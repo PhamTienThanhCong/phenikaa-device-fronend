@@ -28,9 +28,10 @@ module.exports = {
         "tabWidth": 2,
         "endOfLine": "auto",
         "useTabs": false,
-        "singleQuote": true,
+        "singleQuote": false,
+        "jsxSingleQuote": false,
         "printWidth": 120
-      }      
+      }           
     ]
   },
 }
