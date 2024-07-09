@@ -2,10 +2,8 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { usePromiseTracker } from 'react-promise-tracker';
 import './Loading.scss';
-import { useTranslation } from 'react-i18next';
 
 function Loading() {
-  const { t } = useTranslation();
   const { promiseInProgress } = usePromiseTracker({ delay: 1000 });
 
   const value = useSelector((state) => state.loading.value);
@@ -53,7 +51,7 @@ function Loading() {
         <div className="d-flex align-items-center justify-content-center w-100 h-100">
           <div className="loading-panel text-center text-white pt-4">
             <div className="loading-icon loading-spinner m-auto" />
-            <div className="loading-text">{t('Loading')}</div>
+            <div className="loading-text">Loading</div>
           </div>
         </div>
       </div>

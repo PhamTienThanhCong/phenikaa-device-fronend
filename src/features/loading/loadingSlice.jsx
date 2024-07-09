@@ -5,7 +5,7 @@ const initialState = {
   timer: 1000
 };
 
-const loadingSlice = createSlice({
+export const loadingSlice = createSlice({
   name: 'loading',
   initialState,
   reducers: {
