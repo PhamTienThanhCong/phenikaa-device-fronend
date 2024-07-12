@@ -1,7 +1,7 @@
-import { combineReducers, configureStore } from '@reduxjs/toolkit';
-import { setupListeners } from '@reduxjs/toolkit/query';
-import { loadingSlice } from '../features/loading/loadingSlice';
-import { demoSlice } from '../pages/demo/BasicSlice';
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import { setupListeners } from "@reduxjs/toolkit/query";
+import { loadingSlice } from "../features/loading/loadingSlice";
+import { demoSlice } from "@/pages/demo/BasicSlice";
 
 const rootReducer = combineReducers({
   loading: loadingSlice.reducer,

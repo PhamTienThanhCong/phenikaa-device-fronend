@@ -1,7 +1,7 @@
-import { Route, Routes } from 'react-router-dom';
-import NotFoundPage from './pages/errors/NotFoundPage';
-import Loading from './features/loading/Loading';
-import BasicPage from './pages/demo/BasicPage';
+import { Route, Routes } from "react-router-dom";
+import NotFoundPage from "./pages/errors/NotFoundPage";
+import Loading from "./features/loading/Loading";
+import BasicPage from "./pages/demo/BasicPage";
 
 function App() {
   return (

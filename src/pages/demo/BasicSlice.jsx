@@ -1,5 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { getAllDemo } from './BasicApi';
+import { createSlice } from "@reduxjs/toolkit";
+import { getAllDemo } from "./BasicApi";
 
 const initialState = {
   users: [],
@@ -7,7 +7,7 @@ const initialState = {
 };
 
 export const demoSlice = createSlice({
-  name: 'demo',
+  name: "demo",
   initialState,
   reducers: {
     setUsers: (state, action) => {

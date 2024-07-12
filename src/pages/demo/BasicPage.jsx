@@ -1,7 +1,7 @@
-import { useAppDispatch, useAppSelector } from '@/app/hooks';
-import { useEffect } from 'react';
-import { getAllDemo } from './BasicApi';
-import BaseLayout from '@/features/layout/BaseLayout';
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
+// import { useEffect } from "react";
+import { getAllDemo } from "./BasicApi";
+import BaseLayout from "@/features/layout/BaseLayout";
 
 const BasicPage = () => {
   const { users, isGetUser } = useAppSelector((state) => state.demo);
