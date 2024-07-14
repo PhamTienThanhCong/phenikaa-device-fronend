@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import { Layout, Menu, theme, Divider } from "antd";
 // const { Header, Content, Sider } = Layout;
-const { -Content, Footer, Sider } = Layout;
+const { Content, Footer, Sider } = Layout;
 import { UploadOutlined, UserOutlined, VideoCameraOutlined } from "@ant-design/icons";
 import React from "react";
 import "./BaseLayout.scss";

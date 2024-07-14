@@ -2,14 +2,16 @@ import axios from "axios";
 import { trackPromise } from "react-promise-tracker";
 
 const SendRequest = async (url, payload, thunkAPI, method = "post") => {
-  // const BASE_URL = import.meta.env.VITE_API_URL_API;
-  const BASE_URL = "https://reqres.in/api";
+  const BASE_URL = import.meta.env.VITE_API_URL_API;
+  // const BASE_URL = "https://reqres.in/api";
+  const token = localStorage.getItem("token") || "";
   const instance = axios.create({
     baseURL: BASE_URL,
     timeout: 30000,
     headers: {
       "Content-Type": "application/json",
-      Accept: "application/json"
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`
     }
   });
 
