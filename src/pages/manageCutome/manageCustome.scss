@@ -1,0 +1,34 @@
+/* manageCustome.scss */
+.ant-table-thead > tr > th {
+  background-color: #fafafa;
+  font-weight: bold;
+}
+
+.ant-table-tbody > tr > td {
+  vertical-align: middle;
+}
+
+.ant-avatar {
+  margin-right: 8px;
+}
+
+.search-bar {
+  margin-bottom: 20px;
+}
+@media only screen and (max-width: 768px) {
+  .ant-table {
+    overflow-x: auto;
+  }
+
+  .ant-table table {
+    width: 100%;
+  }
+
+  .ant-tabs-tab {
+    font-size: 14px;
+  }
+
+  .ant-input {
+    width: 100% !important;
+  }
+}

@@ -1,0 +1,70 @@
+.profile-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  background-color: #f0f2f5;
+
+  @media (max-width: 768px) {
+    padding: 16px;
+  }
+}
+
+.profile-card {
+  width: 100%;
+  max-width: 1500px; /* Giảm kích thước max-width cho màn hình nhỏ */
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  padding: 24px;
+
+  @media (max-width: 768px) {
+    padding: 16px;
+  }
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap; /* Cho phép các phần tử xếp chồng khi cần thiết */
+
+  .profile-name {
+    margin-left: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    h2 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    button {
+      margin-top: 8px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+
+    .profile-name {
+      margin-left: 0;
+      margin-top: 16px;
+    }
+  }
+}
+
+.ant-descriptions {
+  margin-top: 24px;
+
+  .ant-descriptions-item-label {
+    font-weight: bold;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 14px; /* Giảm kích thước font cho màn hình nhỏ */
+  }
+}

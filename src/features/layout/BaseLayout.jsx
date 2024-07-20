@@ -2,31 +2,139 @@ import PropTypes from "prop-types";
 import { Layout, Menu, theme, Divider } from "antd";
 // const { Header, Content, Sider } = Layout;
 const { Content, Footer, Sider } = Layout;
-import { UploadOutlined, UserOutlined, VideoCameraOutlined } from "@ant-design/icons";
+import {
+  UserOutlined,
+  DashboardOutlined,
+  LaptopOutlined,
+  CalendarOutlined,
+  FileTextOutlined,
+  BellOutlined
+} from "@ant-design/icons";
+import { useNavigate, useLocation } from "react-router-dom";
 import React from "react";
 import "./BaseLayout.scss";
 import Headerlayout from "./components/header/Header";
+import { PATH } from "@/constants/path";
+import { useState, useEffect } from "react";
 
-// base layout component
-// const BaseLayout = ({ children }) => {
-//   return (
-//     <div>
-//       <h3>header</h3>
-//       {children}
-//     </div>
-//   );
-// };
-//
+const navbars = [
+  {
+    key: PATH.TEST,
+    icon: React.createElement(UserOutlined),
+    label: "Test"
+  },
+  {
+    key: PATH.DASHBOARD,
+    icon: React.createElement(DashboardOutlined),
+    label: "Dashboard"
+  },
+  {
+    key: PATH.CUSTOME,
+    icon: React.createElement(UserOutlined),
+    label: "Quản lý người dùng"
+  },
+  {
+    key: "equipment",
+    icon: React.createElement(LaptopOutlined),
+    label: "Quản lý mượn thiết bị",
+    children: [
+      {
+        key: PATH.EQUIPMENT.LIST,
+        label: "Danh sách thiết bị"
+      },
+      {
+        key: PATH.EQUIPMENT.REQUEST,
+        label: "Yêu cầu mượn"
+      },
+      {
+        key: PATH.EQUIPMENT.HISTORY,
+        label: "Tra cứu lịch sử mượn"
+      }
+    ]
+  },
+  {
+    key: PATH.MAINTENANCE_SCHEDULE,
+    icon: React.createElement(CalendarOutlined),
+    label: "Lịch trình bảo trì"
+  },
+  {
+    key: PATH.EQUIPMENT_MANAGEMENT,
+    icon: React.createElement(LaptopOutlined),
+    label: "Quản lý danh sách thiết bị"
+  },
+  {
+    key: "roomLoan",
+    icon: React.createElement(LaptopOutlined),
+    label: "Quản lý mượn phòng",
+    children: [
+      {
+        key: PATH.ROOM_LOAN.LIST,
+        label: "Danh sách phòng"
+      },
+      {
+        key: PATH.ROOM_LOAN.REQUEST,
+        label: "Yêu cầu mượn"
+      },
+      {
+        key: PATH.ROOM_LOAN.HISTORY,
+        label: "Tra cứu lịch sử mượn"
+      }
+    ]
+  },
+  {
+    key: PATH.ISSUE_HISTORY,
+    icon: React.createElement(FileTextOutlined),
+    label: "Lịch sử các phiếu đã cấp"
+  },
+  {
+    key: PATH.ERROR_REPORTS,
+    icon: React.createElement(BellOutlined),
+    label: "Thông báo lỗi"
+  }
+];
 
-const items = [UserOutlined, VideoCameraOutlined, UploadOutlined, UserOutlined].map((icon, index) => ({
-  key: String(index + 1),
-  icon: React.createElement(icon),
-  label: `nav ${index + 1}`
-}));
 const BaseLayout = ({ children }) => {
   const {
-    token: { colorBgContainer, borderRadiusLG }
+    token: { colorBgContainer }
   } = theme.useToken();
+
+  const [selectedKey, setSelectedKey] = useState("");
+  const [openKeys, setOpenKeys] = useState([]);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const findKey = (navbars, path) => {
+      for (let item of navbars) {
+        if (item.key === path) {
+          return item.key;
+        }
+        if (item.children) {
+          const childKey = findKey(item.children, path);
+          if (childKey) {
+            return item.key; // Return the parent key
+          }
+        }
+      }
+      return null;
+    };
+
+    const currentItemKey = findKey(navbars, location.pathname);
+    if (currentItemKey) {
+      setSelectedKey(location.pathname);
+      setOpenKeys((prevKeys) => [...new Set([...prevKeys, currentItemKey])]);
+    }
+  }, [location.pathname]);
+
+  const handleMenuClick = ({ key }) => {
+    setSelectedKey(key);
+    navigate(key);
+  };
+
+  const handleOpenChange = (keys) => {
+    setOpenKeys(keys);
+  };
+
   return (
     <Layout
       style={{
@@ -38,12 +146,8 @@ const BaseLayout = ({ children }) => {
         breakpoint="lg"
         collapsedWidth="0"
         width="17.7rem"
-        onBreakpoint={(broken) => {
-          console.log(broken);
-        }}
-        onCollapse={(collapsed, type) => {
-          console.log(collapsed, type);
-        }}
+        onBreakpoint={(broken) => {}}
+        onCollapse={(collapsed, type) => {}}
         className="custom-sider"
         style={{
           background: colorBgContainer,
@@ -66,13 +170,15 @@ const BaseLayout = ({ children }) => {
         <Menu
           theme="light"
           mode="inline"
-          defaultSelectedKeys={["4"]}
-          items={items}
+          defaultSelectedKeys={[selectedKey]}
+          selectedKeys={[selectedKey]}
+          openKeys={openKeys}
+          onOpenChange={handleOpenChange}
+          onClick={handleMenuClick}
+          items={navbars}
           style={{
-            // width: "100%",
             width: "15.6rem",
             border: "none"
-            // height: "100%"
           }}
         />
       </Sider>
@@ -91,9 +197,6 @@ const BaseLayout = ({ children }) => {
           <div
             style={{
               padding: 24
-              // minHeight: 360
-              // background: colorBgContainer
-              // borderRadius: borderRadiusLG
             }}
           >
             {children}
@@ -103,9 +206,7 @@ const BaseLayout = ({ children }) => {
           style={{
             textAlign: "center"
           }}
-        >
-          Ant Design ©{new Date().getFullYear()} Created by Ant UED
-        </Footer>
+        ></Footer>
       </Layout>
     </Layout>
   );

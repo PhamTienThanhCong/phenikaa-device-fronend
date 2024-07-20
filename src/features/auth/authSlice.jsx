@@ -11,11 +11,13 @@ export const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    loginOut: (state) => {
+    logOut: (state) => {
       state.users = {};
       state.isLogin = false;
       // remove token in local storage
       localStorage.removeItem("token");
+      // redirect to login page
+      window.location.href = "/login";
     }
   },
   extraReducers: (builder) => {
@@ -35,5 +37,5 @@ export const authSlice = createSlice({
   }
 });
 
-export const { loginOut } = authSlice.actions;
+export const { logOut } = authSlice.actions;
 export default authSlice.reducer;

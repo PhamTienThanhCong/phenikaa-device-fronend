@@ -1,10 +1,10 @@
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 // import { useEffect } from "react";
-import { getAllDemo } from "./BasicApi";
+// import { getAllDemo } from "./BasicApi";
 import BaseLayout from "@/features/layout/BaseLayout";
 import { logOut } from "@/features/auth/authSlice";
 
-const BasicPage = () => {
+const TestLayout = () => {
   const { users, isGetUser } = useAppSelector((state) => state.demo);
   const currentUser = useAppSelector((state) => state.auth.currentUser);
   const dispatch = useAppDispatch();
@@ -23,7 +23,7 @@ const BasicPage = () => {
   return (
     <BaseLayout>
       <div>
-        <h1>Basic Page</h1>
+        <h1>Test Page</h1>
         <button onClick={() => reloadData()}>logout</button>
         {isGetUser && (
           <ul>
@@ -37,4 +37,4 @@ const BasicPage = () => {
   );
 };
 
-export default BasicPage;
+export default TestLayout;

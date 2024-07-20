@@ -1,19 +1,49 @@
 .custom-sider {
   background: #fff;
-}
-.demo-logo-vertical {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  // height: 100%;
-  width: 15.6rem;
-  // height: .2px;
-  gap: 0px;
-  opacity: 0px;
-  padding: 14px;
-}
-.image-logo {
-  width: 8.6rem;
+
+  &.collapsed {
+    .demo-logo-vertical {
+      justify-content: center;
+      align-items: center;
+      padding: 14px;
+      opacity: 1;
+    }
+
+    .image-logo {
+      width: 2.5rem;
+      transition: width 0.3s ease;
+    }
+
+    .ant-menu-item {
+      padding-left: 0;
+      justify-content: center;
+    }
+
+    .ant-menu-item-icon {
+      margin-right: 0;
+    }
+
+    .ant-menu-title-content {
+      display: none;
+    }
+  }
+
+  .demo-logo-vertical {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 14px;
+    transition: all 0.3s ease;
+  }
+
+  .image-logo {
+    width: 8.6rem;
+    transition: width 0.3s ease;
+  }
+
+  .ant-menu-item {
+    transition: padding-left 0.3s ease;
+  }
 }

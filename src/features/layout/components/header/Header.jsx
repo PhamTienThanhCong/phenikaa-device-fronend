@@ -1,9 +1,7 @@
-import React from "react";
 import { Layout, Dropdown, Menu, Avatar } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { Box } from "@mui/material";
 import { theme } from "antd";
-
 import "./header.scss";
 
 const { Header } = Layout;
