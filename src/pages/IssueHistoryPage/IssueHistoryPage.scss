@@ -1,0 +1,18 @@
+/* CSS Customization */
+.custom-table {
+  border: 1px solid #e8e8e8; /* Đổi màu viền bảng */
+  border-radius: 8px; /* Bo góc cho bảng */
+}
+
+.custom-table .ant-table-cell {
+  padding: 12px; /* Tăng khoảng cách bên trong ô */
+}
+
+.custom-table .ant-table-thead > tr > th {
+  background: #f7f7f7; /* Màu nền của tiêu đề cột */
+  color: #333; /* Màu chữ tiêu đề cột */
+}
+
+.custom-table .ant-table-tbody > tr > td {
+  border-bottom: 1px solid #e8e8e8; /* Viền dưới của các ô */
+}

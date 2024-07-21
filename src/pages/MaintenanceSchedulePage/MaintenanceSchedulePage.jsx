@@ -9,13 +9,16 @@ import {
   Modal,
   Form,
   Input as AntInput,
-  Typography as AntTypography
+  Tag,
+  Select,
+  Row,
+  Col
 } from "antd";
 import { SearchOutlined, PlusOutlined, DeleteOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
 import BaseLayout from "@/features/layout/BaseLayout";
 
 const { Title } = Typography;
-const { Text } = AntTypography;
+const { Option } = Select;
 
 // Initial data source
 const initialDataSource = [
@@ -23,6 +26,18 @@ const initialDataSource = [
     key: "1",
     index: "1",
     deviceCode: "PNK83201",
+    deviceName: "Camera quan sát IP 4K",
+
+    manufacturer: "Acme Security",
+    powerSource: "210V, 60% hiệu suất",
+    status: "Bảo trì",
+    maintenanceTime: "2 ngày",
+    maintenanceUnit: "Trường Đại học Phenikaa"
+  },
+  {
+    key: "2",
+    index: "2",
+    deviceCode: "PNK83202",
     deviceName: (
       <>
         Camera quan sát IP 4K
@@ -31,38 +46,20 @@ const initialDataSource = [
     ),
     manufacturer: "Acme Security",
     powerSource: "210V, 60% hiệu suất",
-    status: "Bảo trì",
-    maintenanceTime: "2 ngày",
-    maintenanceUnit: "Trường Đại học Phenikaa",
-    actions: (
-      <Space>
-        <Button icon={<EyeOutlined />} type="text" />
-        <Button icon={<EditOutlined />} type="text" />
-        <Popconfirm title="Bạn có chắc chắn muốn xóa?" onConfirm={() => console.log("Delete confirmed")}>
-          <Button icon={<DeleteOutlined />} type="text" />
-        </Popconfirm>
-      </Space>
-    )
+    status: "Quá hạn",
+    maintenanceTime: "3 ngày",
+    maintenanceUnit: "Trường Đại học Phenikaa"
   },
   {
-    key: "2",
-    index: "2",
-    deviceCode: "PNK83202",
+    key: "3",
+    index: "3",
+    deviceCode: "PNK83203",
     deviceName: "Camera quan sát IP 4K",
     manufacturer: "Acme Security",
     powerSource: "210V, 60% hiệu suất",
-    status: "Bảo trì",
-    maintenanceTime: "2 ngày",
-    maintenanceUnit: "Trường Đại học Phenikaa",
-    actions: (
-      <Space>
-        <Button icon={<EyeOutlined />} type="text" />
-        <Button icon={<EditOutlined />} type="text" />
-        <Popconfirm title="Bạn có chắc chắn muốn xóa?" onConfirm={() => console.log("Delete confirmed")}>
-          <Button icon={<DeleteOutlined />} type="text" />
-        </Popconfirm>
-      </Space>
-    )
+    status: "Bình thường",
+    maintenanceTime: "4 ngày",
+    maintenanceUnit: "Trường Đại học Phenikaa"
   }
 ];
 
@@ -82,13 +79,28 @@ const MaintenanceSchedulePage = () => {
     )
   );
 
+  const getStatusTag = (status) => {
+    if (status === "Bảo trì") {
+      return <Tag color="blue">Bảo trì</Tag>;
+    }
+    if (status === "Quá hạn") {
+      return <Tag color="red">Quá hạn</Tag>;
+    }
+    return <Tag color="green">Bình thường</Tag>;
+  };
+
   const columns = [
     { title: "STT", dataIndex: "index", key: "index" },
     { title: "Mã thiết bị", dataIndex: "deviceCode", key: "deviceCode" },
     { title: "Tên thiết bị", dataIndex: "deviceName", key: "deviceName" },
     { title: "Hãng sản xuất", dataIndex: "manufacturer", key: "manufacturer" },
     { title: "Nguồn điện", dataIndex: "powerSource", key: "powerSource" },
-    { title: "Trạng thái thiết bị", dataIndex: "status", key: "status" },
+    {
+      title: "Trạng thái thiết bị",
+      dataIndex: "status",
+      key: "status",
+      render: (status) => getStatusTag(status)
+    },
     { title: "Thời gian bảo trì", dataIndex: "maintenanceTime", key: "maintenanceTime" },
     { title: "Đơn vị bảo trì", dataIndex: "maintenanceUnit", key: "maintenanceUnit" },
     {
@@ -96,11 +108,42 @@ const MaintenanceSchedulePage = () => {
       dataIndex: "actions",
       key: "actions",
       render: (_, record) => (
-        <Space>
-          <Button icon={<EyeOutlined />} type="text" onClick={() => handleModalOpen("view", record)} />
-          <Button icon={<EditOutlined />} type="text" onClick={() => handleModalOpen("edit", record)} />
+        <Space
+          style={{
+            display: "flex",
+            justifyContent: "space-around"
+          }}
+        >
+          <p
+            type="text"
+            onClick={() => handleModalOpen("view", record)}
+            style={{
+              color: "blue",
+              cursor: "pointer"
+            }}
+          >
+            {<EyeOutlined />}{" "}
+          </p>
+          <p
+            type="text"
+            onClick={() => handleModalOpen("edit", record)}
+            style={{
+              color: "green",
+              cursor: "pointer"
+            }}
+          >
+            {<EditOutlined />}
+          </p>
           <Popconfirm title="Bạn có chắc chắn muốn xóa?" onConfirm={() => handleDelete(record.key)}>
-            <Button icon={<DeleteOutlined />} type="text" />
+            <p
+              type="text"
+              style={{
+                color: "red",
+                cursor: "pointer"
+              }}
+            >
+              {<DeleteOutlined />}
+            </p>
           </Popconfirm>
         </Space>
       )
@@ -140,12 +183,9 @@ const MaintenanceSchedulePage = () => {
       <div style={{ padding: "16px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "16px" }}>
           <Title level={2}>Danh sách thiết bị</Title>
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => handleModalOpen("add")}>
-            Thêm
-          </Button>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "16px" }}>
-          <div style={{ position: "relative" }}>
+          <div style={{ position: "relative", display: "flex", justifyContent: "space-between", width: "100%" }}>
             <Input
               prefix={<SearchOutlined />}
               placeholder="Tìm kiếm"
@@ -153,6 +193,17 @@ const MaintenanceSchedulePage = () => {
               value={searchText}
               onChange={handleSearch}
             />
+            <Button
+              type="primary"
+              style={{
+                color: "white",
+                backgroundColor: "#F26526"
+              }}
+              icon={<PlusOutlined color="white" />}
+              onClick={() => handleModalOpen("add")}
+            >
+              Thêm
+            </Button>
           </div>
         </div>
         <Table
@@ -191,7 +242,7 @@ const MaintenanceSchedulePage = () => {
                 <strong>Nguồn điện:</strong> {selectedData.powerSource}
               </p>
               <p>
-                <strong>Trạng thái thiết bị:</strong> {selectedData.status}
+                <strong>Trạng thái thiết bị:</strong> {getStatusTag(selectedData.status)}
               </p>
               <p>
                 <strong>Thời gian bảo trì:</strong> {selectedData.maintenanceTime}
@@ -219,55 +270,86 @@ const MaintenanceSchedulePage = () => {
           style={{ top: 20 }}
         >
           <Form form={form} onFinish={handleFormSubmit} layout="vertical" id="deviceForm">
-            <Form.Item
-              name="deviceCode"
-              label="Mã thiết bị"
-              rules={[{ required: true, message: "Mã thiết bị không thể để trống!" }]}
-            >
-              <AntInput />
-            </Form.Item>
-            <Form.Item
-              name="deviceName"
-              label="Tên thiết bị"
-              rules={[{ required: true, message: "Tên thiết bị không thể để trống!" }]}
-            >
-              <AntInput />
-            </Form.Item>
-            <Form.Item
-              name="manufacturer"
-              label="Hãng sản xuất"
-              rules={[{ required: true, message: "Hãng sản xuất không thể để trống!" }]}
-            >
-              <AntInput />
-            </Form.Item>
-            <Form.Item
-              name="powerSource"
-              label="Nguồn điện"
-              rules={[{ required: true, message: "Nguồn điện không thể để trống!" }]}
-            >
-              <AntInput />
-            </Form.Item>
-            <Form.Item
-              name="status"
-              label="Trạng thái thiết bị"
-              rules={[{ required: true, message: "Trạng thái thiết bị không thể để trống!" }]}
-            >
-              <AntInput />
-            </Form.Item>
-            <Form.Item
-              name="maintenanceTime"
-              label="Thời gian bảo trì"
-              rules={[{ required: true, message: "Thời gian bảo trì không thể để trống!" }]}
-            >
-              <AntInput />
-            </Form.Item>
-            <Form.Item
-              name="maintenanceUnit"
-              label="Đơn vị bảo trì"
-              rules={[{ required: true, message: "Đơn vị bảo trì không thể để trống!" }]}
-            >
-              <AntInput />
-            </Form.Item>
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  name="deviceCode"
+                  label="Mã thiết bị"
+                  rules={[{ required: true, message: "Mã thiết bị không thể để trống!" }]}
+                >
+                  <AntInput />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  name="deviceName"
+                  label="Tên thiết bị"
+                  rules={[{ required: true, message: "Tên thiết bị không thể để trống!" }]}
+                >
+                  <AntInput />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  name="manufacturer"
+                  label="Hãng sản xuất"
+                  rules={[{ required: true, message: "Hãng sản xuất không thể để trống!" }]}
+                >
+                  <AntInput />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  name="powerSource"
+                  label="Nguồn điện"
+                  rules={[{ required: true, message: "Nguồn điện không thể để trống!" }]}
+                >
+                  <AntInput />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  name="status"
+                  label="Trạng thái thiết bị"
+                  rules={[{ required: true, message: "Trạng thái thiết bị không thể để trống!" }]}
+                >
+                  <Select
+                    placeholder="Chọn trạng thái"
+                    style={{
+                      height: "40px"
+                    }}
+                  >
+                    <Option value="Bảo trì">Bảo trì</Option>
+                    <Option value="Quá hạn">Quá hạn</Option>
+                    <Option value="Bình thường">Bình thường</Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  name="maintenanceTime"
+                  label="Thời gian bảo trì"
+                  rules={[{ required: true, message: "Thời gian bảo trì không thể để trống!" }]}
+                >
+                  <AntInput />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  name="maintenanceUnit"
+                  label="Đơn vị bảo trì"
+                  rules={[{ required: true, message: "Đơn vị bảo trì không thể để trống!" }]}
+                >
+                  <AntInput />
+                </Form.Item>
+              </Col>
+            </Row>
           </Form>
         </Modal>
       </div>
