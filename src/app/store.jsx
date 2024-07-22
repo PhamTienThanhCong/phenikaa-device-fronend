@@ -3,11 +3,13 @@ import { setupListeners } from "@reduxjs/toolkit/query";
 import { loadingSlice } from "../features/loading/loadingSlice";
 import { demoSlice } from "@/pages/demo/BasicSlice";
 import { authSlice } from "@/features/auth/authSlice";
+import { deviceSlice } from "@/pages/DeviceManage/DeviceSlice";
 
 const rootReducer = combineReducers({
   loading: loadingSlice.reducer,
   demo: demoSlice.reducer,
-  auth: authSlice.reducer
+  auth: authSlice.reducer,
+  device: deviceSlice.reducer
 });
 
 export const makeStore = (preloadedState) => {

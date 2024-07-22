@@ -19,7 +19,7 @@ export const demoSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(getAllDemo.fulfilled, (state, action) => {
-      state.users = [...action.payload.data];
+      state.users = [...action.payload];
       state.isGetUser = true;
     });
     builder.addCase(getAllDemo.rejected, (state) => {
