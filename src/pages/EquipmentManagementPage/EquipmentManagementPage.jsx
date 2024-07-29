@@ -12,6 +12,9 @@ import {
 
 import BaseLayout from "@/features/layout/BaseLayout";
 import typeImage from "@/assets/images/logo.png"; // Thay thế bằng đường dẫn hình ảnh của bạn
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import { getDeviceList } from "./DeviceApi";
+import { createDeviceCategory } from "./DeviceApi";
 
 const { Title } = Typography;
 const { Meta } = Card;
@@ -95,10 +98,11 @@ const initialDeviceTypes = [
     ],
     icon: typeImage // Hình ảnh cho loại thiết bị
   }
-  // Thêm các loại thiết bị khác nếu cần
 ];
 
 const EquipmentManagementPage = () => {
+  const dispatch = useAppDispatch();
+  const { device, isDevice } = useAppSelector((state) => state.device);
   const [deviceTypes, setDeviceTypes] = useState(initialDeviceTypes);
   const [searchText, setSearchText] = useState("");
   const [selectedDeviceType, setSelectedDeviceType] = useState(null);
@@ -107,9 +111,9 @@ const EquipmentManagementPage = () => {
   const [form] = Form.useForm(); // Form instance for modals
 
   // Hàm lọc danh sách thiết bị dựa trên văn bản tìm kiếm
-  const filteredDevices = (devices) => {
-    return devices.filter((device) => device.deviceName.toLowerCase().includes(searchText.toLowerCase()));
-  };
+  // const filteredDevices = (devices) => {
+  //   return devices.filter((device) => device.deviceName.toLowerCase().includes(searchText.toLowerCase()));
+  // };
 
   const handleSearch = (e) => {
     setSearchText(e.target.value);
@@ -131,9 +135,12 @@ const EquipmentManagementPage = () => {
     form.resetFields();
   };
 
-  const handleFormSubmit = (values) => {
+  const handleFormSubmit = async (values) => {
     if (modalType === "addType") {
       // Add logic to add a new device type
+      await dispatch(createDeviceCategory(values));
+      handleModalClose();
+
       console.log("Adding device type", values);
     } else if (modalType === "editType") {
       // Add logic to edit the existing device type
@@ -152,6 +159,24 @@ const EquipmentManagementPage = () => {
     // Add logic to delete the device or device type
     console.log("Deleting item with key", key);
   };
+  React.useEffect(() => {
+    if (!isDevice) {
+      dispatch(getDeviceList());
+    }
+  }, [dispatch, isDevice]);
+  console.log(device);
+  // map dữ liệu từ device
+  const deviceData = device.map((item) => {
+    return {
+      key: item.id,
+      name: item.name,
+      total_device: item.total_devices,
+      image: item.image,
+      is_active: item.is_active,
+      presigned_url: item.presigned_url
+    };
+  });
+  console.log(222222, deviceData);
 
   const deviceColumns = [
     { title: "Mã thiết bị", dataIndex: "deviceCode", key: "deviceCode" },
@@ -228,7 +253,7 @@ const EquipmentManagementPage = () => {
                 Thêm thiết bị
               </Button>
             </div>
-            <Table columns={deviceColumns} dataSource={filteredDevices(selectedDeviceType.devices)} rowKey="key" />
+            {/* <Table columns={deviceColumns} dataSource={filteredDevices(selectedDeviceType.devices)} rowKey="key" /> */}
           </>
         ) : (
           <>
@@ -238,7 +263,7 @@ const EquipmentManagementPage = () => {
               </Button>
             </div>
             <Row gutter={[16, 16]}>
-              {deviceTypes.map((type) => (
+              {deviceData.map((type) => (
                 <Col key={type.key} span={8}>
                   <Card hoverable onClick={() => handleCardClick(type)}>
                     <div
@@ -247,8 +272,8 @@ const EquipmentManagementPage = () => {
                         justifyContent: "space-between"
                       }}
                     >
-                      <Meta title={type.deviceType} description={`Tổng số thiết bị: ${type.totalDevices}`} />
-                      <img alt="icon" src={type.icon} style={{ height: 70, objectFit: "cover" }} />
+                      <Meta title={type.name} description={`Tổng số thiết bị: ${type.total_device}`} />
+                      <img alt="icon" src={type.image ?? ""} style={{ height: 70, objectFit: "cover" }} />
                     </div>
                   </Card>
                 </Col>
@@ -275,7 +300,7 @@ const EquipmentManagementPage = () => {
             {modalType === "addType" || modalType === "editType" ? (
               <>
                 <Form.Item
-                  name="deviceType"
+                  name="name"
                   label="Tên loại thiết bị"
                   rules={[{ required: true, message: "Tên loại thiết bị không thể để trống!" }]}
                 >

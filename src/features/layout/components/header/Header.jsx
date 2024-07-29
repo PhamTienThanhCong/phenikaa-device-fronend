@@ -3,25 +3,38 @@ import { UserOutlined } from "@ant-design/icons";
 import { Box } from "@mui/material";
 import { theme } from "antd";
 import "./header.scss";
+import { logOut } from "@/features/auth/authSlice";
+import { useAppDispatch } from "@/app/hooks";
 
 const { Header } = Layout;
 
-const menu = (
-  <Menu>
-    <Menu.Item key="profile">
-      <a href="/profile">Profile</a>
-    </Menu.Item>
-    <Menu.Item key="logout">
-      <a href="/logout">Logout</a>
-    </Menu.Item>
-  </Menu>
-);
-
 function Headerlayout() {
+  // const currentUser = useAppSelector((state) => state.auth.currentUser);
+  const dispatch = useAppDispatch();
+  const logout = () => {
+    dispatch(logOut());
+  };
+
   const {
     token: { colorBgContainer }
   } = theme.useToken();
 
+  const menu = (
+    <Menu>
+      <Menu.Item key="profile">
+        <a href="/profile">Profile</a>
+      </Menu.Item>
+      <Menu.Item key="logout">
+        <a
+          onClick={() => {
+            logout();
+          }}
+        >
+          Logout
+        </a>
+      </Menu.Item>
+    </Menu>
+  );
   return (
     <Header
       style={{

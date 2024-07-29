@@ -44,7 +44,7 @@ const navbars = [
       },
       {
         key: PATH.EQUIPMENT.REQUEST,
-        label: "Yêu cầu mượn"
+        label: "Danh sách đang mượn"
       },
       {
         key: PATH.EQUIPMENT.HISTORY,
@@ -73,7 +73,7 @@ const navbars = [
       },
       {
         key: PATH.ROOM_LOAN.REQUEST,
-        label: "Yêu cầu mượn"
+        label: "Danh sách phòng đang mượn"
       },
       {
         key: PATH.ROOM_LOAN.HISTORY,
@@ -89,7 +89,17 @@ const navbars = [
   {
     key: PATH.ERROR_REPORTS,
     icon: React.createElement(BellOutlined),
-    label: "Thông báo lỗi"
+    label: "Thông báo lỗi",
+    children: [
+      {
+        key: PATH.ERROR_REPORTS.LIST,
+        label: "Danh sách thông báo lỗi"
+      },
+      {
+        key: PATH.ERROR_REPORTS.CREATE,
+        label: "Tạo thông báo lỗi"
+      }
+    ]
   }
 ];
 

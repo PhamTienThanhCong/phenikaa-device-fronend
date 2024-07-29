@@ -4,12 +4,16 @@ import { loadingSlice } from "../features/loading/loadingSlice";
 import { demoSlice } from "@/pages/demo/BasicSlice";
 import { authSlice } from "@/features/auth/authSlice";
 import { deviceSlice } from "@/pages/DeviceManage/DeviceSlice";
+import { customerSlice } from "@/pages/manageCutome/CustomerSlice";
+import { roomSlice } from "@/pages/RoomLoan/RoomSlice";
 
 const rootReducer = combineReducers({
   loading: loadingSlice.reducer,
   demo: demoSlice.reducer,
   auth: authSlice.reducer,
-  device: deviceSlice.reducer
+  device: deviceSlice.reducer,
+  customer: customerSlice.reducer,
+  room: roomSlice.reducer
 });
 
 export const makeStore = (preloadedState) => {

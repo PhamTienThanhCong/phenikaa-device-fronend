@@ -1,9 +1,8 @@
 export const PATH = {
-  HOME: "/",
+  DASHBOARD: "/",
   LOGIN: "/login",
   BASIC: "/basic",
   TEST: "/test",
-  DASHBOARD: "/dashboard",
   CUSTOME: "/custome",
   EQUIPMENT: {
     LIST: "/equipment/list",
@@ -18,7 +17,10 @@ export const PATH = {
     HISTORY: "/room-loan/history"
   },
   ISSUE_HISTORY: "/issue/history",
-  ERROR_REPORTS: "/error/reports",
+  ERROR_REPORTS: {
+    LIST: "/error-reports/list",
+    CREATE: "/error-reports/create"
+  },
   PROFILE: "/profile",
   NOT_FOUND: "*"
 };

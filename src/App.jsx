@@ -19,6 +19,7 @@ import RoomLoanHistoryPage from "./pages/RoomLoan/RoomLoanHistoryPage/RoomLoanHi
 import IssueHistoryPage from "./pages/IssueHistoryPage/IssueHistoryPage";
 import ErrorReportsPage from "./pages/ErrorReportsPage/ErrorReportsPage";
 import ProfilePage from "./pages/profile/profile";
+import CreateErrorReportsPage from "./pages/ErrorReportsPage/CreateErrorReportPage";
 
 import "@/assets/styles/main.css";
 
@@ -44,7 +45,9 @@ function App() {
           <Route path={PATH.ROOM_LOAN.REQUEST} element={<RoomLoanRequestPage />} />
           <Route path={PATH.ROOM_LOAN.HISTORY} element={<RoomLoanHistoryPage />} />
           <Route path={PATH.ISSUE_HISTORY} element={<IssueHistoryPage />} />
-          <Route path={PATH.ERROR_REPORTS} element={<ErrorReportsPage />} />
+          <Route path={PATH.ERROR_REPORTS.LIST} element={<ErrorReportsPage />} />
+          <Route path={PATH.ERROR_REPORTS.CREATE} element={<CreateErrorReportsPage />} />
+
           <Route path={PATH.PROFILE} element={<ProfilePage />} />
         </Route>
         <Route path={PATH.NOT_FOUND} element={<NotFoundPage />} />
