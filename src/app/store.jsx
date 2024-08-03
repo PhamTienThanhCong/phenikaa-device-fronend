@@ -6,6 +6,8 @@ import { authSlice } from "@/features/auth/authSlice";
 import { deviceSlice } from "@/pages/DeviceManage/DeviceSlice";
 import { customerSlice } from "@/pages/manageCutome/CustomerSlice";
 import { roomSlice } from "@/pages/RoomLoan/RoomSlice";
+import { device_repair_Slice } from "@/pages/MaintenanceSchedulePage/device_repair_Slice";
+import { maintenanceSlice } from "@/pages/IssueHistoryPage/maintanceSlice";
 
 const rootReducer = combineReducers({
   loading: loadingSlice.reducer,
@@ -13,7 +15,9 @@ const rootReducer = combineReducers({
   auth: authSlice.reducer,
   device: deviceSlice.reducer,
   customer: customerSlice.reducer,
-  room: roomSlice.reducer
+  room: roomSlice.reducer,
+  device_repair: device_repair_Slice.reducer,
+  maintenance: maintenanceSlice.reducer
 });
 
 export const makeStore = (preloadedState) => {

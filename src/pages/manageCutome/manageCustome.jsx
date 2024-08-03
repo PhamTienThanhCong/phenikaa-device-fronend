@@ -1,13 +1,15 @@
 import React, { useState } from "react";
-import { Table, Tabs, Input, Avatar, Layout, Button, Modal, Form, Upload } from "antd";
+import { Table, Tabs, Input, Avatar, Layout, Button, Modal, Form, DatePicker, Select, Row, Col } from "antd";
+import { notification } from "antd";
 import { UploadOutlined, SearchOutlined } from "@ant-design/icons";
 import BaseLayout from "@/features/layout/BaseLayout";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { getCustomer } from "./CustomerAPI";
-import { getUser, createUser } from "./CustomerAPI";
+import { getUser, createUser, deleteUser, editUser } from "./CustomerAPI";
 
 import "./manageCustome.scss";
-
+// import { idIDIntl } from "@ant-design/pro-components";
+import moment from "moment";
 const { TabPane } = Tabs;
 const { Content } = Layout;
 
@@ -90,9 +92,11 @@ const ManageCustome = () => {
   const { customer, isCustomer } = useAppSelector((state) => state.customer);
   const { users, isUser } = useAppSelector((state) => state.customer);
   // const { createUser, isCreateUser } = useAppSelector((state) => state.customer);
-  console.log(11111, createUser);
+  // console.log(11111, createUser);
+  // console.log(11111, users);
   const listQTV = users.map((item) => {
     return {
+      user_id: item.id,
       email: item.email,
       username: item.full_name,
       birth_date: item.profile.birth_date,
@@ -115,87 +119,140 @@ const ManageCustome = () => {
       dispatch(getUser());
     }
   }, [dispatch, isUser]);
-  // React.useEffect(() => {
-  //   if (isCreateUser) {
-  //     dispatch(createUser());
-  //   }
-  // }, [createUser, dispatch, isCreateUser]);
+
   const handleSearchChange = (e) => {
     setSearchText(e.target.value);
   };
   const listDataSinhVien = customer.filter((item) => item.role === 2);
   const listDataGiangVien = customer.filter((item) => item.role === 1);
-  // console.log(11111, listDataGiangVien);
 
   const handleAdd = () => {
     setIsEditing(false);
     setEditingRecord(null);
     setIsModalVisible(true);
   };
-
   const handleEdit = (record) => {
     setIsEditing(true);
     setEditingRecord(record);
-    form.setFieldsValue(record);
+    form.setFieldsValue({
+      username: record.username,
+      password: record.password,
+      full_name: record.full_name,
+      email: record.email,
+      phone_number: record.phone_number,
+      address: record.address,
+      gender: record.gender,
+      card_id: record.card_id,
+      dob: record.profile?.birth_date ? moment(record.profile.birth_date, "DD/MM/YYYY") : null
+    });
     setIsModalVisible(true);
   };
 
   const handleDelete = (record) => {
-    // Handle delete record
+    console.log(11111, record);
+    Modal.confirm({
+      title: "Xác nhận",
+      content: "Bạn có chắc chắn muốn xoá bản ghi này?",
+      okText: "Xoá",
+      cancelText: "Hủy",
+      onOk: async () => {
+        try {
+          await dispatch(deleteUser({ user_id: record.user_id }));
+          await dispatch(getUser());
+          notification.success({
+            message: "Xóa thành công",
+            description: "Bản ghi đã được xóa thành công."
+          });
+        } catch (error) {
+          console.error("Error deleting user:", error);
+          notification.error({
+            message: "Lỗi",
+            description: "Có lỗi xảy ra khi lưu thông tin. Vui lòng thử lại."
+          });
+        }
+      }
+    });
   };
 
   const handleCancel = () => {
     setIsModalVisible(false);
     form.resetFields();
   };
-
+  console.log(11111, editingRecord);
   const handleSave = async (values) => {
+    // console.log(11111, values);
     if (isEditing) {
-      // Handle update record
+      console.log(11111, isEditing);
+      // update
+      try {
+        const payload = {
+          full_name: values.username,
+          email: values.email,
+          role: 1,
+          password: values.password,
+          is_active: true,
+          profile: {
+            full_name: values.full_name,
+            avatar: "",
+            birth_date: values.dob ? moment(values.dob).format("DD/MM/YYYY") : null,
+            gender: values.gender,
+            address: values.address,
+            phone_number: values.phone_number,
+            card_id: values.card_id
+          }
+        };
+        // console.log(222222, payload);
+        await dispatch(
+          editUser({
+            user_id: editingRecord.user_id,
+            ...payload
+          })
+        );
+        await dispatch(editUser({ user_id: editingRecord.user_id, ...payload }));
+        notification.success({
+          message: "Cập nhật thành công",
+          description: "Thông tin đã được cập nhật thành công."
+        });
+      } catch (error) {
+        console.error("Error saving user:", error);
+      }
     } else {
-      // tạo API create user
+      //  create user
       try {
         if (isEditing) {
           // Handle update record
         } else {
-          // Create new user
-          // {
-          //   "full_name": "string",
-          //   "email": "user@example.com",
-          //   "role": 1,
-          //   "password": "string",
-          //   "profile": {
-          //     "full_name": "string",
-          //     "avatar": "string",
-          //     "birth_date": "string",
-          //     "gender": 0,
-          //     "address": "string",
-          //     "phone_number": "string",
-          //     "card_id": "string"
-          //   }
-          // }
           const payload = {
-            full_name: values.name,
-            email: "values.email@gmail.com",
+            full_name: values.username,
+            email: values.email,
             role: 1,
-            password: "123456",
+            password: values.password,
             profile: {
-              full_name: values.name,
-              avatar: "values.avatar",
-              birth_date: "values.d",
-              gender: 0,
-              address: "string",
-              phone_number: "string",
-              card_id: "string"
+              full_name: values.full_name,
+              avatar: "",
+              birth_date: values.dob ? moment(values.dob).format("DD/MM/YYYY") : null,
+              gender: values.gender,
+              address: values.address,
+              phone_number: values.phone_number,
+              card_id: values.card_id
             }
           };
-          console.log(222222, payload);
+
           await dispatch(createUser(payload));
+          notification.success({
+            message: "Tạo mới thành công",
+            description: "Người dùng mới đã được tạo thành công."
+          });
         }
       } catch (error) {
+        notification.error({
+          message: "Lỗi",
+          description: "Có lỗi xảy ra khi lưu thông tin. Vui lòng thử lại."
+        });
         console.error("Error saving user:", error);
       }
     }
+    await dispatch(getUser());
 
     setIsModalVisible(false);
     form.resetFields();
@@ -234,10 +291,20 @@ const ManageCustome = () => {
       dataIndex: "username",
       key: "username"
     },
+    // {
+    //   title: "Mật khẩu",
+    //   dataIndex: "password",
+    //   key: "password"
+    // },
     {
       title: "Email",
       dataIndex: "email",
       key: "email"
+    },
+    {
+      title: "Mã quản trị viên",
+      dataIndex: "card_id",
+      key: "card_id"
     },
     {
       title: "Số điện thoại",
@@ -296,7 +363,7 @@ const ManageCustome = () => {
               scroll={{ x: "max-content" }} // responsive scroll
             />
           </TabPane>
-          <TabPane tab="QTV" key="3">
+          <TabPane tab="Quản Trị Viên" key="3">
             <div style={{ width: "100%", display: "flex", justifyContent: "flex-end" }}>
               <Input
                 placeholder="Tìm kiếm"
@@ -324,35 +391,112 @@ const ManageCustome = () => {
           </TabPane>
         </Tabs>
         <Modal
-          title={isEditing ? "Sửa thông tin" : "Thêm mới"}
+          title={isEditing ? "Sửa thông tin" : "Thêm mới quản trị viên"}
           visible={isModalVisible}
           onCancel={handleCancel}
           footer={null}
+          width={800}
         >
           <Form form={form} layout="vertical" onFinish={handleSave}>
-            <Form.Item name="avatar" label="Avatar">
-              <Upload>
-                <Button icon={<UploadOutlined />}>Tải lên</Button>
-              </Upload>
-            </Form.Item>
-            <Form.Item name="name" label="Tên" rules={[{ required: true, message: "Vui lòng nhập tên" }]}>
-              <Input />
-            </Form.Item>
-            <Form.Item name="dob" label="Ngày sinh" rules={[{ required: true, message: "Vui lòng nhập ngày sinh" }]}>
-              <Input />
-            </Form.Item>
-            <Form.Item>
-              <Button
-                type="primary"
-                htmlType="submit"
-                onClick={() => {
-                  console.log(1111);
-                }}
-              >
-                Lưu
-              </Button>
-              <Button onClick={handleCancel} style={{ marginLeft: 8 }}>
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  name="username"
+                  label="Tên tài khoản"
+                  rules={[{ required: true, message: "Vui lòng nhập tên tài khoản" }]}
+                >
+                  <Input placeholder="Nhập tên tài khoản" style={{ height: 50 }} />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  name="password"
+                  label="Mật khẩu"
+                  rules={[{ required: true, message: "Vui lòng nhập mật khẩu" }]}
+                >
+                  <Input.Password placeholder="Nhập mật khẩu" />
+                </Form.Item>
+              </Col>
+            </Row>
+
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  name="full_name"
+                  label="Họ và tên"
+                  rules={[{ required: true, message: "Vui lòng nhập họ và tên" }]}
+                >
+                  <Input placeholder="Nhập họ và tên" style={{ height: 50 }} />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item name="email" label="Email" rules={[{ required: true, message: "Vui lòng nhập email" }]}>
+                  <Input type="email" placeholder="Nhập email" style={{ height: 50 }} />
+                </Form.Item>
+              </Col>
+            </Row>
+
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  name="phone_number"
+                  label="Số điện thoại"
+                  rules={[{ required: true, message: "Vui lòng nhập số điện thoại" }]}
+                >
+                  <Input type="tel" placeholder="Nhập số điện thoại" style={{ height: 50 }} />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item name="address" label="Địa chỉ">
+                  <Input placeholder="Nhập địa chỉ" style={{ height: 50 }} />
+                </Form.Item>
+              </Col>
+            </Row>
+
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item name="gender" label="Giới tính">
+                  <Select placeholder="Chọn giới tính" style={{ height: 50 }}>
+                    <Select.Option value="1">Nam</Select.Option>
+                    <Select.Option value="2">Nữ</Select.Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item name="card_id" label="Mã quản trị viên">
+                  <Input placeholder="Nhập mã quản trị viên" style={{ height: 50 }} />
+                </Form.Item>
+              </Col>
+            </Row>
+
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  name="dob"
+                  label="Ngày sinh"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng nhập ngày sinh"
+                    }
+                  ]}
+                >
+                  <DatePicker
+                    format="DD/MM/YYYY"
+                    placeholder="Chọn ngày sinh"
+                    style={{ width: "100%", height: 50 }}
+                    disabledDate={(current) => current && current > moment().endOf("day")}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+
+            <Form.Item style={{ display: "flex", justifyContent: "flex-end" }}>
+              <Button onClick={handleCancel} style={{ marginRight: 12 }}>
                 Hủy bỏ
+              </Button>
+              <Button type="primary" htmlType="submit" style={{ backgroundColor: "#F26526" }}>
+                Lưu
               </Button>
             </Form.Item>
           </Form>

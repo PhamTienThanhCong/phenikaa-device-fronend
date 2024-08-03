@@ -18,3 +18,13 @@ export const getUser = createAsyncThunk("customer/get-user", async (payload, thu
   let res = await SendRequest(url, payload, thunkAPI, "GET");
   return res;
 });
+export const deleteUser = createAsyncThunk("customer/delete-user", async (payload, thunkAPI) => {
+  const url = `/user/${payload.user_id}`;
+  let res = await SendRequest(url, payload, thunkAPI, "DELETE");
+  return res;
+});
+export const editUser = createAsyncThunk("customer/edit-user", async (payload, thunkAPI) => {
+  const url = `/user/${payload.user_id}`;
+  let res = await SendRequest(url, payload, thunkAPI, "PUT");
+  return res;
+});

@@ -49,7 +49,7 @@ const RoomLoanListPage = () => {
   const [studentInfo, setStudentInfo] = useState({ studentName: "", studentClass: "" });
   const [summary, setSummary] = useState(null); // Add summary state
   const printRef = useRef(null); // Add ref for printing
-  const [isEdit, setIsEdit] = useState(null);
+  // const [isEdit, setIsEdit] = useState(null);
 
   const [formAddRoom] = Form.useForm();
 
@@ -279,8 +279,13 @@ const RoomLoanListPage = () => {
         visible={openModal}
         onCancel={() => onCloseModalDetailRoom()}
         footer={[
-          <Button key="edit" type="primary" onClick={() => onDeleteRoom()}>
-            Xoa
+          <Button
+            key="edit"
+            type="text"
+            onClick={() => onDeleteRoom()}
+            style={{ color: "white", backgroundColor: "red" }}
+          >
+            Xoá
           </Button>,
           <Button key="edit" type="primary" onClick={() => onEidtRoom()}>
             Chỉnh sửa
@@ -481,14 +486,14 @@ const RoomLoanListPage = () => {
             <Row key={formItem.id} gutter={12}>
               <Col span={12}>
                 <Form.Item
-                  label="Tên cơ sở"
+                  label="Tên cơ sở vật chất"
                   name={["details", formItem.id, "facilityName"]}
-                  rules={[{ required: true, message: "Vui lòng nhập tên cơ sở!" }]}
+                  rules={[{ required: true, message: "Vui lòng nhập tên cơ sở vật chất!" }]}
                 >
                   <Input
                     value={formItem.facilityName}
                     onChange={(e) => handleChange(formItem.id, "facilityName", e.target.value)}
-                    placeholder="Nhập tên cơ sở"
+                    placeholder="Nhập tên cơ sở vật chất"
                   />
                 </Form.Item>
               </Col>
