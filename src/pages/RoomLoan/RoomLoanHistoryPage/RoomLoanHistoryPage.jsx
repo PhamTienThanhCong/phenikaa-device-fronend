@@ -1,39 +1,34 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import BaseLayout from "@/features/layout/BaseLayout";
 import { Table, Typography } from "antd";
+import { getRoomBookingList } from "../RoomApi";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
 
 const { Title } = Typography;
 
-const mockLoanHistoryData = [
-  {
-    id: "P001",
-    roomName: "Phòng A",
-    borrowTime: "09:00 - 11:00",
-    returnTime: "11:00",
-    lender: "Nguyễn Văn A",
-    status: "Đã trả"
-  },
-  {
-    id: "P002",
-    roomName: "Phòng B",
-    borrowTime: "13:00 - 15:00",
-    returnTime: "15:00",
-    lender: "Trần Thị B",
-    status: "Đã trả"
-  },
-  {
-    id: "P003",
-    roomName: "Phòng C",
-    borrowTime: "10:00 - 12:00",
-    returnTime: "Chưa trả",
-    lender: "Lê Văn C",
-    status: "Chưa trả"
-  }
-  // Add more mock data as needed
-];
 
 const RoomLoanHistoryPage = () => {
-  const [loanHistory, setLoanHistory] = useState(mockLoanHistoryData);
+  const dispatch = useAppDispatch();
+  const { roomBooking, isRoomBooking } = useAppSelector((state) => state.room);
+
+  useEffect(() => {
+    if (!isRoomBooking) {
+      dispatch(getRoomBookingList());
+    }
+  }, [dispatch, isRoomBooking]);
+
+
+  const roomBookingData = roomBooking.filter((item) => item.status === "đã sử dụng").map((item) => {
+    return {
+      id: item.id,
+      roomName: item.room.room_id,
+      borrowTime: item.start_time + "  " + item.date_booking,
+      returnTime: item.end_time,
+      lender: item.user.full_name,
+      status: item.status
+    };
+  });
+
 
   const columns = [
     { title: "Mã phiếu", dataIndex: "id", key: "id" },
@@ -47,7 +42,7 @@ const RoomLoanHistoryPage = () => {
   return (
     <BaseLayout>
       <Title level={1}>Tra cứu lịch sử mượn</Title>
-      <Table columns={columns} dataSource={loanHistory} rowKey="id" />
+      <Table columns={columns} dataSource={roomBookingData} rowKey="id" />
     </BaseLayout>
   );
 };

@@ -1,8 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { addRoom, getRoomList } from "./RoomApi";
+import { addRoom, getRoomList, getRoomBookingList } from "./RoomApi";
 const initialState = {
   roomList: [],
-  isGetRoom: false
+  isGetRoom: false,
+  roomBooking: [],
+  isRoomBooking: false,
 };
 
 export const roomSlice = createSlice({
@@ -20,6 +22,10 @@ export const roomSlice = createSlice({
     });
     builder.addCase(addRoom.fulfilled, (state, action) => {
       state.roomList = [...state.roomList, action.payload];
+    });
+    builder.addCase(getRoomBookingList.fulfilled, (state, action) => {
+      state.roomBooking = [...action.payload];
+      state.isRoomBooking = true;
     });
   }
   //  trường hợp tạo loại thiết bị
