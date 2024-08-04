@@ -1,4 +1,5 @@
 import SendRequest from "@/utils/sendRequest";
+
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
 export const getAllDeviceRepair = createAsyncThunk("/maintenance/getal", async (payload, thunkAPI) => {
@@ -33,5 +34,11 @@ export const createDeviceRepair = createAsyncThunk("/maintenance/create", async 
 export const putDeviceRepair = createAsyncThunk("/maintenance/update", async (payload, thunkAPI) => {
   const url = `/device-repair/${payload.device_repair_id}`;
   let res = await SendRequest(url, payload, thunkAPI, "PUT");
+  return res;
+});
+
+export const deleteDeviceRepair = createAsyncThunk("/maintenance/delete", async (payload, thunkAPI) => {
+  const url = `/device-repair/${payload.device_repair_id}`;
+  let res = await SendRequest(url, payload, thunkAPI, "DELETE");
   return res;
 });

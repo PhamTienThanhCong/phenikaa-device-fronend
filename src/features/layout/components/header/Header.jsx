@@ -4,13 +4,23 @@ import { Box } from "@mui/material";
 import { theme } from "antd";
 import "./header.scss";
 import { logOut } from "@/features/auth/authSlice";
-import { useAppDispatch } from "@/app/hooks";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import { getProfile } from "@/pages/profile/profileApi";
+import { useEffect } from "react";
 
 const { Header } = Layout;
 
 function Headerlayout() {
   // const currentUser = useAppSelector((state) => state.auth.currentUser);
   const dispatch = useAppDispatch();
+  const { profileList, isGetAll } = useAppSelector((state) => state.profile);
+
+  useEffect(() => {
+    if (!isGetAll) {
+      dispatch(getProfile());
+    }
+  }, [dispatch, isGetAll]);
+
   const logout = () => {
     dispatch(logOut());
   };
@@ -52,7 +62,7 @@ function Headerlayout() {
           <Dropdown overlay={menu} trigger={["click"]}>
             <div className="user-info" onClick={(e) => e.preventDefault()}>
               <Avatar icon={<UserOutlined />} />
-              <span className="username">Nguyễn Văn A</span>
+              <span className="username">{profileList.full_name}</span>
             </div>
           </Dropdown>
         </div>

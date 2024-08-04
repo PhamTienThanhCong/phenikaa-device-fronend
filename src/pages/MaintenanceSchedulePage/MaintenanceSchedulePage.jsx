@@ -23,7 +23,7 @@ import BaseLayout from "@/features/layout/BaseLayout";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { getAllDeviceRepair } from "./device_repair_Api";
 import { getAllMaintenance } from "./device_repair_Api";
-import { getAllDevice, getAllUser, createDeviceRepair, putDeviceRepair } from "./device_repair_Api";
+import { getAllDevice, getAllUser, createDeviceRepair, putDeviceRepair, deleteDeviceRepair } from "./device_repair_Api";
 import { notification } from "antd";
 import moment from "moment";
 
@@ -100,7 +100,7 @@ const MaintenanceSchedulePage = () => {
 
   // console.log("deviceOptions", deviceOptions);
   // console.log("listData", maintenanceList);
-
+  console.log("maintenanceList", maintenanceList);
   const listData = maintenanceList.map((item) => {
     const currentDate = new Date();
     const returningDate = new Date(item.returning_date);
@@ -118,7 +118,7 @@ const MaintenanceSchedulePage = () => {
       key: item.id,
       index: item.id,
       deviceCode: `TBBT${item.id}`,
-      deviceName: item?.service?.name,
+      deviceName: item?.devices?.map((device) => device.device.name),
       title: item?.name,
       name: item?.service?.name,
       user: item?.user?.full_name,
@@ -357,8 +357,9 @@ const MaintenanceSchedulePage = () => {
     }
   };
 
-  const handleDelete = (key) => {
-    console.log("Deleting device with key", key);
+  const handleDelete = async (key) => {
+    await dispatch(deleteDeviceRepair({ device_repair_id: key }));
+    await dispatch(getAllDeviceRepair());
   };
   const onChange = (value) => {
     console.log("changed", value);

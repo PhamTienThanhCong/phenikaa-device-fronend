@@ -1,119 +1,47 @@
-import React, { useState } from "react";
-import { Table, Button, Input, Space, Typography, Popconfirm, Modal, Form, Upload, Card, Row, Col } from "antd";
-import {
-  SearchOutlined,
-  PlusOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  UploadOutlined,
-  EyeOutlined
-} from "@ant-design/icons";
-// import { SearchOutlined, PlusOutlined, DeleteOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
+import React, { useEffect, useState } from "react";
+import { Table, Button, Input, Space, Typography, Popconfirm, Modal, Form, Card, Row, Col, Select } from "antd";
+import { SearchOutlined, PlusOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 
 import BaseLayout from "@/features/layout/BaseLayout";
-import typeImage from "@/assets/images/logo.png"; // Thay thế bằng đường dẫn hình ảnh của bạn
+
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
-import { getDeviceList } from "./DeviceApi";
-import { createDeviceCategory } from "./DeviceApi";
+import {
+  createDeviceCategory,
+  updateDeviceCategory,
+  getDeviceCategoryList,
+  deleteDeviceCategory,
+  getDeviceList,
+  createDevice,
+  updateDevice,
+  deleteDevice
+} from "./EquipmantManagementApi";
 
 const { Title } = Typography;
 const { Meta } = Card;
 
-// Dữ liệu nguồn ban đầu
-const initialDeviceTypes = [
-  {
-    key: "1",
-    deviceType: "Laptop",
-    totalDevices: 10,
-    devices: [
-      {
-        key: "1",
-        deviceCode: "LAP001",
-        deviceName: "MacBook Pro",
-        totalQuantity: 10,
-        borrowed: 4,
-        available: 5,
-        reserved: 1
-      },
-      {
-        key: "2",
-        deviceCode: "LAP002",
-        deviceName: "Dell XPS 13",
-        totalQuantity: 5,
-        borrowed: 2,
-        available: 2,
-        reserved: 1
-      }
-    ],
-    icon: typeImage // Hình ảnh cho loại thiết bị
-  },
-  {
-    key: "2",
-    deviceType: "Camera",
-    totalDevices: 8,
-    devices: [
-      {
-        key: "3",
-        deviceCode: "CAM001",
-        deviceName: "Sony A7 III",
-        totalQuantity: 8,
-        borrowed: 3,
-        available: 4,
-        reserved: 1
-      }
-    ],
-    icon: typeImage // Hình ảnh cho loại thiết bị
-  },
-  {
-    key: "3",
-    deviceType: "Mobile",
-    totalDevices: 15,
-    devices: [
-      {
-        key: "4",
-        deviceCode: "MOB001",
-        deviceName: "iPhone 12",
-        totalQuantity: 15,
-        borrowed: 6,
-        available: 8,
-        reserved: 1
-      }
-    ],
-    icon: typeImage // Hình ảnh cho loại thiết bị
-  },
-  {
-    key: "4",
-    deviceType: "Printer",
-    totalDevices: 5,
-    devices: [
-      {
-        key: "5",
-        deviceCode: "PRI001",
-        deviceName: "HP LaserJet",
-        totalQuantity: 5,
-        borrowed: 1,
-        available: 3,
-        reserved: 1
-      }
-    ],
-    icon: typeImage // Hình ảnh cho loại thiết bị
-  }
-];
-
 const EquipmentManagementPage = () => {
   const dispatch = useAppDispatch();
-  const { device, isDevice } = useAppSelector((state) => state.device);
-  const [deviceTypes, setDeviceTypes] = useState(initialDeviceTypes);
+  const { deviceCategory, isDeviceCategory, deviceList, isDeviceList } = useAppSelector(
+    (state) => state.deviceCategory
+  );
   const [searchText, setSearchText] = useState("");
   const [selectedDeviceType, setSelectedDeviceType] = useState(null);
   const [modalType, setModalType] = useState(null); // Modal type ('addType', 'editType', 'addDevice', 'editDevice')
   const [selectedData, setSelectedData] = useState(null); // Data for the selected item
   const [form] = Form.useForm(); // Form instance for modals
+  console.log("deviceCategory", deviceCategory);
+  console.log("selectedDeviceType", selectedDeviceType);
+  useEffect(() => {
+    if (!isDeviceCategory) {
+      dispatch(getDeviceCategoryList());
+    }
+  }, [dispatch, isDeviceCategory]);
 
-  // Hàm lọc danh sách thiết bị dựa trên văn bản tìm kiếm
-  // const filteredDevices = (devices) => {
-  //   return devices.filter((device) => device.deviceName.toLowerCase().includes(searchText.toLowerCase()));
-  // };
+  useEffect(() => {
+    if (!isDeviceList) {
+      dispatch(getDeviceList());
+    }
+  }, [dispatch, isDeviceList]);
 
   const handleSearch = (e) => {
     setSearchText(e.target.value);
@@ -137,54 +65,78 @@ const EquipmentManagementPage = () => {
 
   const handleFormSubmit = async (values) => {
     if (modalType === "addType") {
-      // Add logic to add a new device type
-      await dispatch(createDeviceCategory(values));
+      const payload = {
+        name: values.name,
+        is_active: true,
+        image: ""
+      };
+      await dispatch(createDeviceCategory(payload));
+      dispatch(getDeviceCategoryList());
       handleModalClose();
-
-      console.log("Adding device type", values);
     } else if (modalType === "editType") {
-      // Add logic to edit the existing device type
-      console.log("Editing device type", values);
+      const payload = {
+        name: values.name,
+        is_active: true,
+        image: ""
+      };
+      await dispatch(
+        updateDeviceCategory({
+          category_id: selectedData.key,
+          ...payload
+        })
+      );
+      dispatch(getDeviceCategoryList());
     } else if (modalType === "addDevice") {
-      // Add logic to add a new device
-      console.log("Adding device", values);
+      const payload = {
+        name: values.name,
+        category: selectedDeviceType.name,
+        information: values.information,
+        note: values.note,
+        total: values.total,
+        image: ""
+      };
+      await dispatch(createDevice(payload));
+      dispatch(getDeviceList());
     } else if (modalType === "editDevice") {
-      // Add logic to edit the existing device
-      console.log("Editing device", values);
+      const payload = {
+        name: values.name,
+        category: selectedDeviceType.name,
+        information: values.information,
+        note: values.note,
+        total: values.total,
+        image: "",
+        total_used: values.total_used,
+        total_maintenance: values.total_maintenance,
+        is_active: values.is_active === 1 ? true : false
+      };
+      await dispatch(
+        updateDevice({
+          device_id: selectedData.id,
+          ...payload
+        })
+      );
+      dispatch(getDeviceList());
     }
     handleModalClose();
   };
 
-  const handleDelete = (key) => {
-    // Add logic to delete the device or device type
-    console.log("Deleting item with key", key);
+  const handleDelete = async (key) => {
+    await dispatch(deleteDeviceCategory({ category_id: key }));
+    dispatch(getDeviceCategoryList());
   };
-  React.useEffect(() => {
-    if (!isDevice) {
-      dispatch(getDeviceList());
-    }
-  }, [dispatch, isDevice]);
-  console.log(device);
-  // map dữ liệu từ device
-  const deviceData = device.map((item) => {
-    return {
-      key: item.id,
-      name: item.name,
-      total_device: item.total_devices,
-      image: item.image,
-      is_active: item.is_active,
-      presigned_url: item.presigned_url
-    };
-  });
-  console.log(222222, deviceData);
+  const handleDeleleDevice = async (key) => {
+    await dispatch(deleteDevice({ device_id: key }));
+    dispatch(getDeviceList());
+  };
 
   const deviceColumns = [
-    { title: "Mã thiết bị", dataIndex: "deviceCode", key: "deviceCode" },
-    { title: "Tên thiết bị", dataIndex: "deviceName", key: "deviceName" },
-    { title: "Tổng số lượng", dataIndex: "totalQuantity", key: "totalQuantity" },
-    { title: "Đã cho mượn", dataIndex: "borrowed", key: "borrowed" },
-    { title: "Sẵn sàng", dataIndex: "available", key: "available" },
-    { title: "Đã đặt trước", dataIndex: "reserved", key: "reserved" },
+    { title: "Mã thiết bị", dataIndex: "id", key: "id" },
+    { title: "Tên thiết bị", dataIndex: "name", key: "name" },
+    { title: "Thông tin", dataIndex: "information", key: "information" },
+    { title: "Ghi chú", dataIndex: "note", key: "note" },
+    { title: "Tổng số lượng", dataIndex: "total", key: "total" },
+    { title: "Đã sử dụng", dataIndex: "total_used", key: "total_used" },
+    { title: "Bảo trì", dataIndex: "total_maintenance", key: "total_maintenance" },
     {
       title: "Thao tác",
       dataIndex: "actions",
@@ -192,31 +144,21 @@ const EquipmentManagementPage = () => {
       render: (_, record) => (
         <Space
           style={{
-            display: "flex",
-            justifyContent: "space-around"
+            display: "flex"
           }}
         >
           <p
             type="text"
-            onClick={() => handleModalOpen("view", record)}
-            style={{
-              color: "blue",
-              cursor: "pointer"
-            }}
-          >
-            {<EyeOutlined />}{" "}
-          </p>
-          <p
-            type="text"
-            onClick={() => handleModalOpen("edit", record)}
+            onClick={() => handleModalOpen("editDevice", record)}
             style={{
               color: "green",
-              cursor: "pointer"
+              cursor: "pointer",
+              padding: "0 8px"
             }}
           >
             {<EditOutlined />}
           </p>
-          <Popconfirm title="Bạn có chắc chắn muốn xóa?" onConfirm={() => handleDelete(record.key)}>
+          <Popconfirm title="Bạn có chắc chắn muốn xóa thiết bị?" onConfirm={() => handleDeleleDevice(record.id)}>
             <p
               type="text"
               style={{
@@ -253,7 +195,11 @@ const EquipmentManagementPage = () => {
                 Thêm thiết bị
               </Button>
             </div>
-            {/* <Table columns={deviceColumns} dataSource={filteredDevices(selectedDeviceType.devices)} rowKey="key" /> */}
+            <Table
+              columns={deviceColumns}
+              dataSource={deviceList.filter((device) => device.category === selectedDeviceType.name)}
+              rowKey="id"
+            />
           </>
         ) : (
           <>
@@ -263,17 +209,46 @@ const EquipmentManagementPage = () => {
               </Button>
             </div>
             <Row gutter={[16, 16]}>
-              {deviceData.map((type) => (
-                <Col key={type.key} span={8}>
-                  <Card hoverable onClick={() => handleCardClick(type)}>
+              {deviceCategory.map((type, index) => (
+                <Col key={index} span={8}>
+                  <Card hoverable>
                     <div
                       style={{
                         display: "flex",
                         justifyContent: "space-between"
                       }}
                     >
-                      <Meta title={type.name} description={`Tổng số thiết bị: ${type.total_device}`} />
-                      <img alt="icon" src={type.image ?? ""} style={{ height: 70, objectFit: "cover" }} />
+                      <Meta
+                        title={type.name}
+                        description={`Tổng số thiết bị: ${type.total_devices}`}
+                        onClick={() => handleCardClick(type)}
+                        style={{
+                          width: "90%"
+                        }}
+                      />
+                      <Space>
+                        <p
+                          type="text"
+                          onClick={() => handleModalOpen("editType", type)}
+                          style={{
+                            color: "green",
+                            cursor: "pointer"
+                          }}
+                        >
+                          {<EditOutlined />}
+                        </p>
+                        <Popconfirm title="Bạn có chắc chắn muốn xóa?" onConfirm={() => handleDelete(type.id)}>
+                          <p
+                            type="text"
+                            style={{
+                              color: "red",
+                              cursor: "pointer"
+                            }}
+                          >
+                            {<DeleteOutlined />}
+                          </p>
+                        </Popconfirm>
+                      </Space>
                     </div>
                   </Card>
                 </Col>
@@ -290,9 +265,11 @@ const EquipmentManagementPage = () => {
                 ? "Sửa loại thiết bị"
                 : modalType === "addDevice"
                   ? "Thêm thiết bị"
-                  : "Sửa thiết bị"
+                  : modalType === "editDevice"
+                    ? "Sửa thiết bị"
+                    : "12312"
           }
-          visible={modalType !== null}
+          open={modalType !== null}
           onCancel={handleModalClose}
           footer={null}
         >
@@ -306,44 +283,61 @@ const EquipmentManagementPage = () => {
                 >
                   <Input placeholder="Nhập tên loại thiết bị" />
                 </Form.Item>
-                <Form.Item name="icon" label="Hình ảnh loại thiết bị">
-                  <Upload
-                    listType="picture-card"
-                    showUploadList={false}
-                    beforeUpload={() => false} // Không thực hiện upload ngay lập tức
-                  >
-                    <Button icon={<UploadOutlined />}>Chọn hình ảnh</Button>
-                  </Upload>
-                </Form.Item>
               </>
             ) : (
               <>
                 <Form.Item
-                  name="deviceCode"
-                  label="Mã thiết bị"
-                  rules={[{ required: true, message: "Mã thiết bị không thể để trống!" }]}
-                >
-                  <Input placeholder="Nhập mã thiết bị" />
-                </Form.Item>
-                <Form.Item
-                  name="deviceName"
+                  name="name"
                   label="Tên thiết bị"
                   rules={[{ required: true, message: "Tên thiết bị không thể để trống!" }]}
                 >
                   <Input placeholder="Nhập tên thiết bị" />
                 </Form.Item>
+                <Form.Item name="category" label="Loại thiết bị">
+                  <Input value={selectedDeviceType?.name} disabled placeholder={selectedDeviceType?.name} />
+                </Form.Item>
                 <Form.Item
-                  name="totalQuantity"
-                  label="Tổng số lượng"
-                  rules={[{ required: true, message: "Tổng số lượng không thể để trống!" }]}
+                  name="total"
+                  label="Số lượng"
+                  rules={[{ required: true, message: "Số lượng không thể để trống!" }]}
                 >
-                  <Input placeholder="Nhập tổng số lượng" />
+                  <Input placeholder="Nhập số lượng" />
                 </Form.Item>
-                <Form.Item name="image" label="Ảnh thiết bị">
-                  <Upload>
-                    <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
-                  </Upload>
+                <Form.Item
+                  name="information"
+                  label="Thông tin"
+                  rules={[{ required: true, message: "Thông tin không thể để trống!" }]}
+                >
+                  <Input placeholder="Nhập thông tin" />
                 </Form.Item>
+                <Form.Item
+                  name="note"
+                  label="Ghi chú"
+                  rules={[{ required: true, message: "Ghi chú không thể để trống!" }]}
+                >
+                  <Input placeholder="Nhập ghi chú" />
+                </Form.Item>
+                {/* Nếu mà là edit thì thêm 3 trường nữa */}
+                {modalType === "editDevice" && (
+                  <>
+                    <Form.Item name="total_used" label="Đã sử dụng">
+                      <Input placeholder={selectedDeviceType} disabled />
+                    </Form.Item>
+                    <Form.Item name="total_maintenance" label="Bảo trì">
+                      <Input placeholder={selectedDeviceType} disabled />
+                    </Form.Item>
+                    <Form.Item
+                      name="is_active"
+                      label="Trạng thái"
+                      rules={[{ required: true, message: "Trạng thái không thể để trống!" }]}
+                    >
+                      <Select placeholder="Chọn trạng thái">
+                        <Select.Option value={1}>Hoạt động</Select.Option>
+                        <Select.Option value={0}>Ngừng hoạt động</Select.Option>
+                      </Select>
+                    </Form.Item>
+                  </>
+                )}
               </>
             )}
             <Form.Item>

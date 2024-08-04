@@ -93,11 +93,14 @@ const ManageCustome = () => {
   const { users, isUser } = useAppSelector((state) => state.customer);
   // const { createUser, isCreateUser } = useAppSelector((state) => state.customer);
   // console.log(11111, createUser);
-  // console.log(11111, users);
+  console.log(11111, users);
+  //gender
+
   const listQTV = users.map((item) => {
     return {
       user_id: item.id,
       email: item.email,
+      gender: item.profile.gender,
       username: item.full_name,
       birth_date: item.profile.birth_date,
       full_name: item.profile.full_name,
@@ -125,13 +128,26 @@ const ManageCustome = () => {
   };
   const listDataSinhVien = customer.filter((item) => item.role === 2);
   const listDataGiangVien = customer.filter((item) => item.role === 1);
+  const genderOptions = [
+    {
+      label: "Nam",
+      value: 1
+    },
+    {
+      label: "Nữ",
+      value: 2
+    }
+  ];
 
   const handleAdd = () => {
     setIsEditing(false);
     setEditingRecord(null);
     setIsModalVisible(true);
   };
+
   const handleEdit = (record) => {
+    console.log(999999999, genderOptions);
+    console.log(88888888, record.birth_date);
     setIsEditing(true);
     setEditingRecord(record);
     form.setFieldsValue({
@@ -141,15 +157,14 @@ const ManageCustome = () => {
       email: record.email,
       phone_number: record.phone_number,
       address: record.address,
-      gender: record.gender,
+      gender: genderOptions.find((item) => item.value === record.gender).value,
       card_id: record.card_id,
-      dob: record.profile?.birth_date ? moment(record.profile.birth_date, "DD/MM/YYYY") : null
+      dob: record.birth_date ? moment(record.birth_date) : null
     });
     setIsModalVisible(true);
   };
 
   const handleDelete = (record) => {
-    console.log(11111, record);
     Modal.confirm({
       title: "Xác nhận",
       content: "Bạn có chắc chắn muốn xoá bản ghi này?",
@@ -178,7 +193,7 @@ const ManageCustome = () => {
     setIsModalVisible(false);
     form.resetFields();
   };
-  console.log(11111, editingRecord);
+  console.log(22222, editingRecord);
   const handleSave = async (values) => {
     // console.log(11111, values);
     if (isEditing) {
@@ -195,7 +210,7 @@ const ManageCustome = () => {
             full_name: values.full_name,
             avatar: "",
             birth_date: values.dob ? moment(values.dob).format("DD/MM/YYYY") : null,
-            gender: values.gender,
+            gender: "1",
             address: values.address,
             phone_number: values.phone_number,
             card_id: values.card_id
@@ -296,6 +311,13 @@ const ManageCustome = () => {
     //   dataIndex: "password",
     //   key: "password"
     // },
+    {
+      title: "Giới tính",
+      dataIndex: "gender",
+      key: "gender",
+      // nếu giới tính = 1 thì hiển thị Nam, ngược lại hiển thị Nữ
+      render: (text) => (text === 1 ? "Nam" : "Nữ")
+    },
     {
       title: "Email",
       dataIndex: "email",
@@ -457,8 +479,15 @@ const ManageCustome = () => {
               <Col span={12}>
                 <Form.Item name="gender" label="Giới tính">
                   <Select placeholder="Chọn giới tính" style={{ height: 50 }}>
-                    <Select.Option value="1">Nam</Select.Option>
-                    <Select.Option value="2">Nữ</Select.Option>
+                    {genderOptions.map(
+                      (
+                        item // render option
+                      ) => (
+                        <Select.Option key={item.value} value={item.value}>
+                          {item.label}
+                        </Select.Option>
+                      )
+                    )}
                   </Select>
                 </Form.Item>
               </Col>
