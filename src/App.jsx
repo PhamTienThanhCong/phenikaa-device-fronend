@@ -51,6 +51,7 @@ function App() {
           <Route path={PATH.PROFILE} element={<ProfilePage />} />
         </Route>
         <Route path={PATH.NOT_FOUND} element={<NotFoundPage />} />
+        <Route path={"*"} element={<NotFoundPage />} />
       </Routes>
       <Loading />
     </>
