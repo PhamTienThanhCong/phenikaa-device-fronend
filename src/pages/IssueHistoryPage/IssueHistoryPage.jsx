@@ -108,7 +108,6 @@ const IssueHistoryPage = () => {
         ...payload
       })
     );
-    console.log("values", payload);
 
     const updatedData = data.map((item) => (item.key === selectedItem.key ? { ...item, ...values } : item));
     setData(updatedData);

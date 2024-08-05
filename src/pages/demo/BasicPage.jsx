@@ -9,7 +9,7 @@ const BasicPage = () => {
   const currentUser = useAppSelector((state) => state.auth.currentUser);
   const dispatch = useAppDispatch();
 
-  console.log(currentUser);
+  // console.log(currentUser);
   // useEffect(() => {
   //   if (!isGetUser) {
   //     dispatch(getAllDemo());

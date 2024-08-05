@@ -29,8 +29,7 @@ const EquipmentManagementPage = () => {
   const [modalType, setModalType] = useState(null); // Modal type ('addType', 'editType', 'addDevice', 'editDevice')
   const [selectedData, setSelectedData] = useState(null); // Data for the selected item
   const [form] = Form.useForm(); // Form instance for modals
-  console.log("deviceCategory", deviceCategory);
-  console.log("selectedDeviceType", selectedDeviceType);
+
   useEffect(() => {
     if (!isDeviceCategory) {
       dispatch(getDeviceCategoryList());

@@ -11,6 +11,7 @@ import { maintenanceSlice } from "@/pages/IssueHistoryPage/maintanceSlice";
 import { notifySlice } from "@/pages/ErrorReportsPage/errorReportSlice";
 import { deviceCategorySlice } from "@/pages/EquipmentManagementPage/EquipmaintManagementSlice";
 import { profileSlice } from "@/pages/profile/profileSlice";
+import { dashboardSlice } from "@/pages/dashboard/dashboardSlice";
 
 const rootReducer = combineReducers({
   loading: loadingSlice.reducer,
@@ -23,7 +24,8 @@ const rootReducer = combineReducers({
   maintenance: maintenanceSlice.reducer,
   notify: notifySlice.reducer,
   deviceCategory: deviceCategorySlice.reducer,
-  profile: profileSlice.reducer
+  profile: profileSlice.reducer,
+  dashboard: dashboardSlice.reducer
 });
 
 export const makeStore = (preloadedState) => {

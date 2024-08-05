@@ -17,14 +17,15 @@ const ProfilePage = () => {
       dispatch(getProfile());
     }
   }, [dispatch, isGetAll]);
+  console.log(111111, profileList);
 
   const userData = {
-    name: profileList.full_name,
-    email: profileList.email,
-    phone: profileList.profile.phone_number,
-    role: profileList.role,
-    address: profileList.profile.address,
-    birthday: profileList.profile.birth_date
+    name: profileList?.full_name,
+    email: profileList?.email,
+    phone: profileList?.profile?.phone_number,
+    role: profileList?.role,
+    address: profileList?.profile.address,
+    birthday: profileList?.profile.birth_date
   };
 
   return (

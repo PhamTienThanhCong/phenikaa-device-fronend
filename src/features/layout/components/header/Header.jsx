@@ -14,6 +14,7 @@ function Headerlayout() {
   // const currentUser = useAppSelector((state) => state.auth.currentUser);
   const dispatch = useAppDispatch();
   const { profileList, isGetAll } = useAppSelector((state) => state.profile);
+  console.log(111111, profileList);
 
   useEffect(() => {
     if (!isGetAll) {
@@ -62,7 +63,7 @@ function Headerlayout() {
           <Dropdown overlay={menu} trigger={["click"]}>
             <div className="user-info" onClick={(e) => e.preventDefault()}>
               <Avatar icon={<UserOutlined />} />
-              <span className="username">{profileList.full_name}</span>
+              <span className="username">{profileList?.full_name}</span>
             </div>
           </Dropdown>
         </div>

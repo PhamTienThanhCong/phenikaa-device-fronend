@@ -25,7 +25,6 @@ const UserErrorReportForm = () => {
 
   const handleSubmit = async (values) => {
     // Here you would send the data to your backend or handle it as needed
-    console.log("Received values from form: ", values);
 
     const payload = {
       customer_id: values.studentCode,

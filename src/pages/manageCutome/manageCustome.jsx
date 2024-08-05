@@ -92,8 +92,7 @@ const ManageCustome = () => {
   const { customer, isCustomer } = useAppSelector((state) => state.customer);
   const { users, isUser } = useAppSelector((state) => state.customer);
   // const { createUser, isCreateUser } = useAppSelector((state) => state.customer);
-  // console.log(11111, createUser);
-  console.log(11111, users);
+
   //gender
 
   const listQTV = users.map((item) => {
@@ -146,8 +145,6 @@ const ManageCustome = () => {
   };
 
   const handleEdit = (record) => {
-    console.log(999999999, genderOptions);
-    console.log(88888888, record.birth_date);
     setIsEditing(true);
     setEditingRecord(record);
     form.setFieldsValue({
@@ -197,7 +194,6 @@ const ManageCustome = () => {
   const handleSave = async (values) => {
     // console.log(11111, values);
     if (isEditing) {
-      console.log(11111, isEditing);
       // update
       try {
         const payload = {

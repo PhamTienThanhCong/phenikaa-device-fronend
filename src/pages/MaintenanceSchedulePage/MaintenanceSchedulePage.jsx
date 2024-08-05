@@ -95,12 +95,7 @@ const MaintenanceSchedulePage = () => {
       user_name: item.full_name
     };
   });
-  // console.log("listUser", listUserData);
-  // console.log("listMaintaince", listMaintaince);
 
-  // console.log("deviceOptions", deviceOptions);
-  // console.log("listData", maintenanceList);
-  console.log("maintenanceList", maintenanceList);
   const listData = maintenanceList.map((item) => {
     const currentDate = new Date();
     const returningDate = new Date(item.returning_date);
@@ -241,24 +236,16 @@ const MaintenanceSchedulePage = () => {
 
       note: data?.note
     });
-    console.log("111data", data);
-    console.log("Setting form values:", {
-      title: data?.title,
-      user: listUserData.find((value) => value.user_name == data?.user).user_id,
-      name: data?.service_id,
-      maintenanceTime: data?.maintenanceTime ? moment(data?.maintenanceTime) : null,
-      devices: data?.devices,
-      note: data?.note
-    });
   };
-  // console.log("selectedData", selectedData);
   const handleModalClose = () => {
     setModalType(null);
     setSelectedData(null);
+    form.resetFields();
   };
-  console.log("listUserData", listUserData);
   const handleFormSubmit = async (values) => {
     if (modalType === "add") {
+      form.resetFields();
+
       try {
         const payload = {
           name: values.title,
@@ -275,6 +262,8 @@ const MaintenanceSchedulePage = () => {
         await dispatch(createDeviceRepair(payload));
         //gọi lại api để lấy danh sách mới
         await dispatch(getAllDeviceRepair());
+        // đóng modal
+        handleModalClose();
 
         // xử lý nếu thành công
         if (isGetAll) {
@@ -298,21 +287,6 @@ const MaintenanceSchedulePage = () => {
       // console.log("Adding device", payload);
     } else if (modalType === "edit") {
       try {
-        // {
-        //   "name": "string",
-        //   "devices": [
-        //     {
-        //       "device_id": 0,
-        //       "quantity": 0,
-        //       "cost_per_unit": 0
-        //     }
-        //   ],
-        //   "user_id": 0,
-        //   "service_id": 0,
-        //   "returning_date": "2024-01-01 00:00:00",
-        //   "note": "string",
-        //   "is_returned": true
-        // }
         const payload = {
           name: values.title,
           devices: values.devices.map((device) => ({
@@ -333,6 +307,12 @@ const MaintenanceSchedulePage = () => {
           })
         );
         // console.log("payload", payload);
+        //gọi lại api để lấy danh sách mới
+        await dispatch(getAllDeviceRepair());
+        // đóng modal
+        handleModalClose();
+        // clear form
+        form.resetFields();
 
         // xử lý nếu thành công
         if (isGetAll) {
