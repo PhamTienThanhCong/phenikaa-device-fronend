@@ -15,29 +15,38 @@ const SendRequest = async (url, payload, thunkAPI, method = "post") => {
     }
   });
 
-  try {
-    const dataPayload = { ...payload };
-    const requestConfig = {
-      method,
-      url,
-      [method.toLowerCase() === "get" ? "params" : "data"]: dataPayload
-    };
+  const makeRequest = async (retry = false) => {
+    try {
+      const dataPayload = { ...payload };
+      const requestConfig = {
+        method,
+        url,
+        [method.toLowerCase() === "get" ? "params" : "data"]: dataPayload
+      };
 
-    let response = await trackPromise(instance(requestConfig));
-    if (response.data) {
-      return response.data;
-    } else {
-      return response;
-    }
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      if (error.response) {
-        // showAlert(error.response?.data?.message, 'danger');
+      let response = await trackPromise(instance(requestConfig));
+      if (response.data) {
+        return response.data;
+      } else {
+        return response;
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          if (error.response.status === 500 && !retry) {
+            // Gọi lại API một lần nữa
+            return makeRequest(true);
+          } else {
+            // showAlert(error.response?.data?.message, 'danger');
+            return thunkAPI.rejectWithValue(undefined, error);
+          }
+        }
       }
       return thunkAPI.rejectWithValue(undefined, error);
     }
-    return thunkAPI.rejectWithValue(undefined, error);
-  }
+  };
+
+  return makeRequest();
 };
 
 export default SendRequest;
