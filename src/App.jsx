@@ -4,7 +4,7 @@ import Loading from "./features/loading/Loading";
 import LoginPage from "./features/auth/loginPage/loginPage";
 import BasicPage from "./pages/demo/BasicPage";
 import AuthRoute from "./features/auth/authRoute";
-import TestLayout from "./pages/testLayout/TestLayout";
+// import TestLayout from "./pages/testLayout/TestLayout";
 import DashboardPage from "./pages/dashboard/DashboardPage";
 import { PATH } from "./constants/path";
 import ManageCustome from "./pages/manageCutome/manageCustome";
@@ -23,13 +23,15 @@ import CreateErrorReportsPage from "./pages/ErrorReportsPage/CreateErrorReportPa
 
 import "@/assets/styles/main.css";
 import BookingReceipt from "./pages/Receipt/BookingReceipt";
+import DeviceLoanReceipt from "./pages/Receipt/DeviceLoanReceipt";
 
 function App() {
   return (
     <>
       <Routes>
-        <Route path="/login" element={<LoginPage />} />
         <Route path="/booking-receipt/:id" element={<BookingReceipt />} />
+        <Route path="/device-loan/:id" element={<DeviceLoanReceipt />} />
+        <Route path="/login" element={<LoginPage />} />
         {/* auth */}
         <Route element={<AuthRoute />}>
           {/* <Route path={PATH.HOME} element={<h1> demo </h1>} /> */}
