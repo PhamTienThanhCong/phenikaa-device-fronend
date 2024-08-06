@@ -40,7 +40,7 @@ const DeviceLoanReceipt = () => {
   }, [fetchData]);
 
   // Tạo dữ liệu cho mã QR
-  const qrDataUrl = JSON.stringify(DEFAULT_URL + `/booking-receipt/${id}`);
+  const qrDataUrl = JSON.stringify(DEFAULT_URL + `/device-loan/${id}`);
   const qrDataFeedback = JSON.stringify(DEFAULT_URL + `/feedback`);
 
   if (error) {
