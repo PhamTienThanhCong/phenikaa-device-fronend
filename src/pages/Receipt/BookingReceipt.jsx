@@ -84,6 +84,9 @@ const BookingReceipt = () => {
             <Text strong>Ngày mượn:</Text>
             <Text>{` ${formatDate(date_booking)}`}</Text>
             <br />
+            <Text strong>Thời gian:</Text>
+            <Text>{` ${start_time} - ${end_time}`}</Text>
+            <br />
             <Text strong>Số người sử dụng:</Text>
             <Text>{` ${total_customer} người`}</Text>
             <br />
