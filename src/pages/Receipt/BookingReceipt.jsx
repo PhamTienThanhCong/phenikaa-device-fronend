@@ -8,6 +8,7 @@ import { useAppDispatch } from "@/app/hooks";
 import { getRoomBookingReceipt } from "./ReceiptApi";
 import { Link, useParams } from "react-router-dom";
 import { formatDateTime, formatDate } from "./ReceiptUtils";
+import { DEFAULT_URL } from "@/constants/app";
 
 const { Title, Text } = Typography;
 
@@ -40,12 +41,8 @@ const BookingReceipt = () => {
   }, [fetchData]);
 
   // Tạo dữ liệu cho mã QR
-  const qrData = JSON.stringify({
-    roomName: room.room_id,
-    bookingDate: date_booking,
-    startTime: start_time,
-    endTime: end_time
-  });
+  const qrDataUrl = JSON.stringify(DEFAULT_URL + `/booking-receipt/${id}`);
+  const qrDataFeedback = JSON.stringify(DEFAULT_URL + `/feedback`);
 
   if (error) {
     return (
@@ -73,7 +70,7 @@ const BookingReceipt = () => {
       <Card style={{ width: "100%", margin: "0 auto", paddingTop: "0", border: "1px solid #ccc" }}>
         <Title level={3} style={{ textAlign: "center", marginTop: "0" }}>{`Biên Lai Mượn Phòng ${room.room_id}`}</Title>
         <Divider />
-        <Row gutter={16} className="receipt">
+        <Row className="receipt">
           <Col>
             <Text strong>Tên:</Text>
             <Text>{` ${name}`}</Text>
@@ -89,9 +86,12 @@ const BookingReceipt = () => {
             <br />
             <Text strong>Số người sử dụng:</Text>
             <Text>{` ${total_customer} người`}</Text>
+            <br />
+            <Text strong>Ghi chú:</Text>
+            <Text>{` ${note}`}</Text>
           </Col>
           <Col className="qr-code-custom">
-            <QRCode value={qrData} size={100} />
+            <QRCode value={qrDataUrl} size={75} />
           </Col>
         </Row>
         <Divider />
@@ -162,16 +162,6 @@ const BookingReceipt = () => {
         </Row>
         <Divider />
         <Row>
-          <Col span={24}>
-            <Text strong>Ghi chú:</Text>
-            <Text>{` ${note}`}</Text>
-            <br />
-            <Text strong>Trạng thái:</Text>
-            <Text>{` ${status}`}</Text>
-          </Col>
-        </Row>
-        <Divider />
-        <Row>
           <Col span={8} style={{ textAlign: "center" }}>
             <Text strong>Ký tên:</Text>
             <br />
@@ -195,7 +185,7 @@ const BookingReceipt = () => {
             Nếu bạn có phản hồi hoặc cần trợ giúp, vui lòng liên hệ tại <Link to="/feedback">đây</Link>.
           </Text>
           <Col className="qr-code-custom">
-            <QRCode value={qrData} size={50} />
+            <QRCode value={qrDataFeedback} size={50} />
           </Col>
         </Col>
       </Card>
