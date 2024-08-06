@@ -1,0 +1,24 @@
+body {
+  height: auto;
+}
+#root {
+  width: 100%;
+  height: 100%;
+  max-width: 700px;
+  .receipt {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  #root {
+    .receipt {
+      .ant-col {
+        padding: 0 !important;
+      }
+    }
+  }
+}

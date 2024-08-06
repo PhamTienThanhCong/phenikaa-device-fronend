@@ -22,13 +22,14 @@ import ProfilePage from "./pages/profile/profile";
 import CreateErrorReportsPage from "./pages/ErrorReportsPage/CreateErrorReportPage";
 
 import "@/assets/styles/main.css";
+import BookingReceipt from "./pages/Receipt/BookingReceipt";
 
 function App() {
   return (
     <>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
-
+        <Route path="/booking-receipt/:id" element={<BookingReceipt />} />
         {/* auth */}
         <Route element={<AuthRoute />}>
           {/* <Route path={PATH.HOME} element={<h1> demo </h1>} /> */}
