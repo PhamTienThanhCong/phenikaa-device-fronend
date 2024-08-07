@@ -4,7 +4,7 @@ import Loading from "./features/loading/Loading";
 import LoginPage from "./features/auth/loginPage/loginPage";
 import BasicPage from "./pages/demo/BasicPage";
 import AuthRoute from "./features/auth/authRoute";
-// import TestLayout from "./pages/testLayout/TestLayout";
+import TestLayout from "./pages/testLayout/TestLayout";
 import DashboardPage from "./pages/dashboard/DashboardPage";
 import { PATH } from "./constants/path";
 import ManageCustome from "./pages/manageCutome/manageCustome";
