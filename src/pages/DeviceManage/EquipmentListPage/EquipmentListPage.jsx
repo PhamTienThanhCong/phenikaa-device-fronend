@@ -4,15 +4,11 @@ import { Button, Input, Modal, Table, Form, Row, Col, Select, AutoComplete, Date
 import { SearchOutlined, PlusOutlined, PrinterOutlined } from "@ant-design/icons";
 import useDebounce from "@/hooks/useDebounce";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
-import { getDeviceList } from "../DeviceApi";
+import { borrowDevice, getDeviceList } from "../DeviceApi";
 import { v4 as uuidv4 } from "uuid";
 import QRCode from "qrcode.react";
+import { getCustomer } from "@/pages/manageCutome/CustomerAPI";
 
-const studentData = [
-  { studentCode: "SV001", studentName: "Nguyen Van A", class: "10A1" },
-  { studentCode: "SV002", studentName: "Le Thi B", class: "10A2" }
-  // Thêm dữ liệu sinh viên giả lập
-];
 
 const deviceData = [
   { id: "D001", name: "Laptop", total: 10 },
@@ -32,6 +28,8 @@ const EquipmentListPage = () => {
   const [studentCode, setStudentCode] = React.useState("");
   const [projectedReturnDate, setProjectedReturnDate] = React.useState(null);
   const [summaryData, setSummaryData] = React.useState(null);
+  const { isCustomer, customer } = useAppSelector((state) => state.customer);
+  const currentUser = useAppSelector((state) => state.auth.currentUser);
 
   const searchTextDebounce = useDebounce(searchText, 300);
 
@@ -62,6 +60,13 @@ const EquipmentListPage = () => {
     }
   }, [dispatch, isDevice]);
 
+  React.useEffect(() => {
+    if (!isCustomer) {
+      dispatch(getCustomer());
+    }
+  }, [dispatch, isCustomer]);
+
+
   const handleSearch = (e) => {
     setSearchText(e.target.value);
   };
@@ -75,14 +80,15 @@ const EquipmentListPage = () => {
       prev.map((item) => {
         if (item.id === id) {
           if (field === "quantity") {
-            const device = deviceData.find((device) => device.id === item.deviceId);
-            const availableQuantity = device ? device.total : 0;
+            const device = dataDevice.find((device) => device.deviceCode === item.deviceId);
+            const availableQuantity = device ? device.totalQuantity : 0;
             if (value > availableQuantity) {
               return { ...item, quantityError: `Số lượng không được vượt quá ${availableQuantity}` };
             }
           }
           return { ...item, [field]: value, quantityError: "" };
         }
+        console.log('>>>>>>>>>>>>>', item, field, value);
         return item;
       })
     );
@@ -90,27 +96,35 @@ const EquipmentListPage = () => {
 
   const handleStudentCodeChange = (value) => {
     setStudentCode(value);
-    const student = studentData.find((student) => student.studentCode === value);
+    const student = customer.find((student) => student.card_id === value);
     if (student) {
-      setStudentInfo({ studentName: student.studentName, class: student.class });
+      setStudentInfo({
+        id: student.id,
+        studentName: student.full_name,
+        studentClass: student.department,
+        studentCode: student.card_id
+      });
     } else {
-      setStudentInfo({ studentName: "", class: "" });
+      setStudentInfo({ id: "", studentName: "", studentClass: "", studentCode: "" });
     }
   };
 
   const handleSubmit = () => {
     // Prepare summary data
     const summary = {
-      studentCode,
-      studentName: studentInfo.studentName,
-      class: studentInfo.class,
+      name: `Phiếu mượn thiết bị - ${studentInfo.studentName}`,
+      customer_id: studentInfo.id,
+      user_id: currentUser.id,
       devices: formList.map((item) => ({
-        device: deviceData.find((device) => device.id === item.deviceId)?.name || "Unknown",
+        device_id: item.deviceId,
         quantity: item.quantity
       })),
-      projectedReturnDate: projectedReturnDate ? projectedReturnDate.format("DD/MM/YYYY") : "Chưa xác định"
+      returning_date: projectedReturnDate.format("YYYY-MM-DD hh:mm:ss"),
+      note: "Không có note :))"
     };
+    console.log(2222222222222222, summary);
     setSummaryData(summary);
+    dispatch(borrowDevice(summary));
     setOpenModal(false);
     setOpenSummaryModal(true);
   };
@@ -185,13 +199,13 @@ const EquipmentListPage = () => {
         <Form layout="vertical">
           <Form.Item label="Mã sinh viên">
             <AutoComplete
-              options={studentData.map((student) => ({ value: student.studentCode }))}
-              value={studentCode}
+              options={customer.map((student) => ({ value: student.card_id }))}
+              filterOption={(inputValue, option) => option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
               onChange={handleStudentCodeChange}
             />
           </Form.Item>
           <p>Tên sinh viên: {studentInfo.studentName}</p>
-          <p>Lớp: {studentInfo.class}</p>
+          <p>Khoa: {studentInfo.studentClass}</p>
           <Form.Item label="Thời gian dự kiến trả">
             <DatePicker onChange={(date) => setProjectedReturnDate(date)} />
           </Form.Item>
@@ -202,13 +216,13 @@ const EquipmentListPage = () => {
                   <Select
                     value={formItem.deviceId}
                     onChange={(value) => handleChange(formItem.id, "deviceId", value)}
-                    // disabled={selectedDeviceIds.includes(formItem.deviceId)}
+                  // disabled={selectedDeviceIds.includes(formItem.deviceId)}
                   >
-                    {deviceData
-                      .filter((device) => !selectedDeviceIds.includes(device.id) || device.id === formItem.deviceId)
+                    {dataDevice
+                      .filter((device) => !selectedDeviceIds.includes(device.deviceCode) || device.deviceCode === formItem.deviceId)
                       .map((device) => (
-                        <Select.Option key={device.id} value={device.id}>
-                          {device.name}
+                        <Select.Option key={device.deviceCode} value={device.deviceCode}>
+                          {device.deviceName}
                         </Select.Option>
                       ))}
                   </Select>

@@ -15,11 +15,12 @@ import {
   Typography
 } from "antd";
 import { SearchOutlined, PlusOutlined } from "@ant-design/icons";
+import { notification } from "antd";
 import { v4 as uuidv4 } from "uuid";
-import moment from "moment";
 import QRCode from "qrcode.react";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { addRoom, deleteRoom, editRoom, getRoomList } from "../RoomApi";
+import { clearError } from "../RoomSlice";
 import { getRoomBookingList, addRoomBooking, editRoomBooking, deleteRoomBooking, getRoomBookingDetail } from "../RoomApi";
 import { getCustomer } from "@/pages/manageCutome/CustomerAPI";
 import { use } from "echarts";
@@ -29,11 +30,6 @@ const { Title } = Typography;
 
 const mockAddres = ["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "A10", "B1", "B2", "B3", "B4", "C", "D6"];
 
-const mockStudentData = [
-  { studentCode: "S001", studentName: "Nguyễn Văn A", studentClass: "Lớp 12A1" },
-  { studentCode: "S002", studentName: "Trần Thị B", studentClass: "Lớp 12B1" }
-  // Add more mock student data as needed
-];
 
 const RoomLoanListPage = () => {
   const dispatch = useAppDispatch();
@@ -60,18 +56,27 @@ const RoomLoanListPage = () => {
   const { isCustomer, customer } = useAppSelector((state) => state.customer);
 
   const currentUser = useAppSelector((state) => state.auth.currentUser);
-
+  const error = useAppSelector((state) => state.room.error);
+  const [api, contextHolder] = notification.useNotification();
+  const notificationMessage = (type, message) => {
+    api[type]({
+      message: type == "error" ? "Lỗi" : "Thông báo",
+      description: message
+    })
+  }
   useEffect(() => {
     if (!isGetRoom) {
       dispatch(getRoomList());
     }
   }, [dispatch, isGetRoom]);
 
-  // useEffect(() => {
-  //   dispatch(getUserData());
-  // }, [dispatch]);
+  useEffect(() => {
+    if (error) {
+      notificationMessage('error', error)
+      dispatch(clearError())
+    }
+  }, [error, dispatch])
 
-  console.log("user", currentUser);
 
 
   useEffect(() => {
@@ -119,19 +124,6 @@ const RoomLoanListPage = () => {
 
 
   const handleSubmit = () => {
-    // Prepare summary data
-    // const summaryData = {
-    //   borrowDate: borrowDate ? borrowDate.format("YYYY-MM-DD") : "Chưa xác định",
-    //   rooms: formList.map((item) => ({
-    //     room: item.room_id,
-    //     studentCode: item.studentCode,
-    //     studentName: item.studentName,
-    //     studentClass: item.studentClass
-    //   })),
-    //   projectedReturnTime: projectedReturnTime
-    //     ? `${projectedReturnTime[0].format("HH:mm")} - ${projectedReturnTime[1].format("HH:mm")}`
-    //     : "Chưa xác định"
-    // };
     const summaryData = {
       name: `Phòng ${formList[0].room_id}`,
       room_id: formList[0].room_id,
@@ -147,7 +139,7 @@ const RoomLoanListPage = () => {
     dispatch(addRoomBooking(summaryData));
     setSummary(summaryData);
     setSummaryModalVisible(true);
-    setOpenRequestModalCreate(false);
+    setOpenRequestModal(false);
   };
 
 
@@ -289,7 +281,8 @@ const RoomLoanListPage = () => {
   };
 
   return (
-    <BaseLayout>
+    <BaseLayout BaseLayout >
+      {contextHolder}
       <Title level={1}>Danh sách phòng</Title>
       <div style={{ marginBottom: 16, width: "100%", display: "flex", justifyContent: "space-between" }}>
         <Input
@@ -419,7 +412,10 @@ const RoomLoanListPage = () => {
           <Button key="print" onClick={handlePrint}>
             In
           </Button>,
-          <Button key="close" onClick={() => setSummaryModalVisible(false)}>
+          <Button key="close" onClick={() => {
+            setSummaryModalVisible(false)
+
+          }}>
             Đóng
           </Button>
         ]}
@@ -439,10 +435,9 @@ const RoomLoanListPage = () => {
               <Table
                 dataSource={summary.rooms}
                 columns={[
-                  { title: "Tên phòng", dataIndex: "room", key: "room" },
+                  { title: "Tên phòng", dataIndex: "room_id", key: "room" },
                   { title: "Mã sinh viên", dataIndex: "studentCode", key: "studentCode" },
-                  { title: "Tên sinh viên", dataIndex: "studentName", key: "studentName" },
-                  { title: "Lớp", dataIndex: "studentClass", key: "studentClass" }
+                  { title: "Tên sinh viên", dataIndex: "studentName", key: "studentName" }
                 ]}
                 rowKey="studentCode"
                 pagination={false}
@@ -500,7 +495,7 @@ const RoomLoanListPage = () => {
             <>
               {/* select is_active, is_using, is_maintenance */}
               <Form.Item label="Hoạt động" name="is_active">
-                <Select placeholder="">
+                <Select lect placeholder="">
                   <Select.Option value="1">Active</Select.Option>
                   <Select.Option value="0">inActive</Select.Option>
                 </Select>
@@ -561,7 +556,7 @@ const RoomLoanListPage = () => {
           </Form.Item>
         </Form>
       </Modal>
-    </BaseLayout>
+    </BaseLayout >
   );
 };
 

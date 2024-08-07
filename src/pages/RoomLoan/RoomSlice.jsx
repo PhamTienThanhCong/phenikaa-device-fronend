@@ -5,6 +5,7 @@ const initialState = {
   isGetRoom: false,
   roomBooking: [],
   isRoomBooking: false,
+  error: null
 };
 
 export const roomSlice = createSlice({
@@ -13,6 +14,9 @@ export const roomSlice = createSlice({
   reducers: {
     setDevice: (state, action) => {
       // state.users = [...action.payload];
+    },
+    clearError: (state) => {
+      state.error = null;
     }
   },
   extraReducers: (builder) => {
@@ -20,16 +24,25 @@ export const roomSlice = createSlice({
       state.roomList = [...action.payload];
       state.isGetRoom = true;
     });
+    builder.addCase(getRoomList.rejected, (state, action) => {
+      state.error = action.meta.response.data.detail;  // Xử lý lỗi
+    });
     builder.addCase(addRoom.fulfilled, (state, action) => {
       state.roomList = [...state.roomList, action.payload];
+    });
+    builder.addCase(addRoom.rejected, (state, action) => {
+      state.error = action.meta.response.data.detail;  // Xử lý lỗi
     });
     builder.addCase(getRoomBookingList.fulfilled, (state, action) => {
       state.roomBooking = [...action.payload];
       state.isRoomBooking = true;
     });
+    builder.addCase(getRoomBookingList.rejected, (state, action) => {
+      state.error = action.meta.response.data.detail;  // Xử lý lỗi
+    });
   }
   //  trường hợp tạo loại thiết bị
 });
 
-export const { setDevice } = roomSlice.actions;
+export const { setDevice, clearError } = roomSlice.actions;
 export default roomSlice.reducer;
