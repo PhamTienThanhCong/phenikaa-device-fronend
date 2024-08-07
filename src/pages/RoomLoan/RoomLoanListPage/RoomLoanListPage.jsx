@@ -20,6 +20,10 @@ import moment from "moment";
 import QRCode from "qrcode.react";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { addRoom, deleteRoom, editRoom, getRoomList } from "../RoomApi";
+import { getRoomBookingList, addRoomBooking, editRoomBooking, deleteRoomBooking, getRoomBookingDetail } from "../RoomApi";
+import { getCustomer } from "@/pages/manageCutome/CustomerAPI";
+import { use } from "echarts";
+import { getUserData } from "@/features/auth/authApi";
 
 const { Title } = Typography;
 
@@ -40,18 +44,22 @@ const RoomLoanListPage = () => {
   const [openRequestModal, setOpenRequestModal] = useState(false);
   const [summaryModalVisible, setSummaryModalVisible] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
+  const [userList, setUserList] = useState([]);
   const [formList, setFormList] = useState([
-    { id: uuidv4(), roomName: "", studentCode: "", studentName: "", studentClass: "" }
+    { id: uuidv4(), room_id: "", studentCode: "", studentName: "", studentClass: "" }
   ]);
   const [projectedReturnTime, setProjectedReturnTime] = useState(null);
   const [borrowDate, setBorrowDate] = useState(null);
   const [studentCode, setStudentCode] = useState("");
-  const [studentInfo, setStudentInfo] = useState({ studentName: "", studentClass: "" });
+  const [studentInfo, setStudentInfo] = useState({ studentName: "", studentClass: "", studentCode: "" });
   const [summary, setSummary] = useState(null); // Add summary state
   const printRef = useRef(null); // Add ref for printing
   // const [isEdit, setIsEdit] = useState(null);
 
   const [formAddRoom] = Form.useForm();
+  const { isCustomer, customer } = useAppSelector((state) => state.customer);
+
+  const currentUser = useAppSelector((state) => state.auth.currentUser);
 
   useEffect(() => {
     if (!isGetRoom) {
@@ -59,6 +67,19 @@ const RoomLoanListPage = () => {
     }
   }, [dispatch, isGetRoom]);
 
+  // useEffect(() => {
+  //   dispatch(getUserData());
+  // }, [dispatch]);
+
+  console.log("user", currentUser);
+
+
+  useEffect(() => {
+    //set user list
+    if (!isCustomer) {
+      dispatch(getCustomer());
+    }
+  }, [dispatch, isCustomer]);
   const handleSearch = (e) => {
     setSearchText(e.target.value);
   };
@@ -71,6 +92,7 @@ const RoomLoanListPage = () => {
   const filteredRooms = roomList.filter((room) => room.room_id.toLowerCase().includes(searchText.toLowerCase()));
 
   const handleChange = (id, field, value) => {
+    console.log(id, field, value);
     setFormList((prev) =>
       prev.map((item) => {
         if (item.id === id) {
@@ -83,36 +105,58 @@ const RoomLoanListPage = () => {
 
   const handleStudentCodeChange = (value) => {
     setStudentCode(value);
-    const student = mockStudentData.find((student) => student.studentCode === value);
+    const student = customer.find((student) => student.card_id === value);
     if (student) {
       setStudentInfo({
-        studentName: student.studentName,
-        studentClass: student.studentClass
+        studentName: student.full_name,
+        studentClass: student.department,
+        studentCode: student.card_id
       });
     } else {
-      setStudentInfo({ studentName: "", studentClass: "" });
+      setStudentInfo({ studentName: "", studentClass: "", studentCode: "" });
     }
   };
 
+
   const handleSubmit = () => {
     // Prepare summary data
+    // const summaryData = {
+    //   borrowDate: borrowDate ? borrowDate.format("YYYY-MM-DD") : "Chưa xác định",
+    //   rooms: formList.map((item) => ({
+    //     room: item.room_id,
+    //     studentCode: item.studentCode,
+    //     studentName: item.studentName,
+    //     studentClass: item.studentClass
+    //   })),
+    //   projectedReturnTime: projectedReturnTime
+    //     ? `${projectedReturnTime[0].format("HH:mm")} - ${projectedReturnTime[1].format("HH:mm")}`
+    //     : "Chưa xác định"
+    // };
     const summaryData = {
-      borrowDate: borrowDate ? borrowDate.format("YYYY-MM-DD") : "Chưa xác định",
-      rooms: formList.map((item) => ({
-        room: item.roomName,
-        studentCode: item.studentCode,
-        studentName: item.studentName,
-        studentClass: item.studentClass
-      })),
-      projectedReturnTime: projectedReturnTime
-        ? `${projectedReturnTime[0].format("HH:mm")} - ${projectedReturnTime[1].format("HH:mm")}`
-        : "Chưa xác định"
-    };
+      name: `Phòng ${formList[0].room_id}`,
+      room_id: formList[0].room_id,
+      user_id: currentUser.id,
+      date_booking: borrowDate ? borrowDate.format("YYYY-MM-DD") : "Chưa xác định",
+      start_time: projectedReturnTime ? projectedReturnTime[0].format("HH:mm:ss") : "Chưa xác định",
+      end_time: projectedReturnTime ? projectedReturnTime[1].format("HH:mm:ss") : "Chưa xác định",
+      note: "Chưa xác định",
+      total_customer: 50,
+      customer_id: getCustomerId(studentInfo.studentCode),
+    }
+    console.log(111111111111, summaryData, formList);
+    dispatch(addRoomBooking(summaryData));
     setSummary(summaryData);
     setSummaryModalVisible(true);
     setOpenRequestModalCreate(false);
   };
 
+
+
+  const getCustomerId = (card_id) => {
+    const customerinfo = customer.find((user) => user.card_id === card_id);
+    console.log("customer", customerinfo, card_id);
+    return customer ? customerinfo.id : null;
+  };
   const handlePrint = () => {
     window.print();
   };
@@ -151,7 +195,7 @@ const RoomLoanListPage = () => {
     ));
   };
   const handleAddDetail = () => {
-    setFormList((prev) => [...prev, { id: uuidv4(), roomName: "", facilityName: "", quantity: "" }]);
+    setFormList((prev) => [...prev, { id: uuidv4(), room_id: "", facilityName: "", quantity: "" }]);
   };
 
   const onCloseModalDetailRoom = () => {
@@ -177,7 +221,7 @@ const RoomLoanListPage = () => {
 
     formAddRoom.setFieldsValue({
       id: selectedRoom.id,
-      roomName: selectedRoom.room_id,
+      room_id: selectedRoom.room_id,
       position: selectedRoom.house_name,
       categopry: selectedRoom.category,
       managementUnit: selectedRoom.manager,
@@ -213,7 +257,7 @@ const RoomLoanListPage = () => {
     if (selectedRoom) {
       console.log(selectedRoom);
       const dataPayload = {
-        room_id: data["roomName"],
+        room_id: data["room_id"],
         category: data["categopry"],
         house_name: data["position"],
         manager: data["managementUnit"],
@@ -227,7 +271,7 @@ const RoomLoanListPage = () => {
       await dispatch(getRoomList());
     } else {
       const dataPayload = {
-        room_id: data["roomName"],
+        room_id: data["room_id"],
         category: data["categopry"],
         house_name: data["position"],
         manager: data["managementUnit"],
@@ -238,7 +282,7 @@ const RoomLoanListPage = () => {
     }
 
     formAddRoom.resetFields();
-    setFormList([{ id: uuidv4(), roomName: "", studentCode: "", studentName: "", studentClass: "" }]);
+    setFormList([{ id: uuidv4(), room_id: "", studentCode: "", studentName: "", studentClass: "" }]);
 
     onCloseModalCreateRoom();
     setSelectedRoom(null);
@@ -335,15 +379,15 @@ const RoomLoanListPage = () => {
         onCancel={() => setOpenRequestModal(false)}
       >
         <Form layout="vertical">
-          <Form.Item label="Tên sinh viên">
+          <Form.Item label="Mã sinh viên">
             <AutoComplete
-              options={mockStudentData.map((student) => ({ value: student.studentCode }))}
-              value={studentCode}
+              options={customer.map((student) => ({ value: student.card_id }))}
               onChange={handleStudentCodeChange}
+              filterOption={(inputValue, option) => option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
             />
           </Form.Item>
           <p>Tên sinh viên: {studentInfo.studentName}</p>
-          <p>Lớp: {studentInfo.studentClass}</p>
+          <p>Khoa: {studentInfo.studentClass}</p>
           <Form.Item label="Ngày mượn phòng">
             <DatePicker style={{ width: "100%" }} onChange={(date) => setBorrowDate(date)} format="YYYY-MM-DD" />
           </Form.Item>
@@ -360,9 +404,9 @@ const RoomLoanListPage = () => {
                 <Form.Item label="Tên phòng">
                   <Select
                     width="100%"
-                    value={formItem.roomName}
-                    onChange={(value) => handleChange(formItem.id, "roomName", value)}
-                    options={roomList.map((room) => ({ value: room.roomName, label: room.roomName }))}
+                    value={formItem.room_id}
+                    onChange={(value) => handleChange(formItem.id, "room_id", value)}
+                    options={roomList.map((room) => ({ value: room.room_id, label: room.room_id }))}
                   />
                 </Form.Item>
               </Col>
@@ -435,7 +479,7 @@ const RoomLoanListPage = () => {
           </Form.Item>
           <Form.Item
             label="Tên phòng"
-            name="roomName"
+            name="room_id"
             readOnly={selectedRoom ? true : false}
             rules={[{ required: true, message: "Vui lòng nhập tên phòng!" }]}
           >
