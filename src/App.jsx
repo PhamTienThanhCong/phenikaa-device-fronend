@@ -33,7 +33,7 @@ function App() {
         <Route element={<AuthRoute />}>
           {/* <Route path={PATH.HOME} element={<h1> demo </h1>} /> */}
           <Route path={PATH.BASIC} element={<BasicPage />} />
-          {/* <Route path={PATH.TEST} element={<TestLayout />} /> */}
+          <Route path={PATH.TEST} element={<TestLayout />} />
           <Route path={PATH.DASHBOARD} element={<DashboardPage />} />
           <Route path={PATH.CUSTOME} element={<ManageCustome />} />
           <Route path={PATH.EQUIPMENT.LIST} element={<EquipmentListPage />} />

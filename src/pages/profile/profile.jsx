@@ -17,7 +17,6 @@ const ProfilePage = () => {
       dispatch(getProfile());
     }
   }, [dispatch, isGetAll]);
-  console.log(111111, profileList);
 
   const userData = {
     name: profileList?.full_name,

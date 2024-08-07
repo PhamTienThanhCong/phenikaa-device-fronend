@@ -24,7 +24,6 @@ const DashboardPage = () => {
       dispatch(getRoomList());
     }
   }, [dispatch, isGetRoom]);
-  console.log(111111, roomList);
 
   const totalDevices = deviceList.reduce((acc, device) => acc + device.total, 0);
   const total_maintenance = deviceList.reduce((acc, device) => acc + device.total_maintenance, 0);

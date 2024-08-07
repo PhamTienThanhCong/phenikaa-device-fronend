@@ -14,7 +14,6 @@ function Headerlayout() {
   // const currentUser = useAppSelector((state) => state.auth.currentUser);
   const dispatch = useAppDispatch();
   const { profileList, isGetAll } = useAppSelector((state) => state.profile);
-  console.log(111111, profileList);
 
   useEffect(() => {
     if (!isGetAll) {

@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { Table, Tabs, Input, Avatar, Layout, Button, Modal, Form, DatePicker, Select, Row, Col } from "antd";
 import { notification } from "antd";
-import { UploadOutlined, SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
 import BaseLayout from "@/features/layout/BaseLayout";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { getCustomer } from "./CustomerAPI";
 import { getUser, createUser, deleteUser, editUser } from "./CustomerAPI";
+import { clearError } from "./CustomerSlice";
 
 import "./manageCustome.scss";
 // import { idIDIntl } from "@ant-design/pro-components";
@@ -87,6 +88,7 @@ const ManageCustome = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editingRecord, setEditingRecord] = useState(null);
   const [form] = Form.useForm();
+  const error = useAppSelector((state) => state.room.error);
 
   const dispatch = useAppDispatch();
   const { customer, isCustomer } = useAppSelector((state) => state.customer);
@@ -122,6 +124,16 @@ const ManageCustome = () => {
     }
   }, [dispatch, isUser]);
 
+  React.useEffect(() => {
+    if (error) {
+      notification.error({
+        message: "Lỗi",
+        description: "Có lỗi xảy ra khi lấy dữ liệu. Vui lòng thử lại."
+      });
+      dispatch(clearError());
+    }
+  }, [error, dispatch]);
+
   const handleSearchChange = (e) => {
     setSearchText(e.target.value);
   };
@@ -154,7 +166,7 @@ const ManageCustome = () => {
       email: record.email,
       phone_number: record.phone_number,
       address: record.address,
-      gender: genderOptions.find((item) => item.value === record.gender).value,
+      gender: genderOptions.find((item) => item.value === record.gender)?.value,
       card_id: record.card_id,
       dob: record.birth_date ? moment(record.birth_date) : null
     });
@@ -190,9 +202,8 @@ const ManageCustome = () => {
     setIsModalVisible(false);
     form.resetFields();
   };
-  console.log(22222, editingRecord);
+
   const handleSave = async (values) => {
-    // console.log(11111, values);
     if (isEditing) {
       // update
       try {
@@ -212,7 +223,7 @@ const ManageCustome = () => {
             card_id: values.card_id
           }
         };
-        // console.log(222222, payload);
+
         await dispatch(
           editUser({
             user_id: editingRecord.user_id,

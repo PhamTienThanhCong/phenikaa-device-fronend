@@ -1,0 +1,53 @@
+.triangle-border {
+  position: absolute;
+  top: 0px; /* Adjust as needed */
+  left: 245px; /* Adjust as needed */
+  width: 0;
+  height: 0;
+  border-right: 345px solid transparent; /* Length of BC */
+  border-bottom: 145px solid #0f446371; /* Length of AB and color */
+  border-top: 5px solid transparent; /* Transparent to form the right angle */
+  z-index: 0; /* Ensure it is above the image */
+  border-radius: 20px; /* Optional */
+  /* borderradius góc trên bên phải */
+  border-top-left-radius: 20px;
+  /* borderradius góc dưới bên phải */
+  border-bottom-right-radius: 100px;
+}
+.rect1:hover,
+.rect2:hover,
+.rect3:hover {
+  fill: #ff69b4; /* Màu hồng khi hover */
+}
+
+.building:hover {
+  fill: #11cee7; /* Màu hồng khi hover */
+  transition: 0.5s; /* Hiệu ứng chuyển màu */
+  cursor: pointer;
+}
+.parking:hover {
+  fill: #fac677; /* Màu hồng khi hover */
+  transition: 0.5s; /* Hiệu ứng chuyển màu */
+  cursor: pointer;
+}
+.square:hover {
+  fill: #ee5a1b; /* Màu hồng khi hover */
+  transition: 0.5s; /* Hiệu ứng chuyển màu */
+  cursor: pointer;
+}
+.botCamera:hover {
+  fill: #f7f7f7; /* Màu hồng khi hover */
+  transition: 0.5s; /* Hiệu ứng chuyển màu */
+  cursor: pointer;
+}
+
+.tooltip {
+  position: absolute;
+  background-color: #b1abab;
+  color: #fff;
+  padding: 5px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 1000;
+}

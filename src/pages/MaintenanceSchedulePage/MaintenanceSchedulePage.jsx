@@ -15,7 +15,6 @@ import {
   Col,
   Descriptions,
   DatePicker,
-  Checkbox,
   InputNumber
 } from "antd";
 import { SearchOutlined, PlusOutlined, DeleteOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
@@ -26,6 +25,7 @@ import { getAllMaintenance } from "./device_repair_Api";
 import { getAllDevice, getAllUser, createDeviceRepair, putDeviceRepair, deleteDeviceRepair } from "./device_repair_Api";
 import { notification } from "antd";
 import moment from "moment";
+import { clearError } from "./device_repair_Slice";
 
 // import TextArea from "antd/es/input/TextArea";
 // import { SettingOutlined } from "@ant-design/icons";
@@ -50,6 +50,7 @@ const MaintenanceSchedulePage = () => {
   const [modalType, setModalType] = useState(null);
   const [selectedData, setSelectedData] = useState(null);
   const [form] = Form.useForm();
+  const error = useAppSelector((state) => state.device_repair.error);
 
   useEffect(() => {
     if (!isGetAll) {
@@ -73,6 +74,15 @@ const MaintenanceSchedulePage = () => {
       dispatch(getAllUser());
     }
   }, [dispatch, isGetAllUser]);
+  useEffect(() => {
+    if (error) {
+      notification.error({
+        message: "Có lỗi xảy ra",
+        description: error
+      });
+      dispatch(clearError());
+    }
+  }, [error, dispatch]);
 
   // lấy ra danh sách thiết bị gồm id và name để làm select tạo bảo trì
   const deviceOptions = deviceList.map((item) => {
@@ -259,24 +269,13 @@ const MaintenanceSchedulePage = () => {
           note: values.note || "",
           returning_date: values?.maintenanceTime ? values.maintenanceTime.format("YYYY-MM-DD HH:mm:ss") : ""
         };
+
         await dispatch(createDeviceRepair(payload));
+        handleModalClose();
         //gọi lại api để lấy danh sách mới
-        await dispatch(getAllDeviceRepair());
+        dispatch(getAllDeviceRepair());
         // đóng modal
         handleModalClose();
-
-        // xử lý nếu thành công
-        if (isGetAll) {
-          notification.success({
-            message: "Thêm thiết bị thành công",
-            description: "Thiết bị đã được thêm vào hệ thống"
-          });
-        } else {
-          notification.error({
-            message: "Thêm thiết bị thất bại",
-            description: "Đã có lỗi xảy ra, vui lòng thử lại sau"
-          });
-        }
       } catch (e) {
         console.log(e);
         notification.error({

@@ -19,6 +19,11 @@ import { useState, useEffect } from "react";
 
 const navbars = [
   {
+    key: PATH.TEST,
+    icon: React.createElement(DashboardOutlined),
+    label: "Test"
+  },
+  {
     key: PATH.DASHBOARD,
     icon: React.createElement(DashboardOutlined),
     label: "Dashboard"
