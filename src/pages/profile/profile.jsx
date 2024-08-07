@@ -1,40 +1,45 @@
-import React from "react";
-import { Avatar, Descriptions, Layout, Button, Card } from "antd";
-import { UserOutlined, EditOutlined } from "@ant-design/icons";
+import { useEffect } from "react";
+import { Descriptions, Layout, Card } from "antd";
+
 import BaseLayout from "@/features/layout/BaseLayout";
 import "./profile.scss";
+import { getProfile } from "./profileApi";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
 
 const { Content } = Layout;
 
 const ProfilePage = () => {
+  const dispatch = useAppDispatch();
+  const { profileList, isGetAll } = useAppSelector((state) => state.profile);
+
+  useEffect(() => {
+    if (!isGetAll) {
+      dispatch(getProfile());
+    }
+  }, [dispatch, isGetAll]);
+
   const userData = {
-    avatar: "https://via.placeholder.com/150",
-    name: "Nguyễn Văn A",
-    email: "nguyenvana@example.com",
-    phone: "0123456789",
-    role: "Quản lý thiết bị",
-    position: "Quản trị viên"
+    name: profileList?.full_name,
+    email: profileList?.email,
+    phone: profileList?.profile?.phone_number,
+    role: profileList?.role,
+    address: profileList?.profile.address,
+    birthday: profileList?.profile.birth_date
   };
 
   return (
     <BaseLayout>
       <Content style={{ padding: "24px", margin: 0, minHeight: 280 }}>
         <Card className="profile-card">
-          <div className="profile-header">
-            <Avatar size={200} src={userData.avatar} icon={<UserOutlined />} />
-            <div className="profile-name">
-              <h2>{userData.name}</h2>
-              <Button type="primary" icon={<EditOutlined />}>
-                Chỉnh sửa hồ sơ
-              </Button>
-            </div>
-          </div>
           <Descriptions title="Thông tin cá nhân" bordered column={1}>
             <Descriptions.Item label="Họ tên">{userData.name}</Descriptions.Item>
             <Descriptions.Item label="Email">{userData.email}</Descriptions.Item>
             <Descriptions.Item label="Số điện thoại">{userData.phone}</Descriptions.Item>
-            <Descriptions.Item label="Role">{userData.role}</Descriptions.Item>
-            <Descriptions.Item label="Chức vụ">{userData.position}</Descriptions.Item>
+            <Descriptions.Item label="Role">
+              {userData.role === 1 ? "Quản trị viên" : "Quản lý thiết bị"}
+            </Descriptions.Item>
+            <Descriptions.Item label="Địa chỉ">{userData.address}</Descriptions.Item>
+            <Descriptions.Item label="Ngày sinh">{userData.birthday}</Descriptions.Item>
           </Descriptions>
         </Card>
       </Content>

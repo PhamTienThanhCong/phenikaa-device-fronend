@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import BaseLayout from "@/features/layout/BaseLayout";
-import { Form, Input, Button, Typography, message } from "antd";
+import { Form, Input, Button, Typography, message, Select } from "antd";
+import { getAllCustomer, createReport } from "@/pages/ErrorReportsPage/errorReportsApi";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -8,10 +10,33 @@ const { TextArea } = Input;
 const UserErrorReportForm = () => {
   const [form] = Form.useForm();
 
-  const handleSubmit = (values) => {
+  const dispatch = useAppDispatch();
+  const { users, isUser } = useAppSelector((state) => state.notify);
+
+  useEffect(() => {
+    if (!isUser) {
+      dispatch(getAllCustomer());
+    }
+  }, [dispatch, isUser]);
+  const listUserOptions = users.map((user) => ({
+    value: user.id,
+    label: user.email
+  }));
+
+  const handleSubmit = async (values) => {
     // Here you would send the data to your backend or handle it as needed
-    console.log("Received values from form: ", values);
-    message.success("Báo lỗi của bạn đã được gửi thành công!");
+
+    const payload = {
+      customer_id: values.studentCode,
+      title: values.deviceName,
+      content: values.description
+    };
+    await dispatch(createReport(payload));
+    if (isUser) {
+      message.success("Báo lỗi của bạn đã được gửi thành công!");
+    } else {
+      message.error("Có lỗi xảy ra, vui lòng thử lại sau!");
+    }
     form.resetFields();
   };
 
@@ -33,21 +58,26 @@ const UserErrorReportForm = () => {
           label="Mã sinh viên"
           rules={[{ required: true, message: "Vui lòng nhập mã sinh viên" }]}
         >
-          <Input placeholder="Mã sinh viên" />
+          <Select
+            placeholder="Chọn sinh viên"
+            options={listUserOptions}
+            showSearch
+            filterOption={(input, option) => option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+          />
         </Form.Item>
         <Form.Item
           name="deviceName"
-          label="Tên thiết bị lỗi"
+          label="Tiều đề"
           rules={[{ required: true, message: "Vui lòng nhập tên thiết bị lỗi" }]}
         >
-          <Input placeholder="Tên thiết bị lỗi" />
+          <Input placeholder="Tiêu đề" />
         </Form.Item>
         <Form.Item
           name="description"
-          label="Mô tả lỗi"
-          rules={[{ required: true, message: "Vui lòng nhập mô tả lỗi" }]}
+          label="Mô tả lỗi "
+          rules={[{ required: true, message: "Vui lòng nhập mô tả lỗi " }]}
         >
-          <TextArea rows={4} placeholder="Mô tả lỗi" />
+          <TextArea rows={4} placeholder="Mô tả lỗi (tên thiết bị)" />
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit">

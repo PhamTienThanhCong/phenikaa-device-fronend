@@ -35,8 +35,8 @@ const DounutChart = () => {
 
   return (
     <div style={{ width: "100%", height: "400px" }}>
+      <h3>Danh sách thiết bị đang mượn theo trạng thái</h3>
       <Doughnut data={data} options={options} />
-      <h2>Danh sách thiết bị đang mượn theo trạng thái</h2>
     </div>
   );
 };

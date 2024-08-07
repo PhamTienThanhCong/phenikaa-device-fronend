@@ -20,7 +20,7 @@ import { useState, useEffect } from "react";
 const navbars = [
   {
     key: PATH.TEST,
-    icon: React.createElement(UserOutlined),
+    icon: React.createElement(DashboardOutlined),
     label: "Test"
   },
   {
@@ -84,7 +84,7 @@ const navbars = [
   {
     key: PATH.ISSUE_HISTORY,
     icon: React.createElement(FileTextOutlined),
-    label: "Lịch sử các phiếu đã cấp"
+    label: "Đơn vị bảo trì"
   },
   {
     key: PATH.ERROR_REPORTS,

@@ -4,7 +4,7 @@ import Loading from "./features/loading/Loading";
 import LoginPage from "./features/auth/loginPage/loginPage";
 import BasicPage from "./pages/demo/BasicPage";
 import AuthRoute from "./features/auth/authRoute";
-import TestLayout from "./pages/testLayout/TestLayout";
+// import TestLayout from "./pages/testLayout/TestLayout";
 import DashboardPage from "./pages/dashboard/DashboardPage";
 import { PATH } from "./constants/path";
 import ManageCustome from "./pages/manageCutome/manageCustome";
@@ -22,16 +22,21 @@ import ProfilePage from "./pages/profile/profile";
 import CreateErrorReportsPage from "./pages/ErrorReportsPage/CreateErrorReportPage";
 
 import "@/assets/styles/main.css";
+import BookingReceipt from "./pages/Receipt/BookingReceipt";
+import DeviceLoanReceipt from "./pages/Receipt/DeviceLoanReceipt";
+import FeedBackPage from "./pages/FeedBack/FeedBackPage";
 
 function App() {
   return (
     <>
       <Routes>
+        <Route path="/booking-receipt/:id" element={<BookingReceipt />} />
+        <Route path="/device-loan/:id" element={<DeviceLoanReceipt />} />
+        <Route path="/feedback" element={<FeedBackPage />} />
         <Route path="/login" element={<LoginPage />} />
-
         {/* auth */}
         <Route element={<AuthRoute />}>
-          <Route path={PATH.HOME} element={<h1> demo </h1>} />
+          {/* <Route path={PATH.HOME} element={<h1> demo </h1>} /> */}
           <Route path={PATH.BASIC} element={<BasicPage />} />
           <Route path={PATH.TEST} element={<TestLayout />} />
           <Route path={PATH.DASHBOARD} element={<DashboardPage />} />
@@ -51,6 +56,7 @@ function App() {
           <Route path={PATH.PROFILE} element={<ProfilePage />} />
         </Route>
         <Route path={PATH.NOT_FOUND} element={<NotFoundPage />} />
+        <Route path={"*"} element={<NotFoundPage />} />
       </Routes>
       <Loading />
     </>
