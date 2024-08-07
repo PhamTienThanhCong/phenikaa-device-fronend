@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import BaseLayout from "@/features/layout/BaseLayout";
 import { Button, Table, Modal, Input, Typography } from "antd";
 import QRCode from "qrcode.react";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import { getBookingDeviceList } from "../DeviceApi";
 
 const { Title } = Typography;
 
@@ -24,21 +26,50 @@ const mockHistory = [
 ];
 
 const EquipmentHistoryPage = () => {
+
+  const dispatch = useAppDispatch();
   const [history, setHistory] = useState(mockHistory);
   const [searchText, setSearchText] = useState("");
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [viewModalVisible, setViewModalVisible] = useState(false);
+  const { deviceBooking, isDeviceBooking } = useAppSelector((state) => state.device);
 
   const handleSearch = (e) => {
     setSearchText(e.target.value);
   };
 
-  const filteredHistory = history.filter((record) => record.slipCode.toLowerCase().includes(searchText.toLowerCase()));
+  useEffect(() => {
+    if (!isDeviceBooking) {
+      dispatch(getBookingDeviceList());
+    }
+  }, [dispatch, isDeviceBooking]);
+
+  console.log(deviceBooking);
+  const formatDate = (date) => {
+    const d = new Date(date);
+    return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
+  };
+
+  const listDeviceBooking = deviceBooking.filter((item) => item.status === "returned").map((item) => {
+    return {
+      slipCode: item.id,
+      borrowerName: item.customer.full_name,
+      borrowDate: formatDate(item.created_at),
+      returnDate: formatDate(item.returning_date),
+      issuedBy: item.user ? item.user.full_name : "QTV",
+    };
+  });
+  const filteredHistory = listDeviceBooking.filter((record) =>
+    record.slipCode.toString().includes(searchText)
+  );
 
   const handleViewDetails = (record) => {
     setSelectedRecord(record);
     setViewModalVisible(true);
   };
+
+
+
 
   const columns = [
     { title: "Mã phiếu mượn", dataIndex: "slipCode", key: "slipCode" },

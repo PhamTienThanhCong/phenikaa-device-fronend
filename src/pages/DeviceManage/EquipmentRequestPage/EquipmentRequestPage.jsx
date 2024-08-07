@@ -1,7 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import BaseLayout from "@/features/layout/BaseLayout";
 import { Button, Table, Modal, Typography } from "antd";
 import QRCode from "qrcode.react";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import { getBookingDeviceList } from "../DeviceApi";
+import { getDeviceList, returnDevice } from "../DeviceApi";
+import { use } from "echarts";
+import { clearError } from "../DeviceSlice";
+import { notification } from "antd";
 
 const { Title } = Typography;
 
@@ -12,15 +18,74 @@ const mockRequests = [
 ];
 
 const EquipmentRequestPage = () => {
+
+  const dispatch = useAppDispatch();
   const [requests, setRequests] = useState(mockRequests);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [viewModalVisible, setViewModalVisible] = useState(false);
-
+  const { deviceBooking, isDeviceBooking } = useAppSelector((state) => state.device);
+  const { isDevice, device } = useAppSelector((state) => state.device);
+  const error = useAppSelector((state) => state.device.error);
+  const [api, contextHolder] = notification.useNotification();
   const handleMarkAsReturned = (slipCode) => {
-    setRequests((prevRequests) =>
-      prevRequests.map((request) => (request.slipCode === slipCode ? { ...request, isReturned: true } : request))
-    );
+    dispatch(returnDevice({ id: slipCode }));
   };
+  const refreshData = () => {
+    dispatch(getBookingDeviceList());
+  };
+  const notificationMessage = (type, message) => {
+    api[type]({
+      message: type == "error" ? "Lỗi" : "Thông báo",
+      description: message
+    })
+  }
+  useEffect(() => {
+    if (!isDeviceBooking) {
+      dispatch(getBookingDeviceList());
+      refreshData()
+    }
+  }, [dispatch, isDeviceBooking]);
+  useEffect(() => {
+    if (!isDevice) {
+      dispatch(getDeviceList());
+    }
+  }, [dispatch, isDevice]);
+  useEffect(() => {
+    if (error) {
+      notificationMessage('error', error)
+      dispatch(clearError())
+    }
+  }, [error, dispatch])
+
+  const getDeviceInfo = (deviceId) => {
+    const deviceInfo = device.find((item) => item.id === deviceId);
+    return deviceInfo ? {
+      id: deviceInfo.id,
+      name: deviceInfo.name,
+    } : {
+      id: deviceId,
+      name: "Unknown",
+    };
+  };
+
+  const formatDate = (date) => {
+    const d = new Date(date);
+    return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
+  };
+  const listDeviceBooking = deviceBooking.filter((item) => item.status !== "returned").map((item) => {
+    return {
+      slipCode: item.id,
+      borrowerName: item.customer.full_name,
+      borrowDate: formatDate(item.created_at),
+      returnDate: formatDate(item.returning_date),
+      issuedBy: item.user ? item.user.full_name : "QTV",
+      deviceList: item.devices.map((device) => ({
+        id: device.device_id,
+        name: getDeviceInfo(device.device_id).name,
+        quantity: device.quantity
+      }))
+    };
+  });
 
   const handleViewDetails = (request) => {
     setSelectedRequest(request);
@@ -30,7 +95,7 @@ const EquipmentRequestPage = () => {
   const columns = [
     { title: "Mã phiếu mượn", dataIndex: "slipCode", key: "slipCode", width: "20%" },
     { title: "Tên người mượn", dataIndex: "borrowerName", key: "borrowerName", width: "20%" },
-    { title: "Thời gian trả", dataIndex: "projectedReturnDate", key: "projectedReturnDate", width: "20%" },
+    { title: "Thời gian trả", dataIndex: "returnDate", key: "projectedReturnDate", width: "20%" },
     {
       title: "Trạng thái",
       dataIndex: "isReturned",
@@ -60,7 +125,7 @@ const EquipmentRequestPage = () => {
   return (
     <BaseLayout>
       <Title level={1}>Danh sách đang mượn</Title>
-      <Table columns={columns} dataSource={requests} rowKey="slipCode" />
+      <Table columns={columns} dataSource={listDeviceBooking} rowKey="slipCode" />
 
       {/* Modal to view details */}
       <Modal
@@ -85,8 +150,13 @@ const EquipmentRequestPage = () => {
               <strong>Tên người mượn:</strong> {selectedRequest.borrowerName}
             </p>
             <p>
-              <strong>Thời gian trả:</strong> {selectedRequest.projectedReturnDate}
+              <strong>Thời gian trả:</strong> {selectedRequest.returnDate}
             </p>
+            <Table dataSource={selectedRequest.deviceList} rowKey="id" >
+              <Table.Column title="Mã thiết bị" dataIndex="id" key="id" />
+              <Table.Column title="Tên thiết bị" dataIndex="name" key="name" />
+              <Table.Column title="Số lượng" dataIndex="quantity" key="quantity" />
+            </Table>
           </>
         )}
       </Modal>
