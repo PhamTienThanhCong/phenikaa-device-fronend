@@ -24,6 +24,7 @@ import CreateErrorReportsPage from "./pages/ErrorReportsPage/CreateErrorReportPa
 import "@/assets/styles/main.css";
 import BookingReceipt from "./pages/Receipt/BookingReceipt";
 import DeviceLoanReceipt from "./pages/Receipt/DeviceLoanReceipt";
+import FeedBackPage from "./pages/FeedBack/FeedBackPage";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
       <Routes>
         <Route path="/booking-receipt/:id" element={<BookingReceipt />} />
         <Route path="/device-loan/:id" element={<DeviceLoanReceipt />} />
+        <Route path="/feedback" element={<FeedBackPage />} />
         <Route path="/login" element={<LoginPage />} />
         {/* auth */}
         <Route element={<AuthRoute />}>
