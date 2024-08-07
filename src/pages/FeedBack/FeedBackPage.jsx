@@ -50,14 +50,15 @@ const FeedBackPage = () => {
   };
 
   const handleModalOk = async () => {
-    setErrorMess({ ...errorMess, form: "" });
+    setErrorMess({ form: "", studentId: "" });
     let reason = formData.reason;
     if (reason === "Khác") {
       reason = formData.otherReason;
     }
     let dataPayload = {
       customer_id: formData.studentId,
-      title: reason,
+      category: reason,
+      title: formData.title,
       content: formData.description
     };
     let dataUser = await handleCheckStudentId({
@@ -158,11 +159,14 @@ const FeedBackPage = () => {
               <Input placeholder="Lý do khác" />
             </Form.Item>
           )}
+          <Form.Item name="title" label="Tiêu đề" rules={[{ required: true, message: "Vui lòng chỉ rõ tiêu đề!" }]}>
+            <Input placeholder="Tiêu đề" />
+          </Form.Item>
           <Form.Item name="description" label="Mô tả" rules={[{ required: true, message: "Vui lòng nhập mô tả!" }]}>
             <TextArea placeholder="Mô tả" rows={4} />
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit" className="send-button">
+            <Button style={{ borderRadius: "8px" }} type="primary" htmlType="submit" className="send-button">
               Gửi
             </Button>
           </Form.Item>
@@ -170,6 +174,12 @@ const FeedBackPage = () => {
         {/* Bạn có thể kiểm tra phản hồi cũ tại đây */}
         <Row justify="center" align="middle" className="feedback-header">
           <Col>
+            <div style={{ marginTop: "10px", marginBottom: "10px" }}>
+              <i>
+                Chúng tôi sẽ lưu lại địa chỉ IP của bạn khi gửi phản hồi để phục vụ cho việc kiểm soát thông tin. Chúng
+                tôi cam kết tuyệt đối bảo mật thông tin của bạn.{" "}
+              </i>
+            </div>
             <Title level={5} className="feedback-title">
               Bạn có thể kiểm tra phản hồi cũ của mình <Link to="/feedback/result">tại đây</Link>
             </Title>
