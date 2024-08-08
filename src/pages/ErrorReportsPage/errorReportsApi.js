@@ -16,7 +16,7 @@ export const markAsRead = createAsyncThunk("errorReports/mark-as-read", async (p
 // get all customer
 
 export const getAllCustomer = createAsyncThunk("errorReports/get-all-customer", async (payload, thunkAPI) => {
-  const url = "/customer/?limit=1000&offset=0";
+  const url = "/customer";
   let res = await SendRequest(url, payload, thunkAPI, "GET");
   return res;
 });

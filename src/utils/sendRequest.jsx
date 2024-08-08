@@ -1,9 +1,16 @@
+import { notification } from "antd";
 import axios from "axios";
 import { trackPromise } from "react-promise-tracker";
+
+function refactorURL(url) {
+  // Xóa dấu / ở cuối URL hoặc dấu / trước dấu ?
+  return url.replace(/\/(\?|$)/, "$1");
+}
 
 const SendRequest = async (url, payload, thunkAPI, method = "post") => {
   const BASE_URL = import.meta.env.VITE_API_URL_API;
   // const BASE_URL = "https://reqres.in/api";
+  url = refactorURL(url);
   const token = localStorage.getItem("token") || "";
   const instance = axios.create({
     baseURL: BASE_URL,
@@ -17,7 +24,7 @@ const SendRequest = async (url, payload, thunkAPI, method = "post") => {
 
   const makeRequest = async (retry = false) => {
     try {
-      const dataPayload = { ...payload };
+      const dataPayload = { ...payload, retry: retry };
       const requestConfig = {
         method,
         url,
@@ -38,7 +45,19 @@ const SendRequest = async (url, payload, thunkAPI, method = "post") => {
             return makeRequest(true);
           } else {
             // showAlert(error.response?.data?.message, 'danger');
-            return thunkAPI.rejectWithValue(undefined, error);
+            // return thunkAPI.rejectWithValue(undefined, error);
+            let errorMessage = "Có lỗi xảy ra khi lấy dữ liệu. Vui lòng thử lại.";
+            if (method.toLocaleLowerCase() === "post") {
+              errorMessage = "Có lỗi xảy ra khi gửi, tạo dữ liệu. Vui lòng thử lại.";
+            } else if (method.toLocaleLowerCase() === "put") {
+              errorMessage = "Có lỗi xảy ra khi cập nhật dữ liệu. Vui lòng thử lại.";
+            } else if (method.toLocaleLowerCase() === "delete") {
+              errorMessage = "Có lỗi xảy ra khi xóa dữ liệu. Vui lòng thử lại.";
+            }
+            notification.error({
+              message: "Lỗi",
+              description: errorMessage
+            });
           }
         }
       }
