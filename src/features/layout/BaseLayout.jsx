@@ -19,14 +19,14 @@ import { useState, useEffect } from "react";
 
 const navbars = [
   {
-    key: PATH.TEST,
-    icon: React.createElement(DashboardOutlined),
-    label: "Test"
-  },
-  {
     key: PATH.DASHBOARD,
     icon: React.createElement(DashboardOutlined),
     label: "Dashboard"
+  },
+  {
+    key: PATH.CAMERA,
+    icon: React.createElement(DashboardOutlined),
+    label: "Quản lý camera"
   },
   {
     key: PATH.CUSTOME,
@@ -94,11 +94,11 @@ const navbars = [
       {
         key: PATH.ERROR_REPORTS.LIST,
         label: "Danh sách thông báo lỗi"
-      },
-      {
-        key: PATH.ERROR_REPORTS.CREATE,
-        label: "Tạo thông báo lỗi"
       }
+      // {
+      //   key: PATH.ERROR_REPORTS.CREATE,
+      //   label: "Tạo thông báo lỗi"
+      // }
     ]
   }
 ];

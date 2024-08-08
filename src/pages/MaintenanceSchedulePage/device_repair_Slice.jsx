@@ -20,23 +20,14 @@ const initialState = {
   createRepair: [],
   isCreate: false,
   updateRepair: [],
-  isUpdate: false
+  isUpdate: false,
+  error: null
 };
 
 export const device_repair_Slice = createSlice({
   name: "device_repair",
   initialState,
   reducers: {
-    setMaintenance: (state, action) => {
-      state.users = [...action.payload];
-    },
-
-    setCreateRepair: (state, action) => {
-      state.createRepair = [...action.payload];
-    },
-    setUpdateRepair: (state, action) => {
-      state.updateRepair = [...action.payload];
-    },
     clearError: (state) => {
       state.error = null;
     }
@@ -59,25 +50,21 @@ export const device_repair_Slice = createSlice({
       state.isGetAllUser = true;
     });
     builder.addCase(createDeviceRepair.fulfilled, (state, action) => {
-      state.createRepair = [...action.payload];
-      state.isCreate = true;
+      state.deviceList = Array.isArray(action.payload) ? [...action.payload] : [];
     });
     builder.addCase(putDeviceRepair.fulfilled, (state, action) => {
-      state.updateRepair = [...action.payload];
-      state.isUpdate = true;
+      state.updateRepair = [...state.updateRepair, action.payload];
     });
     builder.addCase(createDeviceRepair.rejected, (state, action) => {
-      state.error = action.meta.respone.data.detail | "Lỗi không xác định";
+      console.log(action);
+      state.error = action.meta.response.data.detail || "Lỗi không xác định";
     });
     builder.addCase(putDeviceRepair.rejected, (state, action) => {
-      state.error = action.meta.respone.data.detail | "Lỗi không xác định";
+      state.error = action.meta.response.data.detail | "Lỗi không xác định";
     });
   }
   //  trường hợp tạo loại thiết bị
 });
 
-export const { setMaintenance } = device_repair_Slice.actions;
-export const { setCreateRepair } = device_repair_Slice.actions;
-export const { setUpdateRepair } = device_repair_Slice.actions;
 export const { clearError } = device_repair_Slice.actions;
 export default device_repair_Slice.reducer;

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import BaseLayout from "@/features/layout/BaseLayout";
-import { Table, Tag } from "antd";
+import { Table, Tag, Typography } from "antd";
 // import ReactTooltip from "react-tooltip";
 import "./style.css";
 
@@ -164,7 +164,7 @@ const camerasData = [
   { id: 97, name: "Camera 97", locationCode: "D6", status: "inactive", location: "Toà D6" },
   { id: 98, name: "Camera 98", locationCode: "D6", status: "active", location: "Toà D6" }
 ];
-
+const { Title } = Typography;
 // Hàm tính số camera đang hoạt động theo tòa nhà
 const getActiveCamerasCount = (building) => {
   return camerasData.filter((camera) => camera.locationCode === building && camera.status === "active").length;
@@ -243,6 +243,8 @@ const TestLayout = () => {
 
   return (
     <BaseLayout>
+      <Title level={2}>Quản lý camera</Title>
+
       <div
         style={{
           display: "flex",

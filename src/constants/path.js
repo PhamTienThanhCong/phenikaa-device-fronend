@@ -2,7 +2,7 @@ export const PATH = {
   DASHBOARD: "/",
   LOGIN: "/login",
   BASIC: "/basic",
-  TEST: "/test",
+  CAMERA: "/quanlycamera",
   CUSTOME: "/custome",
   EQUIPMENT: {
     LIST: "/equipment/list",

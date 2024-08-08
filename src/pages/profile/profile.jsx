@@ -23,8 +23,8 @@ const ProfilePage = () => {
     email: profileList?.email,
     phone: profileList?.profile?.phone_number,
     role: profileList?.role,
-    address: profileList?.profile.address,
-    birthday: profileList?.profile.birth_date
+    address: profileList?.profile?.address,
+    birthday: profileList?.profile?.birth_date
   };
 
   return (

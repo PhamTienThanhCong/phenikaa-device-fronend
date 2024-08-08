@@ -82,6 +82,10 @@ const DashboardPage = () => {
 
   const availableRooms = roomList.filter((room) => room.is_active && !room.is_maintenance && !room.is_using);
 
+  const chartData = {
+    data: [total_use, total_ready, total_maintenance]
+  };
+
   return (
     <BaseLayout>
       <>
@@ -98,7 +102,8 @@ const DashboardPage = () => {
                   <div className="number">
                     <Row align="middle" gutter={[24, 0]}>
                       <Col xs={18}>
-                        <span style={{ color: "#fff" }}>{c.today}</span>
+                        <span style={{ color: "#fff", fontSize: "20px" }}>{c.today}</span>
+
                         <Title level={3} style={{ color: "#fff" }}>
                           {c.title} <small className={c.bnb}>{c.persent}</small>
                         </Title>
@@ -139,7 +144,7 @@ const DashboardPage = () => {
                   justifyContent: "center"
                 }}
               >
-                <DounutChart />
+                <DounutChart chartData={chartData} />
               </Card>
             </Col>
           </Row>

@@ -9,7 +9,6 @@ import { v4 as uuidv4 } from "uuid";
 import QRCode from "qrcode.react";
 import { getCustomer } from "@/pages/manageCutome/CustomerAPI";
 
-
 const deviceData = [
   { id: "D001", name: "Laptop", total: 10 },
   { id: "D002", name: "Projector", total: 5 }
@@ -66,7 +65,6 @@ const EquipmentListPage = () => {
     }
   }, [dispatch, isCustomer]);
 
-
   const handleSearch = (e) => {
     setSearchText(e.target.value);
   };
@@ -88,7 +86,7 @@ const EquipmentListPage = () => {
           }
           return { ...item, [field]: value, quantityError: "" };
         }
-        console.log('>>>>>>>>>>>>>', item, field, value);
+
         return item;
       })
     );
@@ -188,7 +186,12 @@ const EquipmentListPage = () => {
           style={{ width: 200, marginRight: 8 }}
           prefix={<SearchOutlined />}
         />
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => setOpenModal(true)}>
+        <Button
+          type="primary"
+          style={{ color: "white", background: "#F26526" }}
+          icon={<PlusOutlined />}
+          onClick={() => setOpenModal(true)}
+        >
           Tạo yêu cầu mượn
         </Button>
       </div>
@@ -216,10 +219,13 @@ const EquipmentListPage = () => {
                   <Select
                     value={formItem.deviceId}
                     onChange={(value) => handleChange(formItem.id, "deviceId", value)}
-                  // disabled={selectedDeviceIds.includes(formItem.deviceId)}
+                    // disabled={selectedDeviceIds.includes(formItem.deviceId)}
                   >
                     {dataDevice
-                      .filter((device) => !selectedDeviceIds.includes(device.deviceCode) || device.deviceCode === formItem.deviceId)
+                      .filter(
+                        (device) =>
+                          !selectedDeviceIds.includes(device.deviceCode) || device.deviceCode === formItem.deviceId
+                      )
                       .map((device) => (
                         <Select.Option key={device.deviceCode} value={device.deviceCode}>
                           {device.deviceName}

@@ -1,18 +1,20 @@
 import React from "react";
-import { Doughnut, Pie } from "react-chartjs-2";
+import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, Tooltip, Legend, ArcElement } from "chart.js";
 
 // Đăng ký các thành phần của Chart.js
 ChartJS.register(Tooltip, Legend, ArcElement);
 
-const DounutChart = () => {
+const DounutChart = (chartData) => {
+  // từ dữ liệu chartData.chartData.data tính ra % của từng trạng thái
+
   const data = {
     title: "Biểu đồ trạng thái thiết bị",
-    labels: ["Đang mượn thiết bị", "Chưa được mượn", "Đang bảo trì"],
+    labels: ["Đang mượn thiết bị", "Sẵn sàng cho mượn", "Đang bảo trì"],
     datasets: [
       {
-        data: [40, 30, 30],
-        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"],
+        data: chartData.chartData.data,
+        backgroundColor: ["#FFCE56", "#95de64", "#FF6384"],
         hoverOffset: 4
       }
     ]
@@ -23,12 +25,28 @@ const DounutChart = () => {
       legend: {
         position: "bottom"
       },
+      datalabels: {
+        color: "#fff",
+        display: true
+      },
+
       tooltip: {
         callbacks: {
           label: function (tooltipItem) {
-            return `${tooltipItem.label}: ${tooltipItem.raw}%`;
+            return `${tooltipItem.label}: ${tooltipItem.raw}`;
           }
         }
+      },
+      title: {
+        display: true,
+        text: data.title
+      },
+      responsive: true,
+      maintainAspectRatio: true,
+
+      animation: {
+        animateScale: true,
+        animateRotate: true
       }
     }
   };

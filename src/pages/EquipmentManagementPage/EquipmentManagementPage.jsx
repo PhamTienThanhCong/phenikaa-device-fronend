@@ -69,7 +69,7 @@ const EquipmentManagementPage = () => {
         is_active: true,
         image: ""
       };
-      await dispatch(createDeviceCategory(payload));
+      dispatch(createDeviceCategory(payload));
       dispatch(getDeviceCategoryList());
       handleModalClose();
     } else if (modalType === "editType") {
@@ -78,12 +78,13 @@ const EquipmentManagementPage = () => {
         is_active: true,
         image: ""
       };
-      await dispatch(
+      dispatch(
         updateDeviceCategory({
-          category_id: selectedData.key,
+          category_id: selectedData.id,
           ...payload
         })
       );
+      handleModalClose();
       dispatch(getDeviceCategoryList());
     } else if (modalType === "addDevice") {
       const payload = {
@@ -108,9 +109,10 @@ const EquipmentManagementPage = () => {
         total_maintenance: values.total_maintenance,
         is_active: values.is_active === 1 ? true : false
       };
+
       await dispatch(
         updateDevice({
-          device_id: selectedData.id,
+          device_id: selectedData?.id,
           ...payload
         })
       );
@@ -190,7 +192,12 @@ const EquipmentManagementPage = () => {
                 style={{ width: 200, marginRight: 8 }}
                 prefix={<SearchOutlined />}
               />
-              <Button type="primary" icon={<PlusOutlined />} onClick={() => handleModalOpen("addDevice")}>
+              <Button
+                type="primary"
+                style={{ color: "white", background: "#F26526" }}
+                icon={<PlusOutlined />}
+                onClick={() => handleModalOpen("addDevice")}
+              >
                 Thêm thiết bị
               </Button>
             </div>
@@ -203,7 +210,12 @@ const EquipmentManagementPage = () => {
         ) : (
           <>
             <div style={{ marginBottom: 16, width: "100%", display: "flex", justifyContent: "flex-end" }}>
-              <Button type="primary" icon={<PlusOutlined />} onClick={() => handleModalOpen("addType")}>
+              <Button
+                type="primary"
+                style={{ color: "white", background: "#F26526" }}
+                icon={<PlusOutlined />}
+                onClick={() => handleModalOpen("addType")}
+              >
                 Thêm loại thiết bị
               </Button>
             </div>

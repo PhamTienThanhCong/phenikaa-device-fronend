@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Table,
   Button,
@@ -74,11 +74,13 @@ const MaintenanceSchedulePage = () => {
       dispatch(getAllUser());
     }
   }, [dispatch, isGetAllUser]);
+
   useEffect(() => {
     if (error) {
+      console.log("error", error);
       notification.error({
         message: "Có lỗi xảy ra",
-        description: error
+        description: "abc"
       });
       dispatch(clearError());
     }
@@ -163,7 +165,7 @@ const MaintenanceSchedulePage = () => {
   };
 
   const columns = [
-    { title: "STT", dataIndex: "index", key: "index" },
+    { title: "ID", dataIndex: "index", key: "index" },
     // { title: "Mã bảo trì", dataIndex: "deviceCode", key: "deviceCode" },
     { title: "Tiêu đề", dataIndex: "title", key: "title" },
     { title: "Tên thiết bị", dataIndex: "deviceName", key: "deviceName" },
@@ -232,11 +234,12 @@ const MaintenanceSchedulePage = () => {
   const handleModalOpen = (type, data) => {
     setModalType(type);
     setSelectedData(data);
+    console.log("data", listUserData.find((value) => value.user_name == data?.user)?.user_id);
 
     form.setFieldsValue({
       title: data?.title,
-      user: listUserData.find((value) => value.user_name == data?.user).user_id,
-      name: listMaintaince.find((value) => value.device_maintance_name == data?.name).device_maintance_id,
+      user: listUserData.find((value) => value.user_name == data?.user)?.user_id,
+      name: listMaintaince.find((value) => value.device_maintance_name == data?.name)?.device_maintance_id,
       maintenanceTime: data?.maintenanceTime ? moment(data?.maintenanceTime) : null,
       devices: data?.quantity?.map((quantity) => ({
         deviceName: deviceOptions.find((value) => value.divice_name == data?.deviceName).device_id,
@@ -271,13 +274,20 @@ const MaintenanceSchedulePage = () => {
         };
 
         await dispatch(createDeviceRepair(payload));
+        // thông báo tạo thành công
+        notification.success({
+          message: "Thêm thiết bị thành công",
+          description: "Đã thêm vào danh sách bảo trì"
+        });
         handleModalClose();
-        //gọi lại api để lấy danh sách mới
+
         dispatch(getAllDeviceRepair());
-        // đóng modal
+        dispatch(getAllMaintenance());
+        dispatch(getAllDevice());
+
         handleModalClose();
       } catch (e) {
-        console.log(e);
+        console.log(1111111, e);
         notification.error({
           message: "Thêm thiết bị thất bại",
           description: "Đã có lỗi xảy ra, vui lòng thử lại sau"
@@ -313,16 +323,12 @@ const MaintenanceSchedulePage = () => {
         // clear form
         form.resetFields();
 
-        // xử lý nếu thành công
-        if (isGetAll) {
+        // // xử lý nếu thành công
+
+        if (error == null) {
           notification.success({
             message: "Cập nhật thiết bị thành công",
             description: "Thiết bị đã được cập nhật vào hệ thống"
-          });
-        } else {
-          notification.error({
-            message: "Cập nhật thiết bị thất bại",
-            description: "Đã có lỗi xảy ra, vui lòng thử lại sau"
           });
         }
       } catch (e) {
@@ -371,6 +377,7 @@ const MaintenanceSchedulePage = () => {
             </Button>
           </div>
         </div>
+
         <Table
           dataSource={filteredData.reverse()}
           columns={columns}

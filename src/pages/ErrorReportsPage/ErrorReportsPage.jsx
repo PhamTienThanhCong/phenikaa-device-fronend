@@ -33,9 +33,9 @@ const AdminErrorReportsPage = () => {
       studentCode: item.customer.card_id,
       studentEmail: item.customer.email,
       studentName: item.customer.full_name,
-      deviceName: item.title,
-      description: item.content,
-      status: item.is_read
+      deviceName: item.category,
+      description: item.title,
+      status: item.status
     }));
     setReports(updatedNotifyList);
     setFilteredReports(updatedNotifyList);
@@ -88,7 +88,13 @@ const AdminErrorReportsPage = () => {
     { title: "STT", dataIndex: "index", key: "index" },
     { title: "Mã phiếu", dataIndex: "id", key: "id", render: (text) => <>TB{text}</> },
     { title: "Tiêu đề", dataIndex: "deviceName", key: "deviceName" },
-    { title: "Mô tả lỗi", dataIndex: "description", key: "description" },
+    {
+      title: "Mô tả lỗi",
+      dataIndex: "description",
+      key: "description",
+      // xuống dòng khi nội dung quá dài
+      render: (text) => <div style={{ whiteSpace: "pre-wrap" }}>{text}</div>
+    },
     { title: "Mã sinh viên", dataIndex: "studentCode", key: "studentCode" },
     { title: "Tên sinh viên", dataIndex: "studentName", key: "studentName" },
     { title: "Email", dataIndex: "studentEmail", key: "studentEmail" },
@@ -96,13 +102,14 @@ const AdminErrorReportsPage = () => {
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",
-      render: (status) => (status ? <Tag color="success">Đã xử lý</Tag> : <Tag color="error">Chưa xử lý</Tag>)
+      render: (status) =>
+        status === "Đã phản hồi" ? <Tag color="success">Đã xử lý</Tag> : <Tag color="error">Chưa xử lý</Tag>
     },
     {
       title: "Hành động",
       key: "action",
       render: (text, record) => (
-        <Button type="primary" onClick={() => handleViewReport(record)} disabled={record.status}>
+        <Button type="primary" onClick={() => handleViewReport(record)} disabled={record.status === "Đã phản hồi"}>
           Phản hồi
         </Button>
       )
@@ -120,8 +127,8 @@ const AdminErrorReportsPage = () => {
           allowClear
         >
           <Option value="all">Tất cả</Option>
-          <Option value={true}>Đã xử lý</Option>
-          <Option value={false}>Chưa xử lý</Option>
+          <Option value="Đã phản hồi">Đã xử lý</Option>
+          <Option value="Đang chờ phản hồi">Chưa xử lý</Option>
         </Select>
         <Input
           placeholder="Tìm kiếm theo tiêu đề, tên sinh viên, mô tả lỗi"

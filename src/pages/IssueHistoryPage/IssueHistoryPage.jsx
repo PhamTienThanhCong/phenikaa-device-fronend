@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { Table, Button, Space, Typography, Modal, Input as AntInput, Form, Input } from "antd";
+import { useState, useEffect } from "react";
+import { Table, Button, Space, Typography, Modal, Input as AntInput, Form, Input, notification } from "antd";
 import { EyeOutlined, SearchOutlined, PlusOutlined, EditOutlined } from "@ant-design/icons";
 import { DeleteOutlined } from "@ant-design/icons";
 import BaseLayout from "@/features/layout/BaseLayout";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { getAllMaintaince } from "./maintainceAPI";
 import { createMaintaince, updateMaintaince, deleteMaintaince } from "./maintainceAPI";
-
+import { clearError } from "./maintanceSlice";
 const { Title } = Typography;
 
 const IssueHistoryPage = () => {
@@ -16,7 +16,7 @@ const IssueHistoryPage = () => {
   const [form] = Form.useForm();
   const dispatch = useAppDispatch();
   const { maintenanceList, isGetAll } = useAppSelector((state) => state.maintenance);
-
+  const error = useAppSelector((state) => state.maintenance.error);
   useEffect(() => {
     if (!isGetAll) {
       dispatch(getAllMaintaince());
@@ -36,6 +36,7 @@ const IssueHistoryPage = () => {
   });
   const [filteredData, setFilteredData] = useState(dataMaintenanceList);
   const [data, setData] = useState(dataMaintenanceList);
+
   useEffect(() => {
     // Thay thế bằng logic lấy dữ liệu từ API nếu cần
     setData(dataMaintenanceList);
@@ -55,6 +56,16 @@ const IssueHistoryPage = () => {
       )
     );
   }, [searchText, data]);
+
+  useEffect(() => {
+    if (error) {
+      notification.error({
+        message: "Lỗi",
+        description: error
+      });
+      dispatch(clearError());
+    }
+  }, [error, dispatch]);
 
   const handleModalOpen = (type, item) => {
     setModalType(type);
@@ -82,12 +93,21 @@ const IssueHistoryPage = () => {
       status: true,
       map_url: ""
     };
-    await dispatch(createMaintaince(payload));
-    dispatch(getAllMaintaince());
 
-    setData([...data, { key: data.length + 1, ...values }]);
-    handleModalClose();
-    // nếu status lỗi trả về khác 200 thì thông báo lỗi
+    try {
+      await dispatch(createMaintaince(payload));
+
+      dispatch(getAllMaintaince());
+
+      setData([...data, { key: data.length + 1, ...values }]);
+      handleModalClose();
+    } catch (error) {
+      // Thông báo lỗi nếu có
+      notification.error({
+        message: "Lỗi",
+        description: "Có lỗi xảy ra khi thêm đơn vị bảo trì!"
+      });
+    }
   };
 
   const handleEditUnit = async (values) => {
@@ -111,8 +131,8 @@ const IssueHistoryPage = () => {
 
     const updatedData = data.map((item) => (item.key === selectedItem.key ? { ...item, ...values } : item));
     setData(updatedData);
-    handleModalClose();
     dispatch(getAllMaintaince());
+    handleModalClose();
   };
 
   const handleDelete = async (record) => {
@@ -180,7 +200,12 @@ const IssueHistoryPage = () => {
             prefix={<SearchOutlined />}
             style={{ width: 300 }}
           />
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => handleModalOpen("add")}>
+          <Button
+            type="primary"
+            style={{ color: "white", backgroundColor: "#F26526" }}
+            icon={<PlusOutlined />}
+            onClick={() => handleModalOpen("add")}
+          >
             Thêm Đơn Vị Bảo Trì
           </Button>
         </div>

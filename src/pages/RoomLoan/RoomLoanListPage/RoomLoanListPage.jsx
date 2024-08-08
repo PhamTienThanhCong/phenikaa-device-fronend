@@ -21,7 +21,13 @@ import QRCode from "qrcode.react";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { addRoom, deleteRoom, editRoom, getRoomList } from "../RoomApi";
 import { clearError } from "../RoomSlice";
-import { getRoomBookingList, addRoomBooking, editRoomBooking, deleteRoomBooking, getRoomBookingDetail } from "../RoomApi";
+import {
+  getRoomBookingList,
+  addRoomBooking,
+  editRoomBooking,
+  deleteRoomBooking,
+  getRoomBookingDetail
+} from "../RoomApi";
 import { getCustomer } from "@/pages/manageCutome/CustomerAPI";
 import { use } from "echarts";
 import { getUserData } from "@/features/auth/authApi";
@@ -29,7 +35,6 @@ import { getUserData } from "@/features/auth/authApi";
 const { Title } = Typography;
 
 const mockAddres = ["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "A10", "B1", "B2", "B3", "B4", "C", "D6"];
-
 
 const RoomLoanListPage = () => {
   const dispatch = useAppDispatch();
@@ -62,8 +67,8 @@ const RoomLoanListPage = () => {
     api[type]({
       message: type == "error" ? "Lỗi" : "Thông báo",
       description: message
-    })
-  }
+    });
+  };
   useEffect(() => {
     if (!isGetRoom) {
       dispatch(getRoomList());
@@ -72,12 +77,10 @@ const RoomLoanListPage = () => {
 
   useEffect(() => {
     if (error) {
-      notificationMessage('error', error)
-      dispatch(clearError())
+      notificationMessage("error", error);
+      dispatch(clearError());
     }
-  }, [error, dispatch])
-
-
+  }, [error, dispatch]);
 
   useEffect(() => {
     //set user list
@@ -122,7 +125,6 @@ const RoomLoanListPage = () => {
     }
   };
 
-
   const handleSubmit = () => {
     const summaryData = {
       name: `Phòng ${formList[0].room_id}`,
@@ -133,16 +135,14 @@ const RoomLoanListPage = () => {
       end_time: projectedReturnTime ? projectedReturnTime[1].format("HH:mm:ss") : "Chưa xác định",
       note: "Chưa xác định",
       total_customer: 50,
-      customer_id: getCustomerId(studentInfo.studentCode),
-    }
+      customer_id: getCustomerId(studentInfo.studentCode)
+    };
     console.log(111111111111, summaryData, formList);
     dispatch(addRoomBooking(summaryData));
     setSummary(summaryData);
     setSummaryModalVisible(true);
     setOpenRequestModal(false);
   };
-
-
 
   const getCustomerId = (card_id) => {
     const customerinfo = customer.find((user) => user.card_id === card_id);
@@ -281,7 +281,7 @@ const RoomLoanListPage = () => {
   };
 
   return (
-    <BaseLayout BaseLayout >
+    <BaseLayout BaseLayout>
       {contextHolder}
       <Title level={1}>Danh sách phòng</Title>
       <div style={{ marginBottom: 16, width: "100%", display: "flex", justifyContent: "space-between" }}>
@@ -295,15 +295,23 @@ const RoomLoanListPage = () => {
         <div>
           <Button
             type="primary"
+            style={{
+              marginRight: 8,
+
+              color: "white",
+              backgroundColor: "#F26526"
+            }}
             icon={<PlusOutlined />}
             onClick={() => setOpenRequestModal(true)}
-            style={{
-              marginRight: 8
-            }}
           >
             Yêu cầu mượn phòng
           </Button>
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => setOpenRequestModalCreate(true)}>
+          <Button
+            type="primary"
+            style={{ color: "white", backgroundColor: "#F26526" }}
+            icon={<PlusOutlined />}
+            onClick={() => setOpenRequestModalCreate(true)}
+          >
             Yêu cầu tạo phòng
           </Button>
         </div>
@@ -417,10 +425,12 @@ const RoomLoanListPage = () => {
           <Button key="print" onClick={handlePrint}>
             In
           </Button>,
-          <Button key="close" onClick={() => {
-            setSummaryModalVisible(false)
-
-          }}>
+          <Button
+            key="close"
+            onClick={() => {
+              setSummaryModalVisible(false);
+            }}
+          >
             Đóng
           </Button>
         ]}
@@ -561,7 +571,7 @@ const RoomLoanListPage = () => {
           </Form.Item>
         </Form>
       </Modal>
-    </BaseLayout >
+    </BaseLayout>
   );
 };
 

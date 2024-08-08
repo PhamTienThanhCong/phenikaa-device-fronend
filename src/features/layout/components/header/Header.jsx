@@ -32,7 +32,7 @@ function Headerlayout() {
   const menu = (
     <Menu>
       <Menu.Item key="profile">
-        <a href="/profile">Profile</a>
+        <a href="/profile">Trang cá nhân</a>
       </Menu.Item>
       <Menu.Item key="logout">
         <a
@@ -40,7 +40,7 @@ function Headerlayout() {
             logout();
           }}
         >
-          Logout
+          Đăng xuất
         </a>
       </Menu.Item>
     </Menu>
@@ -57,7 +57,13 @@ function Headerlayout() {
       }}
     >
       <Box className="header-content">
-        <h2>Đại học Phenikaa</h2>
+        <h2
+          style={{
+            color: "#F26526"
+          }}
+        >
+          Đại học Phenikaa
+        </h2>
         <div>
           <Dropdown overlay={menu} trigger={["click"]}>
             <div className="user-info" onClick={(e) => e.preventDefault()}>
