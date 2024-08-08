@@ -70,7 +70,7 @@ const LoginPage = () => {
           }}
         >
           {/* Thêm logo */}
-          <h2
+          {/* <h2
             style={{
               color: "#ffffff",
               marginTop: "0",
@@ -82,7 +82,7 @@ const LoginPage = () => {
             }}
           >
             HỆ THỐNG QUẢN LÝ THIẾT BỊ
-          </h2>
+          </h2> */}
           <img src={Logo} alt="logo-phenikaa" style={{ width: "15vw" }} />
           {/* error message */}
           {error && <Alert message={error} type="error" />}
