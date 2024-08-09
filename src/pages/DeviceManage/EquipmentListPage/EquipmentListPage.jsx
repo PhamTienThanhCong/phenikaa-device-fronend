@@ -219,7 +219,7 @@ const EquipmentListPage = () => {
                   <Select
                     value={formItem.deviceId}
                     onChange={(value) => handleChange(formItem.id, "deviceId", value)}
-                    // disabled={selectedDeviceIds.includes(formItem.deviceId)}
+                  // disabled={selectedDeviceIds.includes(formItem.deviceId)}
                   >
                     {dataDevice
                       .filter(
@@ -241,6 +241,7 @@ const EquipmentListPage = () => {
                   help={formItem.quantityError}
                 >
                   <Input
+                    style={{ height: "auto" }}
                     type="number"
                     value={formItem.quantity}
                     onChange={(e) => handleChange(formItem.id, "quantity", e.target.value)}

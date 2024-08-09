@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { addRoom, getRoomList, getRoomBookingList } from "./RoomApi";
+import { addRoom, getRoomList, getRoomBookingList, addRoomBooking } from "./RoomApi";
 const initialState = {
   roomList: [],
   isGetRoom: false,
@@ -38,6 +38,13 @@ export const roomSlice = createSlice({
       state.isRoomBooking = true;
     });
     builder.addCase(getRoomBookingList.rejected, (state, action) => {
+      state.error = action.meta.response.data.detail;  // Xử lý lỗi
+    });
+    builder.addCase(addRoomBooking.fulfilled, (state, action) => {
+      state.roomBooking = [...action.payload];
+      state.isRoomBooking = true;
+    });
+    builder.addCase(addRoomBooking.rejected, (state, action) => {
       state.error = action.meta.response.data.detail;  // Xử lý lỗi
     });
   }

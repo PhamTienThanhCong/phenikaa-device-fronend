@@ -26,19 +26,20 @@ const LoginPage = () => {
   return (
     <div
       style={{
-        width: "100vw",
+        width: "100%",
+        height: "100vh",
         display: "flex"
         // justifyContent: "space-between"
       }}
     >
       <div
         style={{
-          width: "70vw",
-          height: "100vh"
+          width: "100vw",
+          height: "100vh",
         }}
       >
         {/* tạo background video */}
-        <video autoPlay muted loop className="video-background">
+        <video autoPlay muted loop className="video-background" style={{ width: "100%", height: "100%", objectFit: "cover", overflow: "hidden" }}>
           <source
             src="https://gw.alipayobjects.com/v/huamei_gcee1x/afts/video/jXRBRK_VAwoAAAAAAAAAAAAAK4eUAQBr"
             type="video/mp4"
@@ -47,6 +48,8 @@ const LoginPage = () => {
       </div>
       <div
         style={{
+          position: "absolute",
+          right: "0",
           width: "30vw",
           height: "100vh",
           display: "flex",
@@ -93,6 +96,7 @@ const LoginPage = () => {
               remember: true
             }}
             onFinish={onFinish}
+            autoComplete="off"
           >
             <Form.Item
               name="email"

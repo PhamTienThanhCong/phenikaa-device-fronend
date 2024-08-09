@@ -445,7 +445,7 @@ const RoomLoanListPage = () => {
                   justifyContent: "center"
                 }}
               >
-                <QRCode value={JSON.stringify(summary)} size={150} />
+                <QRCode value={`https://phenikaa-uni.top/booking-receipt/${summary.id}`} size={150} />
               </div>
               <Table
                 dataSource={summary.rooms}

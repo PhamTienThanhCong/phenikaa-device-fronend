@@ -57,6 +57,11 @@ const EquipmentHistoryPage = () => {
       borrowDate: formatDate(item.created_at),
       returnDate: formatDate(item.returning_date),
       issuedBy: item.user ? item.user.full_name : "QTV",
+      devices: item.devices.map((device) => ({
+        id: device.device_id,
+        name: device.device.name,
+        quantity: device.quantity
+      }))
     };
   });
   const filteredHistory = listDeviceBooking.filter((record) =>
@@ -64,6 +69,7 @@ const EquipmentHistoryPage = () => {
   );
 
   const handleViewDetails = (record) => {
+    console.log(11111111111111, record);
     setSelectedRecord(record);
     setViewModalVisible(true);
   };
@@ -109,7 +115,7 @@ const EquipmentHistoryPage = () => {
         {selectedRecord && (
           <>
             <div style={{ textAlign: "center", marginBottom: 16 }}>
-              <QRCode value={`Slip Code: ${selectedRecord.slipCode}`} />
+              <QRCode value={`https://phenikaa-uni.top/device-loan/${selectedRecord.slipCode}`} />
             </div>
             <p>
               <strong>Mã phiếu mượn:</strong> {selectedRecord.slipCode}
@@ -126,6 +132,12 @@ const EquipmentHistoryPage = () => {
             <p>
               <strong>Tên tài khoản đã cho mượn:</strong> {selectedRecord.issuedBy}
             </p>
+            <Table dataSource={selectedRecord.devices} rowKey="id" >
+              <Table.Column title="Mã thiết bị" dataIndex="id" key="id" />
+              <Table.Column title="Tên thiết bị" dataIndex="name" key="name" />
+              <Table.Column title="Số lượng" dataIndex="quantity" key="quantity" />
+            </Table>
+
           </>
         )}
       </Modal>

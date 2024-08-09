@@ -93,7 +93,7 @@ const RoomLoanRequestPage = () => {
                 justifyContent: "center"
               }}
             >
-              <QRCode value={selectedBorrowing.id} size={150} />
+              <QRCode value={`https://phenikaa-uni.top/booking-receipt/${selectedBorrowing.id}`} size={150} />
             </div>
 
             <p>
