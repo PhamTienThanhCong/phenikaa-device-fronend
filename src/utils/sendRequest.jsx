@@ -32,6 +32,22 @@ const SendRequest = async (url, payload, thunkAPI, method = "post") => {
       };
 
       let response = await trackPromise(instance(requestConfig));
+      if (response) {
+        let successMessage = "";
+        if (method.toLocaleLowerCase() === "post") {
+          successMessage = "Dữ liệu đã được gửi và tạo thành công.";
+        } else if (method.toLocaleLowerCase() === "put") {
+          successMessage = "Dữ liệu đã được cập nhật thành công.";
+        } else if (method.toLocaleLowerCase() === "delete") {
+          successMessage = "Dữ liệu đã được xóa thành công.";
+        }
+        if (successMessage) {
+          notification.success({
+            message: "Thành công",
+            description: successMessage
+          });
+        }
+      }
       if (response.data) {
         return response.data;
       } else {
