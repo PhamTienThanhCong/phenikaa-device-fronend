@@ -62,7 +62,7 @@ function Headerlayout() {
             color: "#F26526"
           }}
         >
-          Đại học Phenikaa
+          Hệ thống quản lý thiết bị
         </h2>
         <div>
           <Dropdown overlay={menu} trigger={["click"]}>
