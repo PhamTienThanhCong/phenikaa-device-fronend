@@ -6,6 +6,11 @@ body {
   background-color: #f0f2f5;
 }
 
+/* set root element overflow hidden just in this page*/
+:host #root {
+  overflow: hidden !important;
+}
+
 .login-card {
   width: 300px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
