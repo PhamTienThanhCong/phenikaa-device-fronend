@@ -60,20 +60,22 @@ const SendRequest = async (url, payload, thunkAPI, method = "post") => {
             // Gọi lại API một lần nữa
             return makeRequest(true);
           } else {
-            // showAlert(error.response?.data?.message, 'danger');
-            // return thunkAPI.rejectWithValue(undefined, error);
-            let errorMessage = "Có lỗi xảy ra khi lấy dữ liệu. Vui lòng thử lại.";
-            if (method.toLocaleLowerCase() === "post") {
-              errorMessage = "Có lỗi xảy ra khi gửi, tạo dữ liệu. Vui lòng thử lại.";
-            } else if (method.toLocaleLowerCase() === "put") {
-              errorMessage = "Có lỗi xảy ra khi cập nhật dữ liệu. Vui lòng thử lại.";
-            } else if (method.toLocaleLowerCase() === "delete") {
-              errorMessage = "Có lỗi xảy ra khi xóa dữ liệu. Vui lòng thử lại.";
+            if (!error.response.status === 403) {
+              // showAlert(error.response?.data?.message, 'danger');
+              // return thunkAPI.rejectWithValue(undefined, error);
+              let errorMessage = "Có lỗi xảy ra khi lấy dữ liệu. Vui lòng thử lại.";
+              if (method.toLocaleLowerCase() === "post") {
+                errorMessage = "Có lỗi xảy ra khi gửi, tạo dữ liệu. Vui lòng thử lại.";
+              } else if (method.toLocaleLowerCase() === "put") {
+                errorMessage = "Có lỗi xảy ra khi cập nhật dữ liệu. Vui lòng thử lại.";
+              } else if (method.toLocaleLowerCase() === "delete") {
+                errorMessage = "Có lỗi xảy ra khi xóa dữ liệu. Vui lòng thử lại.";
+              }
+              notification.error({
+                message: "Lỗi",
+                description: errorMessage
+              });
             }
-            notification.error({
-              message: "Lỗi",
-              description: errorMessage
-            });
           }
         }
       }
