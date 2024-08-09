@@ -60,7 +60,7 @@ const SendRequest = async (url, payload, thunkAPI, method = "post") => {
             // Gọi lại API một lần nữa
             return makeRequest(true);
           } else {
-            if (!error.response.status === 403) {
+            if (error.response.status !== 403) {
               // showAlert(error.response?.data?.message, 'danger');
               // return thunkAPI.rejectWithValue(undefined, error);
               let errorMessage = "Có lỗi xảy ra khi lấy dữ liệu. Vui lòng thử lại.";
