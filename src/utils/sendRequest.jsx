@@ -54,6 +54,7 @@ const SendRequest = async (url, payload, thunkAPI, method = "post") => {
         return response;
       }
     } catch (error) {
+      console.log("error", error);
       if (error.response) {
         if (error.response.status === 500 && !retry) {
           // Gọi lại API một lần nữa
