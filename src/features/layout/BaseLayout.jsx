@@ -8,7 +8,10 @@ import {
   LaptopOutlined,
   CalendarOutlined,
   FileTextOutlined,
-  BellOutlined
+  BellOutlined,
+  VideoCameraOutlined,
+  InboxOutlined,
+  SolutionOutlined
 } from "@ant-design/icons";
 import { useNavigate, useLocation } from "react-router-dom";
 import React from "react";
@@ -24,14 +27,14 @@ const navbars = [
     label: "Dashboard"
   },
   {
-    key: PATH.CAMERA,
-    icon: React.createElement(DashboardOutlined),
-    label: "Quản lý camera"
+    key: PATH.EQUIPMENT_MANAGEMENT,
+    icon: <InboxOutlined />,
+    label: "Quản lý danh sách thiết bị"
   },
   {
-    key: PATH.CUSTOME,
-    icon: React.createElement(UserOutlined),
-    label: "Quản lý người dùng"
+    key: PATH.CAMERA,
+    icon: <VideoCameraOutlined />,
+    label: "Quản lý camera"
   },
   {
     key: "equipment",
@@ -53,18 +56,8 @@ const navbars = [
     ]
   },
   {
-    key: PATH.MAINTENANCE_SCHEDULE,
-    icon: React.createElement(CalendarOutlined),
-    label: "Lịch trình bảo trì"
-  },
-  {
-    key: PATH.EQUIPMENT_MANAGEMENT,
-    icon: React.createElement(LaptopOutlined),
-    label: "Quản lý danh sách thiết bị"
-  },
-  {
     key: "roomLoan",
-    icon: React.createElement(LaptopOutlined),
+    icon: <SolutionOutlined />,
     label: "Quản lý mượn phòng",
     children: [
       {
@@ -81,6 +74,18 @@ const navbars = [
       }
     ]
   },
+  {
+    key: PATH.CUSTOME,
+    icon: React.createElement(UserOutlined),
+    label: "Quản lý người dùng"
+  },
+
+  {
+    key: PATH.MAINTENANCE_SCHEDULE,
+    icon: React.createElement(CalendarOutlined),
+    label: "Lịch trình bảo trì"
+  },
+
   {
     key: PATH.ISSUE_HISTORY,
     icon: React.createElement(FileTextOutlined),

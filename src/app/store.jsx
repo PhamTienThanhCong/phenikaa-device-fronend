@@ -12,6 +12,7 @@ import { notifySlice } from "@/pages/ErrorReportsPage/errorReportSlice";
 import { deviceCategorySlice } from "@/pages/EquipmentManagementPage/EquipmaintManagementSlice";
 import { profileSlice } from "@/pages/profile/profileSlice";
 import { dashboardSlice } from "@/pages/dashboard/dashboardSlice";
+import { cameraSlice } from "@/pages/testLayout/cameraSlice";
 
 const rootReducer = combineReducers({
   loading: loadingSlice.reducer,
@@ -25,7 +26,8 @@ const rootReducer = combineReducers({
   notify: notifySlice.reducer,
   deviceCategory: deviceCategorySlice.reducer,
   profile: profileSlice.reducer,
-  dashboard: dashboardSlice.reducer
+  dashboard: dashboardSlice.reducer,
+  camera: cameraSlice.reducer
 });
 
 export const makeStore = (preloadedState) => {

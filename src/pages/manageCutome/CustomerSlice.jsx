@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { getCustomer } from "./CustomerAPI";
-import { getUser, createUser, editUser } from "./CustomerAPI";
+import { getUser } from "./CustomerAPI";
 
 const initialState = {
   customer: [],
@@ -43,20 +43,6 @@ export const customerSlice = createSlice({
     builder.addCase(getUser.fulfilled, (state, action) => {
       state.users = [...action.payload];
       state.isUser = true;
-    });
-    builder.addCase(createUser.fulfilled, (state, action) => {
-      state.createUser = [...action.payload];
-      state.isCreateUser = true;
-    });
-    builder.addCase(editUser.fulfilled, (state, action) => {
-      state.updateUser = [...action.payload];
-      state.isUpdateCreateUser = true;
-    });
-    builder.addCase(createUser.rejected, (state, action) => {
-      state.error = action.meta.respone.data.detail | "Lỗi không xác định";
-    });
-    builder.addCase(editUser.rejected, (state, action) => {
-      state.error = action.meta.respone.data.detail | "Lỗi không xác định";
     });
   }
 });

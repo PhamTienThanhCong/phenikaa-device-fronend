@@ -1,179 +1,51 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import BaseLayout from "@/features/layout/BaseLayout";
-import { Table, Tag, Typography } from "antd";
+import { Table, Tag, Typography, Button, Form, Input, Modal, Card } from "antd";
+import { getCamera } from "./cameraApi";
 // import ReactTooltip from "react-tooltip";
 import "./style.css";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
+import { createCamera, deleteCamera } from "./cameraApi";
 
 // Dữ liệu camera giả
-const camerasData = [
-  // Các camera cho tòa nhà A1
-  { id: 1, name: "Camera 1", locationCode: "A1", status: "active", location: "Toà A1" },
-  { id: 2, name: "Camera 2", locationCode: "A1", status: "inactive", location: "Toà A1" },
-  { id: 3, name: "Camera 3", locationCode: "A1", status: "active", location: "Toà A1" },
 
-  // Các camera cho tòa nhà A2
-  { id: 4, name: "Camera 4", locationCode: "A2", status: "inactive", location: "Toà A2" },
-  { id: 5, name: "Camera 5", locationCode: "A2", status: "active", location: "Toà A2" },
-
-  // Các camera cho tòa nhà A3
-  { id: 6, name: "Camera 6", locationCode: "A3", status: "active", location: "Toà A3" },
-  { id: 7, name: "Camera 7", locationCode: "A3", status: "inactive", location: "Toà A3" },
-  { id: 8, name: "Camera 8", locationCode: "A3", status: "active", location: "Toà A3" },
-
-  // Các camera cho tòa nhà A4
-  { id: 9, name: "Camera 9", locationCode: "A4", status: "inactive", location: "Toà A4" },
-  { id: 10, name: "Camera 10", locationCode: "A4", status: "active", location: "Toà A4" },
-
-  // Các camera cho tòa nhà A5
-  { id: 11, name: "Camera 11", locationCode: "A5", status: "active", location: "Toà A5" },
-  { id: 12, name: "Camera 12", locationCode: "A5", status: "inactive", location: "Toà A5" },
-
-  // Các camera cho tòa nhà A6
-  { id: 13, name: "Camera 13", locationCode: "A6", status: "active", location: "Toà A6" },
-  { id: 14, name: "Camera 14", locationCode: "A6", status: "inactive", location: "Toà A6" },
-  { id: 15, name: "Camera 15", locationCode: "A6", status: "active", location: "Toà A6" },
-
-  // Các camera cho tòa nhà A7
-  { id: 16, name: "Camera 16", locationCode: "A7", status: "inactive", location: "Toà A7" },
-  { id: 17, name: "Camera 17", locationCode: "A7", status: "active", location: "Toà A7" },
-
-  // Các camera cho tòa nhà A8
-  { id: 18, name: "Camera 18", locationCode: "A8", status: "active", location: "Toà A8" },
-  { id: 19, name: "Camera 19", locationCode: "A8", status: "inactive", location: "Toà A8" },
-
-  // Các camera cho tòa nhà A9
-  { id: 20, name: "Camera 20", locationCode: "A9", status: "active", location: "Toà A9" },
-  { id: 21, name: "Camera 21", locationCode: "A9", status: "inactive", location: "Toà A9" },
-
-  // Các camera cho tòa nhà A10
-  { id: 22, name: "Camera 22", locationCode: "A10", status: "active", location: "Toà A10" },
-  { id: 23, name: "Camera 23", locationCode: "A10", status: "inactive", location: "Toà A10" },
-
-  // Các camera cho tòa nhà B1
-  { id: 24, name: "Camera 24", locationCode: "B1", status: "active", location: "Toà B1" },
-  { id: 25, name: "Camera 25", locationCode: "B1", status: "inactive", location: "Toà B1" },
-
-  // Các camera cho tòa nhà B2
-  { id: 26, name: "Camera 26", locationCode: "B2", status: "active", location: "Toà B2" },
-  { id: 27, name: "Camera 27", locationCode: "B2", status: "inactive", location: "Toà B2" },
-  { id: 28, name: "Camera 28", locationCode: "B2", status: "active", location: "Toà B2" },
-
-  // Các camera cho tòa nhà B3
-  { id: 29, name: "Camera 29", locationCode: "B3", status: "active", location: "Toà B3" },
-  { id: 30, name: "Camera 30", locationCode: "B3", status: "inactive", location: "Toà B3" },
-  { id: 31, name: "Camera 31", locationCode: "B3", status: "active", location: "Toà B3" },
-
-  // Các camera cho tòa nhà B4
-  { id: 32, name: "Camera 32", locationCode: "B4", status: "active", location: "Toà B4" },
-  { id: 33, name: "Camera 33", locationCode: "B4", status: "inactive", location: "Toà B4" },
-  { id: 34, name: "Camera 34", locationCode: "B4", status: "active", location: "Toà B4" },
-  { id: 35, name: "Camera 35", locationCode: "ParkingTeacher", status: "active", location: "Bãi đỗ xe giảng viên" },
-  { id: 36, name: "Camera 36", locationCode: "ParkingTeacher", status: "inactive", location: "Bãi đỗ xe giảng viên" },
-  { id: 37, name: "Camera 37", locationCode: "ParkingTeacher", status: "active", location: "Bãi đỗ xe giảng viên" },
-
-  // Các camera cho bãi đỗ xe P2
-  { id: 38, name: "Camera 38", locationCode: "ParkingStudent1", status: "active", location: "Bãi đỗ xe sinh viên 1" },
-  { id: 39, name: "Camera 39", locationCode: "ParkingStudent1", status: "inactive", location: "Bãi đỗ xe sinh viên 1" },
-  { id: 40, name: "Camera 40", locationCode: "ParkingStudent1", status: "active", location: "Bãi đỗ xe sinh viên 1" },
-
-  // Các camera cho bãi đỗ xe P3
-  { id: 41, name: "Camera 41", locationCode: "ParkingStudent2", status: "inactive", location: "Bãi đỗ xe sinh viên 2" },
-  { id: 42, name: "Camera 42", locationCode: "ParkingStudent2", status: "active", location: "Bãi đỗ xe sinh viên 2" },
-  { id: 43, name: "Camera 43", locationCode: "ParkingStudent2", status: "active", location: "Bãi đỗ xe sinh viên 2" },
-
-  // Các camera cho bãi đỗ xe P4
-  { id: 44, name: "Camera 44", locationCode: "ParkingStudent3", status: "active", location: "Bãi đỗ xe sinh viên 3" },
-  { id: 45, name: "Camera 45", locationCode: "parkingStudent3", status: "inactive", location: "Bãi đỗ xe sinh viên 3" },
-
-  // Các camera cho bãi đỗ xe P5
-  { id: 46, name: "Camera 46", locationCode: "ParkingStaduim", status: "active", location: "Bãi đỗ xe nhà thi đấu" },
-  { id: 47, name: "Camera 47", locationCode: "ParkingStaduim", status: "inactive", location: "Bãi đỗ xe nhà thi đấu" },
-  { id: 48, name: "Camera 48", locationCode: "ParkingStaduim", status: "active", location: "Bãi đỗ xe nhà thi đấu" },
-
-  // Các camera cho sân bóng
-  { id: 49, name: "Camera 49", locationCode: "Football", status: "active", location: "Sân bóng" },
-  { id: 50, name: "Camera 50", locationCode: "Football", status: "inactive", location: "Sân bóng" },
-  { id: 51, name: "Camera 51", locationCode: "Football", status: "active", location: "Sân bóng" },
-
-  // Các camera cho sân tennis
-  { id: 52, name: "Camera 52", locationCode: "Tennis", status: "active", location: "Sân tennis" },
-  { id: 53, name: "Camera 53", locationCode: "Tennis", status: "inactive", location: "Sân tennis" },
-
-  // Các camera cho sân bóng rổ
-  { id: 54, name: "Camera 54", locationCode: "Basketball", status: "active", location: "Sân bóng rổ" },
-  { id: 55, name: "Camera 55", locationCode: "Basketball", status: "inactive", location: "Sân bóng rổ" },
-  { id: 56, name: "Camera 56", locationCode: "Basketball", status: "active", location: "Sân bóng rổ" },
-
-  // Các camera cho khu vực nhà thi đấu
-  { id: 57, name: "Camera 57", locationCode: "C", status: "active", location: "Nhà thi đấu" },
-  { id: 58, name: "Camera 58", locationCode: "C", status: "inactive", location: "Nhà thi đấu" },
-  { id: 59, name: "Camera 59", locationCode: "C", status: "active", location: "Nhà thi đấu" },
-
-  // Các camera cho khu vực cổng chính
-  { id: 60, name: "Camera 60", locationCode: "MainGate", status: "active", location: "Cổng chính" },
-  { id: 61, name: "Camera 61", locationCode: "MainGate", status: "inactive", location: "Cổng chính" },
-  { id: 62, name: "Camera 62", locationCode: "MainGate", status: "active", location: "Cổng chính" },
-
-  // Các camera cho khu vực cổng phụ phía D6
-  { id: 63, name: "Camera 63", locationCode: "SideGateD6", status: "active", location: "Cổng phụ phía D6" },
-  { id: 64, name: "Camera 64", locationCode: "SideGateD6", status: "inactive", location: "Cổng phụ phía D6" },
-  { id: 65, name: "Camera 65", locationCode: "SideGateD6", status: "active", location: "Cổng phụ phía D6" },
-
-  // Các camera cho bãi đỗ xe P6
-  { id: 66, name: "Camera 49", locationCode: "ParkingD6", status: "active", location: "Bãi đỗ xe D6" },
-  { id: 67, name: "Camera 50", locationCode: "ParkingD6", status: "inactive", location: "Bãi đỗ xe D6" },
-  { id: 68, name: "Camera 51", locationCode: "ParkingD6", status: "active", location: "Bãi đỗ xe D6" },
-  // các camera cho cổng phụ phía nhà B
-  { id: 69, name: "Camera 69", locationCode: "SideGateB", status: "active", location: "Cổng phụ phía nhà B" },
-  { id: 70, name: "Camera 70", locationCode: "SideGateB", status: "inactive", location: "Cổng phụ phía nhà B" },
-  { id: 71, name: "Camera 71", locationCode: "SideGateB", status: "active", location: "Cổng phụ phía nhà B" },
-  // camera cổng phụ Sinh viên
-  { id: 72, name: "Camera 72", locationCode: "GateSideStudent", status: "active", location: "Cổng phụ Sinh viên" },
-  { id: 73, name: "Camera 73", locationCode: "GateSideStudent", status: "inactive", location: "Cổng phụ Sinh viên" },
-  { id: 74, name: "Camera 74", locationCode: "GateSideStudent", status: "active", location: "Cổng phụ Sinh viên" },
-  // camera cổng phụ giảng viên
-  { id: 75, name: "Camera 75", locationCode: "GateSideTeacher", status: "active", location: "Cổng phụ giảng viên" },
-  { id: 76, name: "Camera 76", locationCode: "GateSideTeacher", status: "inactive", location: "Cổng phụ giảng viên" },
-  { id: 77, name: "Camera 77", locationCode: "GateSideTeacher", status: "active", location: "Cổng phụ giảng viên" },
-  // camera Quảng trường
-  { id: 78, name: "Camera 78", locationCode: "Square", status: "active", location: "Quảng trường" },
-  { id: 79, name: "Camera 79", locationCode: "Square", status: "inactive", location: "Quảng trường" },
-  { id: 80, name: "Camera 80", locationCode: "Square", status: "active", location: "Quảng trường" },
-  // camera khu vực KTXA1
-  { id: 81, name: "Camera 81", locationCode: "KTXA1", status: "active", location: "Ký túc xá A1" },
-  { id: 82, name: "Camera 82", locationCode: "KTXA1", status: "inactive", location: "Ký túc xá A1" },
-  { id: 83, name: "Camera 83", locationCode: "KTXA1", status: "active", location: "Ký túc xá A1" },
-  // camera khu vực KTXB
-  { id: 84, name: "Camera 84", locationCode: "KTXB", status: "active", location: "Ký túc xá B" },
-  { id: 85, name: "Camera 85", locationCode: "KTXB", status: "inactive", location: "Ký túc xá B" },
-  { id: 86, name: "Camera 86", locationCode: "KTXB", status: "active", location: "Ký túc xá B" },
-  // camera khu vực KTXC1
-  { id: 87, name: "Camera 87", locationCode: "KTXC1", status: "active", location: "Ký túc xá C1" },
-  { id: 88, name: "Camera 88", locationCode: "KTXC1", status: "inactive", location: "Ký túc xá C1" },
-  { id: 89, name: "Camera 89", locationCode: "KTXC1", status: "active", location: "Ký túc xá C1" },
-  // camera khu vực KTXC2
-  { id: 90, name: "Camer 90", locationCode: "KTXC2", status: "active", location: "Ký túc xá C2" },
-  { id: 91, name: "Camera 91", locationCode: "KTXC2", status: "inactive", location: "Ký túc xá C2" },
-  { id: 92, name: "Camera 92", locationCode: "KTXC2", status: "active", location: "Ký túc xá C2" },
-  // camera khu vực CT
-  { id: 93, name: "Camera 93", locationCode: "CT", status: "active", location: "Khu vực Canteen" },
-  { id: 94, name: "Camera 94", locationCode: "CT", status: "inactive", location: "Khu vực Canteen" },
-  { id: 95, name: "Camera 95", locationCode: "CT", status: "active", location: "Khu vực Canteen" },
-  // camera khu vực D6
-  { id: 96, name: "Camera 96", locationCode: "D6", status: "active", location: "Toà D6" },
-  { id: 97, name: "Camera 97", locationCode: "D6", status: "inactive", location: "Toà D6" },
-  { id: 98, name: "Camera 98", locationCode: "D6", status: "active", location: "Toà D6" }
-];
 const { Title } = Typography;
 // Hàm tính số camera đang hoạt động theo tòa nhà
-const getActiveCamerasCount = (building) => {
-  return camerasData.filter((camera) => camera.locationCode === building && camera.status === "active").length;
-};
-const getCamerasForBuilding = (building) => {
-  return camerasData.filter((camera) => camera.locationCode === building, location);
-};
+
 const TestLayout = () => {
+  const dispatch = useAppDispatch();
+  const { listCamera, isGetAll } = useAppSelector((state) => state.camera);
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+  const [cameraToDelete, setCameraToDelete] = useState(null);
+
+  useEffect(() => {
+    if (!isGetAll) {
+      dispatch(getCamera());
+    }
+  }, [isGetAll, dispatch]);
+
+  const datacamera = listCamera.map((item) => {
+    return {
+      id: item.id,
+      name: item.name,
+      location: item.location,
+      status: item.status,
+      stream_url: item.stream_url,
+      locationCode: item.location_code
+    };
+  });
+
+  const getActiveCamerasCount = (building) => {
+    return datacamera.filter((camera) => camera.locationCode === building && camera.status === "active").length;
+  };
+  const getCamerasForBuilding = (building) => {
+    return datacamera.filter((camera) => camera.locationCode === building, location);
+  };
+
   const [selectedBuilding, setSelectedBuilding] = useState(null);
+  const [selectedCamera, setSelectedCamera] = useState(null);
+
   useEffect(() => {
     const tooltips = document.querySelectorAll(".building , .parking,.botCamera,.square");
 
@@ -205,32 +77,55 @@ const TestLayout = () => {
       });
     };
   }, []);
-
   const handleBuildingClick = (building) => {
     setSelectedBuilding(building);
+  };
+  // thêm
+  const handleDeleteCamera = (id) => {
+    setCameraToDelete(id);
+    setIsDeleteModalVisible(true);
+  };
+
+  const handleDeleteOk = async () => {
+    console.log("cameraToDelete", cameraToDelete);
+    try {
+      await dispatch(
+        deleteCamera({
+          id: cameraToDelete
+        })
+      );
+      dispatch(getCamera());
+      setIsDeleteModalVisible(false);
+    } catch (error) {
+      console.error("Failed to delete camera:", error);
+    }
   };
   // các cột của table
   const columns = [
     {
       title: "ID",
       dataIndex: "id",
-      key: "id"
+      key: "id",
+      width: "10%"
     },
     {
       title: "Tên camera",
       dataIndex: "name",
-      key: "name"
+      key: "name",
+      width: "20%"
     },
     {
       title: "Vị trí",
       dataIndex: "location",
-      key: "location"
+      key: "location",
+      width: "30%"
     },
 
     {
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",
+      width: "20%",
       render: (status) => {
         return status === "active" ? (
           <Tag style={{ color: "green" }}>Hoạt động</Tag>
@@ -238,8 +133,67 @@ const TestLayout = () => {
           <Tag style={{ color: "red" }}>Không hoạt động</Tag>
         );
       }
+    },
+    {
+      title: "Hành động",
+      key: "stream_url",
+      width: "20%",
+      render: (text, record) => (
+        <div>
+          <a href="#" onClick={() => handleSelectCamera(record)}>
+            Xem
+          </a>
+
+          <Button
+            type="link"
+            icon={<DeleteOutlined />}
+            onClick={() => handleDeleteCamera(record.id)}
+            style={{ marginLeft: 10, color: "red" }}
+          >
+            Xoá
+          </Button>
+        </div>
+      )
     }
   ];
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [form] = Form.useForm();
+
+  const handleSelectCamera = (record) => {
+    setSelectedCamera(null);
+    setTimeout(() => {
+      setSelectedCamera(record);
+    }, 10);
+  };
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleOk = async () => {
+    try {
+      const values = await form.validateFields();
+      const newCamera = {
+        name: values.name,
+        location_code: selectedBuilding,
+        location: values.location,
+        stream_url: values.stream_url
+      };
+      await dispatch(createCamera(newCamera));
+      // gọi lại api getCamera để cập nhật lại danh sách camera
+      dispatch(getCamera());
+
+      setIsModalVisible(false);
+      form.resetFields();
+    } catch (error) {
+      console.error("Failed to add camera:", error);
+    }
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+    setIsDeleteModalVisible(false);
+  };
 
   return (
     <BaseLayout>
@@ -1025,9 +979,77 @@ const TestLayout = () => {
           <rect x="40.5" y="4.5" width="75.75" height="29" rx="2.5" stroke="white" strokeOpacity="0.0980392" />
           {/* <ReactTooltip id="buildingB4" place="top" effect="solid" /> */}
         </svg>
-        {/* nếu data trống thì không hiển thị */}
         {selectedBuilding && (
-          <Table columns={columns} dataSource={selectedBuilding ? getCamerasForBuilding(selectedBuilding) : []} />
+          <div
+            style={{
+              width: "40rem"
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              {/* thêm title hiển thị vị trí đang chọn */}
+              <Title style={{ color: "black", fontSize: "30px" }}>{selectedBuilding}</Title>
+              <Button type="primary" icon={<PlusOutlined />} onClick={showModal} style={{ marginBottom: "16px" }}>
+                Thêm camera
+              </Button>
+            </div>
+            <Table
+              width="700px"
+              columns={columns}
+              dataSource={selectedBuilding ? getCamerasForBuilding(selectedBuilding) : []}
+            />
+
+            <Card>
+              {selectedCamera ? (
+                <video controls autoPlay style={{ width: "500px", height: "auto" }}>
+                  <source src={selectedCamera.stream_url} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              ) : (
+                <p>Không có camera nào đang được chọn</p>
+              )}
+            </Card>
+            <Modal
+              title="Thêm camera mới"
+              visible={isModalVisible}
+              onOk={handleOk}
+              onCancel={handleCancel}
+              okText="Create"
+              cancelText="Cancel"
+            >
+              <Form form={form} layout="vertical" name="create_camera_form">
+                <Form.Item
+                  name="name"
+                  label="Tên camera"
+                  rules={[{ required: true, message: "Please input the camera name!" }]}
+                >
+                  <Input />
+                </Form.Item>
+                <Form.Item name="location_code" label="mã khu vực">
+                  <Input value={selectedBuilding} disabled placeholder={selectedBuilding} />
+                </Form.Item>
+                <Form.Item
+                  name="location"
+                  label="vị trí"
+                  rules={[{ required: true, message: "Please input the location!" }]}
+                >
+                  <Input />
+                </Form.Item>
+                <Form.Item name="stream_url" label="Stream URL">
+                  <Input />
+                </Form.Item>
+              </Form>
+            </Modal>
+            <Modal
+              title="Xác nhận xoá"
+              visible={isDeleteModalVisible}
+              onOk={handleDeleteOk}
+              onCancel={handleCancel}
+              okText="Xoá"
+              cancelText="Hủy"
+            >
+              <p>Bạn có chắc chắn muốn xoá camera này?</p>
+            </Modal>
+          </div>
         )}
       </div>
     </BaseLayout>

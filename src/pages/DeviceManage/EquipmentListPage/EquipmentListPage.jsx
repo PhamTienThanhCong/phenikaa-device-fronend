@@ -175,6 +175,10 @@ const EquipmentListPage = () => {
 
   const selectedDeviceIds = formList.map((formItem) => formItem.deviceId);
 
+  const handleDeleteForm = (id) => {
+    setFormList((prev) => prev.filter((item) => item.id !== id));
+  };
+
   return (
     <BaseLayout>
       <h1>Danh sách thiết bị</h1>
@@ -213,13 +217,20 @@ const EquipmentListPage = () => {
             <DatePicker onChange={(date) => setProjectedReturnDate(date)} />
           </Form.Item>
           {formList.map((formItem) => (
-            <Row key={formItem.id} gutter={16}>
-              <Col span={12}>
+            <Row
+              key={formItem.id}
+              gutter={16}
+              style={{
+                display: "flex",
+                alignItems: "center"
+              }}
+            >
+              <Col span={11}>
                 <Form.Item label="Tên thiết bị">
                   <Select
                     value={formItem.deviceId}
                     onChange={(value) => handleChange(formItem.id, "deviceId", value)}
-                  // disabled={selectedDeviceIds.includes(formItem.deviceId)}
+                    // disabled={selectedDeviceIds.includes(formItem.deviceId)}
                   >
                     {dataDevice
                       .filter(
@@ -234,7 +245,7 @@ const EquipmentListPage = () => {
                   </Select>
                 </Form.Item>
               </Col>
-              <Col span={12}>
+              <Col span={10}>
                 <Form.Item
                   label="Số lượng"
                   validateStatus={formItem.quantityError ? "error" : ""}
@@ -247,6 +258,11 @@ const EquipmentListPage = () => {
                     onChange={(e) => handleChange(formItem.id, "quantity", e.target.value)}
                   />
                 </Form.Item>
+              </Col>
+              <Col span={1} style={{ textAlign: "center", paddingRight: "30px" }}>
+                <Button type="link" style={{ color: "red" }} onClick={() => handleDeleteForm(formItem.id)}>
+                  Xoá
+                </Button>
               </Col>
             </Row>
           ))}

@@ -470,7 +470,16 @@ const ManageCustome = () => {
                 <Form.Item
                   name="phone_number"
                   label="Số điện thoại"
-                  rules={[{ required: true, message: "Vui lòng nhập số điện thoại" }]}
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng nhập số điện thoại"
+                    },
+                    {
+                      pattern: /^[0-9]{10}$/,
+                      message: "Số điện thoại phải có 10 chữ số"
+                    }
+                  ]}
                 >
                   <Input type="tel" placeholder="Nhập số điện thoại" style={{ height: 50 }} />
                 </Form.Item>
