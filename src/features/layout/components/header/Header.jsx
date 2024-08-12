@@ -21,8 +21,8 @@ function Headerlayout() {
     }
   }, [dispatch, isGetAll]);
 
-  const logout = () => {
-    dispatch(logOut());
+  const logout = async () => {
+    await dispatch(logOut());
   };
 
   const {

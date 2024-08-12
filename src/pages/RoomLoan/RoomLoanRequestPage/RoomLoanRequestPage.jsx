@@ -7,9 +7,7 @@ import { getRoomBookingList } from "../RoomApi";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 const { Title } = Typography;
 
-
 const RoomLoanRequestPage = () => {
-
   const dispatch = useAppDispatch();
   const [selectedBorrowing, setSelectedBorrowing] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -22,22 +20,22 @@ const RoomLoanRequestPage = () => {
     }
   }, [dispatch, isRoomBooking]);
 
-
-  const roomBookingData = roomBooking.filter((item) => item.status !== "đã sử dụng").map((item) => {
-    return {
-      id: item.id,
-      name: item.room.room_id,
-      borrowTime: item.start_time + " - " + item.end_time,
-      date_booking: item.date_booking,
-      status: item.status
-    };
-  });
+  const roomBookingData = roomBooking
+    .filter((item) => item.status !== "đã sử dụng")
+    .map((item) => {
+      return {
+        id: item.id,
+        name: item.room.room_id,
+        borrowTime: item.start_time + " - " + item.end_time,
+        date_booking: item.date_booking,
+        status: item.status
+      };
+    });
 
   const handleViewDetails = (record) => {
     setSelectedBorrowing(record);
     setIsModalVisible(true);
   };
-
 
   const columns = [
     { title: "Mã phiếu mượn", dataIndex: "id", key: "id", width: "16%" },

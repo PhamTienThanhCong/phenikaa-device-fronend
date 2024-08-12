@@ -69,8 +69,8 @@ const EquipmentManagementPage = () => {
         is_active: true,
         image: ""
       };
-      dispatch(createDeviceCategory(payload));
-      dispatch(getDeviceCategoryList());
+      await dispatch(createDeviceCategory(payload));
+      await dispatch(getDeviceCategoryList());
       handleModalClose();
     } else if (modalType === "editType") {
       const payload = {
@@ -78,14 +78,14 @@ const EquipmentManagementPage = () => {
         is_active: true,
         image: ""
       };
-      dispatch(
+      await dispatch(
         updateDeviceCategory({
           category_id: selectedData.id,
           ...payload
         })
       );
       handleModalClose();
-      dispatch(getDeviceCategoryList());
+      await dispatch(getDeviceCategoryList());
     } else if (modalType === "addDevice") {
       const payload = {
         name: values.name,
@@ -96,7 +96,7 @@ const EquipmentManagementPage = () => {
         image: ""
       };
       await dispatch(createDevice(payload));
-      dispatch(getDeviceList());
+      await dispatch(getDeviceList());
     } else if (modalType === "editDevice") {
       const payload = {
         name: values.name,
@@ -116,18 +116,18 @@ const EquipmentManagementPage = () => {
           ...payload
         })
       );
-      dispatch(getDeviceList());
+      await dispatch(getDeviceList());
     }
     handleModalClose();
   };
 
   const handleDelete = async (key) => {
     await dispatch(deleteDeviceCategory({ category_id: key }));
-    dispatch(getDeviceCategoryList());
+    await dispatch(getDeviceCategoryList());
   };
   const handleDeleleDevice = async (key) => {
     await dispatch(deleteDevice({ device_id: key }));
-    dispatch(getDeviceList());
+    await dispatch(getDeviceList());
   };
 
   const deviceColumns = [

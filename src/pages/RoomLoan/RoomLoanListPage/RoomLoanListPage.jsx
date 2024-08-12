@@ -45,7 +45,7 @@ const RoomLoanListPage = () => {
   const [openRequestModal, setOpenRequestModal] = useState(false);
   const [summaryModalVisible, setSummaryModalVisible] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
-  const [userList, setUserList] = useState([]);
+  // const [userList, setUserList] = useState([]);
   const [formList, setFormList] = useState([
     { id: uuidv4(), room_id: "", studentCode: "", studentName: "", studentClass: "" }
   ]);
@@ -125,7 +125,7 @@ const RoomLoanListPage = () => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const summaryData = {
       name: `Phòng ${formList[0].room_id}`,
       room_id: formList[0].room_id,
@@ -138,7 +138,7 @@ const RoomLoanListPage = () => {
       customer_id: getCustomerId(studentInfo.studentCode)
     };
     console.log(111111111111, summaryData, formList);
-    dispatch(addRoomBooking(summaryData));
+    await dispatch(addRoomBooking(summaryData));
     setSummary(summaryData);
     setSummaryModalVisible(true);
     setOpenRequestModal(false);
@@ -201,7 +201,7 @@ const RoomLoanListPage = () => {
   };
 
   const onEidtRoom = () => {
-    let details = selectedRoom.detail.map((item, index) => {
+    let details = selectedRoom.detail.map((item) => {
       return { id: uuidv4(), facilityName: item.name, quantity: item.total };
     });
 
@@ -511,20 +511,20 @@ const RoomLoanListPage = () => {
               {/* select is_active, is_using, is_maintenance */}
               <Form.Item label="Hoạt động" name="is_active">
                 <Select lect placeholder="">
-                  <Select.Option value="1">Active</Select.Option>
-                  <Select.Option value="0">inActive</Select.Option>
+                  <Select.Option value="1">Đang hoạt động</Select.Option>
+                  <Select.Option value="0">Không hoạt động</Select.Option>
                 </Select>
               </Form.Item>
-              <Form.Item label="Hoạt sử dụng" name="is_using">
+              <Form.Item label="Có thể sử dụng" name="is_using">
                 <Select placeholder="">
-                  <Select.Option value="1">Active</Select.Option>
-                  <Select.Option value="0">inActive</Select.Option>
+                  <Select.Option value="1">Bình thường</Select.Option>
+                  <Select.Option value="0">Bảo trì</Select.Option>
                 </Select>
               </Form.Item>
               <Form.Item label="bảo trì" name="is_maintenance">
                 <Select placeholder="">
-                  <Select.Option value="1">Active</Select.Option>
-                  <Select.Option value="0">inActive</Select.Option>
+                  <Select.Option value="1">Sẵn sàng</Select.Option>
+                  <Select.Option value="0">Bảo trì</Select.Option>
                 </Select>
               </Form.Item>
             </>

@@ -94,7 +94,7 @@ const TestLayout = () => {
           id: cameraToDelete
         })
       );
-      dispatch(getCamera());
+      await dispatch(getCamera());
       setIsDeleteModalVisible(false);
     } catch (error) {
       console.error("Failed to delete camera:", error);
@@ -181,7 +181,7 @@ const TestLayout = () => {
       };
       await dispatch(createCamera(newCamera));
       // gọi lại api getCamera để cập nhật lại danh sách camera
-      dispatch(getCamera());
+      await dispatch(getCamera());
 
       setIsModalVisible(false);
       form.resetFields();

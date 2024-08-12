@@ -15,7 +15,8 @@ import {
   Col,
   Descriptions,
   DatePicker,
-  InputNumber
+  InputNumber,
+  Checkbox
 } from "antd";
 import { SearchOutlined, PlusOutlined, DeleteOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
 import BaseLayout from "@/features/layout/BaseLayout";
@@ -215,17 +216,6 @@ const MaintenanceSchedulePage = () => {
           >
             {<EditOutlined />}
           </p>
-          <Popconfirm title="Bạn có chắc chắn muốn xóa?" onConfirm={() => handleDelete(record.key)}>
-            <p
-              type="text"
-              style={{
-                color: "red",
-                cursor: "pointer"
-              }}
-            >
-              {<DeleteOutlined />}
-            </p>
-          </Popconfirm>
         </Space>
       )
     }
@@ -281,9 +271,9 @@ const MaintenanceSchedulePage = () => {
         });
         handleModalClose();
 
-        dispatch(getAllDeviceRepair());
-        dispatch(getAllMaintenance());
-        dispatch(getAllDevice());
+        await dispatch(getAllDeviceRepair());
+        await dispatch(getAllMaintenance());
+        await dispatch(getAllDevice());
 
         handleModalClose();
       } catch (e) {
@@ -300,13 +290,14 @@ const MaintenanceSchedulePage = () => {
           name: values.title,
           devices: values.devices.map((device) => ({
             device_id: device.deviceName,
-            quantity: parseInt(device?.quantity),
-            cost_per_unit: device.cost_per_unit[0]
+            arise_from: parseInt(device?.quantity),
+            cost_per_unit: device.cost_per_unit[0],
+            note: "device.note"
           })),
           user_id: values.user,
           service_id: values.name,
           note: values.note || "",
-          is_returned: true,
+          is_returned: values.is_returned,
           returning_date: values?.maintenanceTime ? values.maintenanceTime.format("YYYY-MM-DD HH:mm:ss") : ""
         };
         await dispatch(
@@ -445,6 +436,7 @@ const MaintenanceSchedulePage = () => {
                       width: "100%",
                       height: "40px"
                     }}
+                    disabled={modalType === "edit"}
                   >
                     {listMaintaince.map((item) => (
                       <Option key={item.device_maintance_id} value={item.device_maintance_id}>
@@ -460,7 +452,7 @@ const MaintenanceSchedulePage = () => {
                   label="Tiêu đề"
                   rules={[{ required: true, message: "Tiêu đề không thể để trống!" }]}
                 >
-                  <Input />
+                  <Input disabled={modalType === "edit"} />
                 </Form.Item>
               </Col>
             </Row>
@@ -477,6 +469,7 @@ const MaintenanceSchedulePage = () => {
                       width: "100%",
                       height: "40px"
                     }}
+                    disabled={modalType === "edit"}
                   >
                     {listUserData.map((item) => (
                       <Option key={item.user_id} value={item.user_id}>
@@ -491,8 +484,15 @@ const MaintenanceSchedulePage = () => {
                   name="maintenanceTime"
                   label="Thời gian hoàn thành"
                   rules={[{ required: true, message: "Vui lòng chọn thời gian hoàn thành!" }]}
+                  disabled={modalType === "edit"}
                 >
-                  <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" style={{ width: "100%" }} size="large" />
+                  <DatePicker
+                    showTime
+                    format="YYYY-MM-DD HH:mm:ss"
+                    style={{ width: "100%" }}
+                    size="large"
+                    disabled={modalType === "edit"}
+                  />
                 </Form.Item>
               </Col>
             </Row>
@@ -510,6 +510,7 @@ const MaintenanceSchedulePage = () => {
                               fieldKey={[fieldKey, "deviceName"]}
                               label="Tên thiết bị"
                               rules={[{ required: true, message: "Tên thiết bị không thể để trống!" }]}
+                              disabled={modalType === "edit"}
                             >
                               <Select
                                 placeholder="Chọn thiết bị"
@@ -518,6 +519,7 @@ const MaintenanceSchedulePage = () => {
                                   height: "40px"
                                 }}
                                 size="large"
+                                disabled={modalType === "edit"}
                               >
                                 {deviceOptions.map((item) => (
                                   <Option key={item.device_id} value={item.device_id}>
@@ -534,8 +536,9 @@ const MaintenanceSchedulePage = () => {
                               fieldKey={[fieldKey, "quantity"]}
                               label="Số lượng"
                               rules={[{ required: true, message: "Số lượng không thể để trống!" }]}
+                              disabled={modalType === "edit"}
                             >
-                              <AntInput type="number" />
+                              <AntInput type="number" disabled={modalType === "edit"} />
                             </Form.Item>
                           </Col>
                           <Col span={8}>
@@ -546,6 +549,7 @@ const MaintenanceSchedulePage = () => {
                               label="Giá mỗi thiết bị"
                               rules={[{ required: true, message: "Giá không thể để trống!" }]}
                               style={{ width: "100%", height: "50px" }}
+                              disabled={modalType === "edit"}
                             >
                               <InputNumber
                                 addonAfter={`VNĐ`}
@@ -554,6 +558,7 @@ const MaintenanceSchedulePage = () => {
                                 onChange={onChange}
                                 style={{ width: "100%", height: "80px" }}
                                 size="large"
+                                disabled={modalType === "edit"}
                               />
                             </Form.Item>
                           </Col>
@@ -578,6 +583,7 @@ const MaintenanceSchedulePage = () => {
                           style={{
                             width: "100%"
                           }}
+                          disabled={modalType === "edit"}
                         >
                           Thêm thiết bị
                         </Button>
@@ -589,7 +595,7 @@ const MaintenanceSchedulePage = () => {
 
                           // rules={[{ required: true, message: "Lý do bảo trì không thể để trống!" }]}
                         >
-                          <AntInput.TextArea />
+                          <AntInput.TextArea disabled={modalType === "edit"} />
                         </Form.Item>
                       </Col>
                     </>
@@ -600,13 +606,24 @@ const MaintenanceSchedulePage = () => {
             {modalType === "edit" && (
               <Row gutter={16}>
                 <Col span={12}>
-                  {/* <Form.Item
-                    name="isReturned"
+                  <Form.Item
+                    name="is_returned"
                     label="Trạng thái"
                     rules={[{ required: true, message: "Trạng thái không thể để trống!" }]}
                   >
-                    <Checkbox>Đã trả</Checkbox>
-                  </Form.Item> */}
+                    {/* <Checkbox>Đã trả</Checkbox> */}
+                    {/* sửa checkbox thành select */}
+                    <Select
+                      placeholder="Chọn trạng thái"
+                      style={{
+                        width: "100%",
+                        height: "40px"
+                      }}
+                    >
+                      <Option value={true}>Đã trả</Option>
+                      <Option value={false}>Chưa trả</Option>
+                    </Select>
+                  </Form.Item>
                 </Col>
               </Row>
             )}

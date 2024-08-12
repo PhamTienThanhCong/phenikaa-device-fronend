@@ -6,7 +6,6 @@ import { useAppDispatch, useAppSelector } from "@/app/hooks";
 
 const { Title } = Typography;
 
-
 const RoomLoanHistoryPage = () => {
   const dispatch = useAppDispatch();
   const { roomBooking, isRoomBooking } = useAppSelector((state) => state.room);
@@ -17,18 +16,18 @@ const RoomLoanHistoryPage = () => {
     }
   }, [dispatch, isRoomBooking]);
 
-
-  const roomBookingData = roomBooking.filter((item) => item.status === "đã sử dụng").map((item) => {
-    return {
-      id: item.id,
-      roomName: item.room.room_id,
-      borrowTime: item.start_time + "  " + item.date_booking,
-      returnTime: item.end_time,
-      lender: item.user.full_name,
-      status: item.status
-    };
-  });
-
+  const roomBookingData = roomBooking
+    .filter((item) => item.status === "đã sử dụng")
+    .map((item) => {
+      return {
+        id: item.id,
+        roomName: item.room.room_id,
+        borrowTime: item.start_time + "  " + item.date_booking,
+        returnTime: item.end_time,
+        lender: item.user.full_name,
+        status: item.status
+      };
+    });
 
   const columns = [
     { title: "Mã phiếu", dataIndex: "id", key: "id" },

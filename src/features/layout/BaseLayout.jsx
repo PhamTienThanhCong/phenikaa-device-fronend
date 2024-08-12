@@ -99,11 +99,11 @@ const navbars = [
       {
         key: PATH.ERROR_REPORTS.LIST,
         label: "Danh sách thông báo lỗi"
-      },
-      {
-        key: PATH.ERROR_REPORTS.CREATE,
-        label: "Tạo thông báo lỗi"
       }
+      // {
+      //   key: PATH.ERROR_REPORTS.CREATE,
+      //   label: "Tạo thông báo lỗi"
+      // }
     ]
   }
 ];

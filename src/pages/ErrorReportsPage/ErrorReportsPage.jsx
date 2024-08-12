@@ -78,7 +78,7 @@ const AdminErrorReportsPage = () => {
     };
 
     await dispatch(markAsRead({ notify_id: selectedReport.id, ...payload }));
-    dispatch(getErrorReportsList());
+    await dispatch(getErrorReportsList());
 
     message.success("Phản hồi đã được gửi qua email");
     setModalVisible(false);

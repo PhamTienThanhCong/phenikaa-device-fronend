@@ -12,12 +12,12 @@ const BasicPage = () => {
   // console.log(currentUser);
   // useEffect(() => {
   //   if (!isGetUser) {
-  //     dispatch(getAllDemo());
+  //   await dispatch(getAllDemo());
   //   }
   // }, [dispatch, isGetUser]);
 
-  const reloadData = () => {
-    dispatch(logOut());
+  const reloadData = async () => {
+    await dispatch(logOut());
   };
 
   return (

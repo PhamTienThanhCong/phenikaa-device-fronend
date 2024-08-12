@@ -107,7 +107,7 @@ const EquipmentListPage = () => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Prepare summary data
     const summary = {
       name: `Phiếu mượn thiết bị - ${studentInfo.studentName}`,
@@ -120,9 +120,9 @@ const EquipmentListPage = () => {
       returning_date: projectedReturnDate.format("YYYY-MM-DD hh:mm:ss"),
       note: "Không có note :))"
     };
-    console.log(2222222222222222, summary);
+
     setSummaryData(summary);
-    dispatch(borrowDevice(summary));
+    await dispatch(borrowDevice(summary));
     setOpenModal(false);
     setOpenSummaryModal(true);
   };

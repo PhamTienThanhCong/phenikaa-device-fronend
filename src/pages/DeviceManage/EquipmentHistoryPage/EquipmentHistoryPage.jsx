@@ -26,7 +26,6 @@ const mockHistory = [
 ];
 
 const EquipmentHistoryPage = () => {
-
   const dispatch = useAppDispatch();
   const [history, setHistory] = useState(mockHistory);
   const [searchText, setSearchText] = useState("");
@@ -50,32 +49,29 @@ const EquipmentHistoryPage = () => {
     return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
   };
 
-  const listDeviceBooking = deviceBooking.filter((item) => item.status === "returned").map((item) => {
-    return {
-      slipCode: item.id,
-      borrowerName: item.customer.full_name,
-      borrowDate: formatDate(item.created_at),
-      returnDate: formatDate(item.returning_date),
-      issuedBy: item.user ? item.user.full_name : "QTV",
-      devices: item.devices.map((device) => ({
-        id: device.device_id,
-        name: device.device.name,
-        quantity: device.quantity
-      }))
-    };
-  });
-  const filteredHistory = listDeviceBooking.filter((record) =>
-    record.slipCode.toString().includes(searchText)
-  );
+  const listDeviceBooking = deviceBooking
+    .filter((item) => item.status === "returned")
+    .map((item) => {
+      return {
+        slipCode: item.id,
+        borrowerName: item.customer.full_name,
+        borrowDate: formatDate(item.created_at),
+        returnDate: formatDate(item.returning_date),
+        issuedBy: item.user ? item.user.full_name : "QTV",
+        devices: item.devices.map((device) => ({
+          id: device.device_id,
+          name: device.device.name,
+          quantity: device.quantity
+        }))
+      };
+    });
+  const filteredHistory = listDeviceBooking.filter((record) => record.slipCode.toString().includes(searchText));
 
   const handleViewDetails = (record) => {
     console.log(11111111111111, record);
     setSelectedRecord(record);
     setViewModalVisible(true);
   };
-
-
-
 
   const columns = [
     { title: "Mã phiếu mượn", dataIndex: "slipCode", key: "slipCode" },
@@ -132,12 +128,11 @@ const EquipmentHistoryPage = () => {
             <p>
               <strong>Tên tài khoản đã cho mượn:</strong> {selectedRecord.issuedBy}
             </p>
-            <Table dataSource={selectedRecord.devices} rowKey="id" >
+            <Table dataSource={selectedRecord.devices} rowKey="id">
               <Table.Column title="Mã thiết bị" dataIndex="id" key="id" />
               <Table.Column title="Tên thiết bị" dataIndex="name" key="name" />
               <Table.Column title="Số lượng" dataIndex="quantity" key="quantity" />
             </Table>
-
           </>
         )}
       </Modal>

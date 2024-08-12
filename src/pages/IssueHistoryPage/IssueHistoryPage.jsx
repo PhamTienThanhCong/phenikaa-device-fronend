@@ -22,18 +22,25 @@ const IssueHistoryPage = () => {
       dispatch(getAllMaintaince());
     }
   }, [dispatch, isGetAll]);
-  const dataMaintenanceList = maintenanceList.map((item, index) => {
-    return {
-      key: index + 1,
-      id: item.id,
-      name: item.name,
-      guardian: item.guardian,
-      description: item.description,
-      address: item.address,
-      phone: item.phone,
-      email: item.email
-    };
-  });
+
+  // lọc dữ liệu theo status = true
+  const dataMaintenanceList = maintenanceList
+    .filter((item) => item.status === true)
+    .map((item, index) => {
+      return {
+        key: index + 1,
+        id: item.id,
+        name: item.name,
+        guardian: item.guardian,
+        description: item.description,
+        address: item.address,
+        phone: item.phone,
+        email: item.email,
+        status: item.status
+      };
+    });
+  // console.log("dataMaintenanceList", dataMaintenanceList);
+
   const [filteredData, setFilteredData] = useState(dataMaintenanceList);
   const [data, setData] = useState(dataMaintenanceList);
 
@@ -97,7 +104,7 @@ const IssueHistoryPage = () => {
     try {
       await dispatch(createMaintaince(payload));
 
-      dispatch(getAllMaintaince());
+      await dispatch(getAllMaintaince());
 
       setData([...data, { key: data.length + 1, ...values }]);
       handleModalClose();
@@ -131,7 +138,7 @@ const IssueHistoryPage = () => {
 
     const updatedData = data.map((item) => (item.key === selectedItem.key ? { ...item, ...values } : item));
     setData(updatedData);
-    dispatch(getAllMaintaince());
+    await dispatch(getAllMaintaince());
     handleModalClose();
   };
 
@@ -145,14 +152,27 @@ const IssueHistoryPage = () => {
       cancelText: "Hủy",
       onOk: async () => {
         try {
+          const payload = {
+            guardian: record.guardian,
+            name: record.name,
+            description: record.description,
+            address: record.address,
+            phone: record.phone,
+            email: record.email,
+            status: false,
+            map_url: ""
+          };
+          // console.log("payload", payload);
           await dispatch(
-            deleteMaintaince({
-              service_id: record.id
+            updateMaintaince({
+              service_id: record.id,
+              ...payload
             })
           );
+
           setData(data.filter((item) => item.key !== record.key));
           //  gọi lại api để lấy dữ liệu mới
-          dispatch(getAllMaintaince());
+          await dispatch(getAllMaintaince());
         } catch (error) {
           console.error("Failed to delete:", error);
         }

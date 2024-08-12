@@ -11,38 +11,31 @@ import { notification } from "antd";
 
 const { Title } = Typography;
 
-const mockRequests = [
-  { slipCode: "MS001", borrowerName: "Nguyen Van A", projectedReturnDate: "2024-07-30", isReturned: false },
-  { slipCode: "MS002", borrowerName: "Le Thi B", projectedReturnDate: "2024-08-05", isReturned: true }
-  // Add more mock data as needed
-];
-
 const EquipmentRequestPage = () => {
-
   const dispatch = useAppDispatch();
-  const [requests, setRequests] = useState(mockRequests);
+  // const [requests, setRequests] = useState(mockRequests);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [viewModalVisible, setViewModalVisible] = useState(false);
   const { deviceBooking, isDeviceBooking } = useAppSelector((state) => state.device);
   const { isDevice, device } = useAppSelector((state) => state.device);
   const error = useAppSelector((state) => state.device.error);
   const [api, contextHolder] = notification.useNotification();
-  const handleMarkAsReturned = (slipCode) => {
-    dispatch(returnDevice({ id: slipCode }));
+  const handleMarkAsReturned = async (slipCode) => {
+    await dispatch(returnDevice({ id: slipCode }));
   };
-  const refreshData = () => {
-    dispatch(getBookingDeviceList());
+  const refreshData = async () => {
+    await dispatch(getBookingDeviceList());
   };
   const notificationMessage = (type, message) => {
     api[type]({
       message: type == "error" ? "Lỗi" : "Thông báo",
       description: message
-    })
-  }
+    });
+  };
   useEffect(() => {
     if (!isDeviceBooking) {
       dispatch(getBookingDeviceList());
-      refreshData()
+      refreshData();
     }
   }, [dispatch, isDeviceBooking]);
   useEffect(() => {
@@ -52,40 +45,44 @@ const EquipmentRequestPage = () => {
   }, [dispatch, isDevice]);
   useEffect(() => {
     if (error) {
-      notificationMessage('error', error)
-      dispatch(clearError())
+      notificationMessage("error", error);
+      dispatch(clearError());
     }
-  }, [error, dispatch])
+  }, [error, dispatch]);
 
   const getDeviceInfo = (deviceId) => {
     const deviceInfo = device.find((item) => item.id === deviceId);
-    return deviceInfo ? {
-      id: deviceInfo.id,
-      name: deviceInfo.name,
-    } : {
-      id: deviceId,
-      name: "Unknown",
-    };
+    return deviceInfo
+      ? {
+          id: deviceInfo.id,
+          name: deviceInfo.name
+        }
+      : {
+          id: deviceId,
+          name: "Unknown"
+        };
   };
 
   const formatDate = (date) => {
     const d = new Date(date);
     return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
   };
-  const listDeviceBooking = deviceBooking.filter((item) => item.status !== "returned").map((item) => {
-    return {
-      slipCode: item.id,
-      borrowerName: item.customer.full_name,
-      borrowDate: formatDate(item.created_at),
-      returnDate: formatDate(item.returning_date),
-      issuedBy: item.user ? item.user.full_name : "QTV",
-      deviceList: item.devices.map((device) => ({
-        id: device.device_id,
-        name: getDeviceInfo(device.device_id).name,
-        quantity: device.quantity
-      }))
-    };
-  });
+  const listDeviceBooking = deviceBooking
+    .filter((item) => item.status !== "returned")
+    .map((item) => {
+      return {
+        slipCode: item.id,
+        borrowerName: item.customer.full_name,
+        borrowDate: formatDate(item.created_at),
+        returnDate: formatDate(item.returning_date),
+        issuedBy: item.user ? item.user.full_name : "QTV",
+        deviceList: item.devices.map((device) => ({
+          id: device.device_id,
+          name: getDeviceInfo(device.device_id).name,
+          quantity: device.quantity
+        }))
+      };
+    });
 
   const handleViewDetails = (request) => {
     setSelectedRequest(request);
@@ -152,7 +149,7 @@ const EquipmentRequestPage = () => {
             <p>
               <strong>Thời gian trả:</strong> {selectedRequest.returnDate}
             </p>
-            <Table dataSource={selectedRequest.deviceList} rowKey="id" >
+            <Table dataSource={selectedRequest.deviceList} rowKey="id">
               <Table.Column title="Mã thiết bị" dataIndex="id" key="id" />
               <Table.Column title="Tên thiết bị" dataIndex="name" key="name" />
               <Table.Column title="Số lượng" dataIndex="quantity" key="quantity" />
