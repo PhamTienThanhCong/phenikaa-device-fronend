@@ -25,12 +25,14 @@ import "@/assets/styles/main.css";
 import BookingReceipt from "./pages/Receipt/BookingReceipt";
 import DeviceLoanReceipt from "./pages/Receipt/DeviceLoanReceipt";
 import FeedBackPage from "./pages/FeedBack/FeedBackPage";
+import DeviceReturnReceipt from "./pages/Receipt/DeviceReturnReceipt";
 
 function App() {
   return (
     <>
       <Routes>
         <Route path="/booking-receipt/:id" element={<BookingReceipt />} />
+        <Route path="/device-return-receipt" element={<DeviceReturnReceipt />} />
         <Route path="/device-loan/:id" element={<DeviceLoanReceipt />} />
         <Route path="/feedback" element={<FeedBackPage />} />
         <Route path="/login" element={<LoginPage />} />

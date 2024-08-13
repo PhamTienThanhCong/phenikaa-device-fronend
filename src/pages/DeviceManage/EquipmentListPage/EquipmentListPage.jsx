@@ -9,6 +9,8 @@ import { v4 as uuidv4 } from "uuid";
 import QRCode from "qrcode.react";
 import { getCustomer } from "@/pages/manageCutome/CustomerAPI";
 
+import { unwrapResult } from '@reduxjs/toolkit';
+
 const deviceData = [
   { id: "D001", name: "Laptop", total: 10 },
   { id: "D002", name: "Projector", total: 5 }
@@ -29,7 +31,8 @@ const EquipmentListPage = () => {
   const [summaryData, setSummaryData] = React.useState(null);
   const { isCustomer, customer } = useAppSelector((state) => state.customer);
   const currentUser = useAppSelector((state) => state.auth.currentUser);
-
+  const { newBooking, isNewBooking } = useAppSelector((state) => state.device);
+  const [newData, setNewData] = React.useState({});
   const searchTextDebounce = useDebounce(searchText, 300);
 
   const deviceColumns = [
@@ -91,6 +94,9 @@ const EquipmentListPage = () => {
       })
     );
   };
+  const handleRemoveForm = (id) => {
+    setFormList((prev) => prev.filter((item) => item.id !== id));
+  };
 
   const handleStudentCodeChange = (value) => {
     setStudentCode(value);
@@ -121,8 +127,13 @@ const EquipmentListPage = () => {
       note: "Không có note :))"
     };
 
-    setSummaryData(summary);
-    await dispatch(borrowDevice(summary));
+    const response = await dispatch(borrowDevice(summary));
+
+    const data = await unwrapResult(response);
+    console.log(data);
+    setNewData(data);
+    console.log("newwwwwwwwwwwwwww", newData);
+
     setOpenModal(false);
     setOpenSummaryModal(true);
   };
@@ -171,6 +182,13 @@ const EquipmentListPage = () => {
     printWindow.document.close();
     printWindow.focus();
     printWindow.print();
+  };
+  const formatDeviceData = (deviceData) => {
+    return deviceData.map((item) => ({
+      id: item.device.id,
+      name: item.device.name,
+      quantity: item.quantity
+    }));
   };
 
   const selectedDeviceIds = formList.map((formItem) => formItem.deviceId);
@@ -230,7 +248,7 @@ const EquipmentListPage = () => {
                   <Select
                     value={formItem.deviceId}
                     onChange={(value) => handleChange(formItem.id, "deviceId", value)}
-                    // disabled={selectedDeviceIds.includes(formItem.deviceId)}
+                  // disabled={selectedDeviceIds.includes(formItem.deviceId)}
                   >
                     {dataDevice
                       .filter(
@@ -245,7 +263,12 @@ const EquipmentListPage = () => {
                   </Select>
                 </Form.Item>
               </Col>
-              <Col span={10}>
+              <Col span={() => {
+                if (formList.length == 1) {
+                  return 12;
+                }
+                return 10;
+              }}>
                 <Form.Item
                   label="Số lượng"
                   validateStatus={formItem.quantityError ? "error" : ""}
@@ -259,15 +282,19 @@ const EquipmentListPage = () => {
                   />
                 </Form.Item>
               </Col>
-              <Col span={1} style={{ textAlign: "center", paddingRight: "30px" }}>
-                <Button type="link" style={{ color: "red" }} onClick={() => handleDeleteForm(formItem.id)}>
-                  Xoá
-                </Button>
+              <Col span={1}>
+                {
+                  formList.length > 1 && (
+                    <Button type="link" onClick={() => handleRemoveForm(formItem.id)} style={{ width: "100%", height: "32px", color: 'red' }}>
+                      Xóa
+                    </Button>
+                  )
+                }
               </Col>
             </Row>
           ))}
         </Form>
-        <Button type="dashed" onClick={handleAddForm} style={{ width: "100%", marginTop: 16 }}>
+        <Button span={4} type="dashed" onClick={handleAddForm} style={{ width: "100%", marginTop: 16 }}>
           Mượn thêm
         </Button>
       </Modal>
@@ -287,33 +314,38 @@ const EquipmentListPage = () => {
           </Button>
         ]}
       >
-        {summaryData && (
+        {newData?.customer && (
           <>
             <div style={{ textAlign: "center", marginBottom: 16 }}>
-              <QRCode value={`Student Code: ${summaryData.studentCode}`} />
+              <QRCode value={`https://phenikaa-uni.top/device-loan/${newData.id}`} />
             </div>
             <p>
-              <strong>Mã sinh viên:</strong> {summaryData.studentCode}
+              <strong>Mã sinh viên:</strong> {newData?.customer?.id}
             </p>
             <p>
-              <strong>Tên sinh viên:</strong> {summaryData.studentName}
+              <strong>Tên sinh viên:</strong> {newData?.customer?.full_name}
             </p>
             <p>
-              <strong>Lớp:</strong> {summaryData.class}
+              <strong>Khoa:</strong> {newData?.customer?.department}
             </p>
             <p>
-              <strong>Thời gian trả dự kiến:</strong> {summaryData.projectedReturnDate}
+              <strong>Thời gian trả dự kiến:</strong> {newData?.returning_date}
             </p>
             <p>
               <strong>Các thiết bị mượn:</strong>
             </p>
-            <ul>
-              {summaryData.devices.map((device, index) => (
+            {/* <ul>
+              {newBooking.devices.map((device, index) => (
                 <li key={index}>
                   {device.device} - {device.quantity}
                 </li>
               ))}
-            </ul>
+            </ul> */}
+            <Table dataSource={formatDeviceData(newData?.devices)} rowKey="device_id">
+              <Table.Column title="Mã thiết bị" dataIndex="id" key="device.id" />
+              <Table.Column title="Tên thiết bị" dataIndex="name" key="device.name" />
+              <Table.Column title="Số lượng" dataIndex="quantity" key="quantity" />
+            </Table>
           </>
         )}
       </Modal>
