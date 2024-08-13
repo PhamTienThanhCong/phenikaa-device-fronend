@@ -89,6 +89,7 @@ const EquipmentRequestPage = () => {
   const handleModalOk = () => {
     setIsPrintModalVisible(true);
     setIsModalVisible(false);
+    dispatch(returnDevice({ id: selectedRequest.slipCode }));
     // setSubmited(true);
   };
   const handlePrint = () => {
