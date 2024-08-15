@@ -31,14 +31,16 @@ const DashboardPage = () => {
   const total_ready = totalDevices - total_use - total_maintenance;
   const columns = [
     {
-      title: "Tên phòng",
+      title: "Vị trí",
       dataIndex: "house_name",
-      key: "house_name"
+      key: "house_name",
+      width: "15%"
     },
     {
       title: "Mã phòng",
       dataIndex: "room_id",
-      key: "room_id"
+      key: "room_id",
+      width: "15%"
     },
     {
       title: "Quản lý",
@@ -48,7 +50,9 @@ const DashboardPage = () => {
     {
       title: "Ghi chú",
       dataIndex: "note",
-      key: "note"
+      key: "note",
+      // nội dung nhiều quá thì ẩn đi
+      ellipsis: true
     }
   ];
   const count = [
@@ -131,7 +135,8 @@ const DashboardPage = () => {
                   columns={columns}
                   dataSource={availableRooms}
                   rowKey="room_id"
-                  pagination={false} // Tắt phân trang nếu không cần thiết
+                  // phân trang 5 phần tử 1 trang
+                  pagination={{ pageSize: 5 }}
                 />
               </Card>
             </Col>

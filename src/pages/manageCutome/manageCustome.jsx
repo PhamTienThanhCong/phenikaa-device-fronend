@@ -95,8 +95,6 @@ const ManageCustome = () => {
   const { users, isUser } = useAppSelector((state) => state.customer);
   // const { createUser, isCreateUser } = useAppSelector((state) => state.customer);
 
-  //gender
-
   const listQTV = users.map((item) => {
     return {
       user_id: item?.id,
