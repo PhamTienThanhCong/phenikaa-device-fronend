@@ -282,19 +282,19 @@ const ManageCustome = () => {
 
   const filteredStudents = listDataSinhVien.filter(
     (student) =>
-      student.full_name.toLowerCase().includes(searchText.toLowerCase()) ||
-      student.card_id.toLowerCase().includes(searchText.toLowerCase()) ||
-      student.department.toLowerCase().includes(searchText.toLowerCase())
+      student.full_name.toLowerCase().includes(searchText?.toLowerCase()) ||
+      student.card_id.toLowerCase().includes(searchText?.toLowerCase()) ||
+      student.department.toLowerCase().includes(searchText?.toLowerCase())
   );
 
   const filteredTeachers = listDataGiangVien.filter(
     (teacher) =>
-      teacher.full_name.toLowerCase().includes(searchText.toLowerCase()) ||
-      teacher.card_id.toLowerCase().includes(searchText.toLowerCase()) ||
-      teacher.department.toLowerCase().includes(searchText.toLowerCase())
+      teacher.full_name.toLowerCase().includes(searchText?.toLowerCase()) ||
+      teacher.card_id.toLowerCase().includes(searchText?.toLowerCase()) ||
+      teacher.department.toLowerCase().includes(searchText?.toLowerCase())
   );
 
-  const filteredQTV = listQTV.filter((qtv) => qtv.full_name.toLowerCase().includes(searchText.toLowerCase()));
+  const filteredQTV = listQTV.filter((qtv) => qtv.full_name.toLowerCase().includes(searchText?.toLowerCase()));
 
   const qtvColumns = [
     {
