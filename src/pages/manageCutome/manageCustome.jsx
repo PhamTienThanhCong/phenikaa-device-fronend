@@ -247,7 +247,7 @@ const ManageCustome = () => {
           const payload = {
             full_name: values.username,
             email: values.email,
-            role: 1,
+            role: 2,
             password: values.password,
             profile: {
               full_name: values.full_name,
