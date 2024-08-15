@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from "react";
 import BaseLayout from "@/features/layout/BaseLayout";
-import {
-  Button, Table, Modal, Input, Typography, Row, Col, Form, Space, DatePicker,
-  TimePicker, Select
-} from "antd";
+import { Button, Table, Modal, Input, Typography, Row, Col, Form, Space, DatePicker, TimePicker, Select } from "antd";
 import QRCode from "qrcode.react";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
-import { getBookingDeviceList } from "../DeviceApi";
+import { getBookingDeviceList, deviceBorrowingDetail } from "../DeviceApi";
 // import "./FeedBackPage.scss";
 import "../../FeedBack/FeedBackPage.scss";
 
@@ -49,30 +46,65 @@ const EquipmentHistoryPage = () => {
   const [errorMess, setErrorMess] = useState({ form: "", studentId: "" });
   const [isReturnVisible, setIsReturnVisible] = useState(false);
   const [submited, setSubmited] = useState(false);
+  const { deviceBorrowingDetailList } = useAppSelector((state) => state.device);
+  useEffect(() => {
+    if (selectedRecord) {
+      dispatch(deviceBorrowingDetail({ id: selectedRecord.slipCode }));
+    }
+  }, [selectedRecord, dispatch]);
+  console.log(11111111, deviceBorrowingDetailList);
+
+  console.log(22222222, selectedRecord);
 
   const reasons = ["Bình thường", "Hỏng", "Mất", "Khác"];
   const returnColumns = [
     {
       title: "Mã thiết bị",
-      dataIndex: "deviceCode",
-      key: "deviceCode"
+      dataIndex: "id",
+      key: "device_id"
     },
     {
-      title: "Tên thiết bị/Tên phòng",
-      dataIndex: "deviceName",
+      title: "Tên thiết bị",
+      dataIndex: "nameDevice",
       key: "deviceName"
-    },
-    // thời gian trả
-    {
-      title: "Thời gian trả",
-      dataIndex: "returnTime",
-      key: "returnTime"
     },
 
     {
+      title: "Số lượng",
+      dataIndex: "quantity",
+      key: "quantity"
+    },
+    {
+      title: "Thời gian trả",
+      dataIndex: "returnDate",
+      key: "returnDate",
+      render: (date) => {
+        const adjustedDate = new Date(new Date(date).getTime() + 7 * 60 * 60 * 1000);
+        return adjustedDate.toLocaleString("vi-VN", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit"
+        });
+      }
+    },
+    {
       title: "Tình trạng",
-      dataIndex: "condition",
-      key: "condition"
+      dataIndex: "status",
+      key: "status",
+      render(text, record) {
+        if (record.status === "done") {
+          return "Bình thường";
+        } else if (record.status === "fair") {
+          return "Hư hỏng";
+        } else if (record.status === "lost") {
+          return "Mất";
+        } else {
+          return "Đang mượn";
+        }
+      }
     },
     {
       title: "Mô tả",
@@ -89,24 +121,38 @@ const EquipmentHistoryPage = () => {
     setFormData(values);
     setIsModalVisible(true);
   };
-  const data = [
-    {
-      key: "1",
-      deviceCode: "ABC123",
-      deviceName: "Thiết bị X",
-      returnTime: "2021-10-10 10:00:00",
-      condition: "Bình thường",
-      description: "Mô tả thiết bị X",
-      note: "Ghi chú thiết bị X"
-    }
-    // Add more data as needed
-  ];
+  // const data = [
+  //   {
+  //     key: "1",
+  //     deviceCode: "ABC123",
+  //     deviceName: "Thiết bị X",
+  //     returnTime: "2021-10-10 10:00:00",
+  //     condition: "Bình thường",
+  //     description: "Mô tả thiết bị X",
+  //     note: "Ghi chú thiết bị X"
+  //   }
+  //   // Add more data as needed
+  // ];
+
+  // tạo 1 mảng data
+  const data = deviceBorrowingDetailList?.devices;
+
+  const transformedData = data?.map((item) => ({
+    id: item.device.id,
+    nameDevice: item.device.name,
+    quantity: item.quantity,
+    status: item.status,
+    description: item.note,
+    name: deviceBorrowingDetailList.customer.full_name,
+    returnDate: deviceBorrowingDetailList.retired_date
+  }));
+
   const handleModalOk = () => {
     setIsPrintModalVisible(true);
     setIsModalVisible(false);
     // setSubmited(true);
   };
-
+  console.log("transformedData", transformedData);
   const handlePrint = () => {
     window.print();
   };
@@ -146,16 +192,12 @@ const EquipmentHistoryPage = () => {
   const filteredHistory = listDeviceBooking.filter((record) => record.slipCode.toString().includes(searchText));
 
   const handleViewDetails = (record) => {
-    console.log(11111111111111, record);
     setSelectedRecord(record);
     setViewModalVisible(true);
   };
   const handleWiewSlip = (record) => {
-    console.log(222222222222222, record);
     window.open(`https://phenikaa-uni.top/device-loan/${record.slipCode}`, "_blank");
   };
-
-
 
   const columns = [
     { title: "Mã phiếu mượn", dataIndex: "slipCode", key: "slipCode" },
@@ -167,11 +209,18 @@ const EquipmentHistoryPage = () => {
       title: "Hành động",
       key: "action",
       render: (text, record) => {
-        return <>
-          <Button onClick={() => handleViewDetails(record)}>Xem chi tiết</Button>
-          <Button type="primary" onClick={() => handleWiewSlip(record)} style={{ marginLeft: 8 }}>Xem phiếu mượn</Button>
-
-        </>
+        return (
+          <>
+            <Button onClick={() => handleViewDetails(record)}>Xem chi tiết</Button>
+            <Button
+              type="primary"
+              onClick={() => handleWiewSlip(record)}
+              style={{ marginLeft: 8, backgroundColor: "#F26526" }}
+            >
+              Xem phiếu mượn
+            </Button>
+          </>
+        );
       }
     }
   ];
@@ -195,6 +244,17 @@ const EquipmentHistoryPage = () => {
         footer={[
           <Button key="close" onClick={() => setViewModalVisible(false)}>
             Đóng
+          </Button>,
+          <Button
+            key="return"
+            type="primary"
+            style={{
+              color: "white",
+              backgroundColor: "#F26526"
+            }}
+            onClick={() => setIsPrintModalVisible(true)}
+          >
+            Biên lai trả thiết bị
           </Button>
         ]}
       >
@@ -226,7 +286,14 @@ const EquipmentHistoryPage = () => {
           </>
         )}
       </Modal>
-      <Modal Title="Biên lai trả Thiết bị" visible={isReturnVisible} onCancel={() => { setIsReturnVisible(true) }} footer={null}>
+      <Modal
+        Title="Biên lai trả Thiết bị"
+        visible={isReturnVisible}
+        onCancel={() => {
+          setIsReturnVisible(true);
+        }}
+        footer={null}
+      >
         <Row justify="center" align="middle" className="feedback-page">
           <Col className="feedback-box">
             <Row justify="center" align="middle" className="feedback-header">
@@ -293,8 +360,8 @@ const EquipmentHistoryPage = () => {
               <Col>
                 <div style={{ marginTop: "10px", marginBottom: "10px" }}>
                   <i>
-                    Biên lai có giá trị sau 3 ngày kể từ ngày trả phòng/thiết bị. Vui lòng giữ biên lai này để có thể đảm
-                    bảo quyền lợi của bạn. Xin chân thành cảm ơn
+                    Biên lai có giá trị sau 3 ngày kể từ ngày trả phòng/thiết bị. Vui lòng giữ biên lai này để có thể
+                    đảm bảo quyền lợi của bạn. Xin chân thành cảm ơn
                   </i>
                 </div>
               </Col>
@@ -341,99 +408,103 @@ const EquipmentHistoryPage = () => {
               </Form.Item>
             </Form>
           </Modal>
-
-          <Modal
-            open={isPrintModalVisible}
-            width={1000}
-            footer={[
-              <Button key="print" onClick={handlePrint}>
-                In biên lai
-              </Button>,
-              <Button key="close" onClick={() => setIsPrintModalVisible(false)}>
-                Đóng
-              </Button>
-            ]}
-            onCancel={() => setIsPrintModalVisible(false)}
-          >
-            <div
-              style={{
-                padding: "20px",
-                border: "1px solid black",
-                borderRadius: "10px",
-                width: "90%",
-                height: "100%",
-                margin: "auto",
-                textAlign: "center",
-                paddingTop: "50px",
-                marginTop: "50px"
-              }}
-            >
-              <p
-                style={{
-                  marginTop: "0",
-                  marginBottom: "0",
-                  fontSize: "36px",
-                  fontWeight: "bold"
-                }}
-              >
-                CỘNG HOÀ XÃ HỘI CHỦ NGHĨA VIỆT NAM
-              </p>
-              <p
-                style={{
-                  marginTop: "0",
-                  marginBottom: "30px",
-                  fontSize: "30px",
-                  fontWeight: "bold"
-                }}
-              >
-                Độc lập - Tự do - Hạnh phúc
-              </p>
-              <p
-                style={{
-                  marginTop: "0",
-                  marginBottom: "0",
-                  fontSize: "34px",
-                  fontWeight: "bold"
-                }}
-              >
-                BIÊN LAI TRẢ PHÒNG THIẾT BỊ
-              </p>
-
-              <div>
-                <Row>
-                  <Col span={12}>
-                    <p style={{ fontSize: "24px", fontWeight: "bold" }}>Bên A (Trả thiết bị)</p>
-                    <p style={{ fontSize: "20px" }}>Tên người trả: {formData.studentId}</p>
-                    <p style={{ fontSize: "20px" }}>Mã sinh viên: {formData.studentId}</p>
-                    <p style={{ fontSize: "20px" }}>Email: {formData.studentId}</p>
-                  </Col>
-                  <Col span={12}>
-                    <p style={{ fontSize: "24px", fontWeight: "bold" }}>Bên B (Nhận thiết bị)</p>
-                    <p style={{ fontSize: "20px" }}>Tên người nhận: {formData.receiver}</p>
-                    <p style={{ fontSize: "20px" }}>Chức vụ: {formData.receiver}</p>
-                    <p style={{ fontSize: "20px" }}>Email: {formData.receiver}</p>
-                  </Col>
-                </Row>
-
-                <Table columns={returnColumns} dataSource={data} pagination={false} />
-                <Row>
-                  <Col span={12}>
-                    <p style={{ fontSize: "24px", fontWeight: "bold", marginBottom: 0 }}>Bên A (Trả thiết bị)</p>
-                    <p style={{ fontSize: "20px", marginBottom: 150, marginTop: 0 }}>
-                      (Ký, ghi rõ họ tên, đóng dấu nếu có)
-                    </p>
-                  </Col>
-
-                  <Col span={12}>
-                    <p style={{ fontSize: "24px", fontWeight: "bold", marginBottom: 0 }}>Bên B (Nhận thiết bị)</p>
-                    <p style={{ fontSize: "20px", marginBottom: 150, marginTop: 0 }}>(Ký, ghi rõ họ tên)</p>
-                  </Col>
-                </Row>
-              </div>
-            </div>
-          </Modal>
         </Row>
+      </Modal>
+      <Modal
+        open={isPrintModalVisible}
+        width={1000}
+        footer={[
+          <Button key="print" onClick={handlePrint}>
+            In biên lai
+          </Button>,
+          <Button key="close" onClick={() => setIsPrintModalVisible(false)}>
+            Đóng
+          </Button>
+        ]}
+        onCancel={() => setIsPrintModalVisible(false)}
+      >
+        <div
+          style={{
+            padding: "20px",
+            border: "1px solid black",
+            borderRadius: "10px",
+            width: "90%",
+            height: "100%",
+            margin: "auto",
+            textAlign: "center",
+            paddingTop: "50px",
+            marginTop: "50px"
+          }}
+        >
+          <p
+            style={{
+              marginTop: "0",
+              marginBottom: "0",
+              fontSize: "36px",
+              fontWeight: "bold"
+            }}
+          >
+            CỘNG HOÀ XÃ HỘI CHỦ NGHĨA VIỆT NAM
+          </p>
+          <p
+            style={{
+              marginTop: "0",
+              marginBottom: "30px",
+              fontSize: "30px",
+              fontWeight: "bold"
+            }}
+          >
+            Độc lập - Tự do - Hạnh phúc
+          </p>
+          <p
+            style={{
+              marginTop: "0",
+              marginBottom: "0",
+              fontSize: "34px",
+              fontWeight: "bold"
+            }}
+          >
+            BIÊN LAI TRẢ PHÒNG THIẾT BỊ
+          </p>
 
+          <div>
+            <Row>
+              <Col span={12}>
+                <p style={{ fontSize: "24px", fontWeight: "bold" }}>Bên A (Trả thiết bị)</p>
+                <p style={{ fontSize: "20px" }}>Tên người trả: {deviceBorrowingDetailList?.customer?.full_name} </p>
+                <p style={{ fontSize: "20px" }}>Mã sinh viên: {deviceBorrowingDetailList?.customer?.id} </p>
+                <p style={{ fontSize: "20px" }}>
+                  Email: {""} {deviceBorrowingDetailList?.customer?.email}
+                </p>
+              </Col>
+              <Col span={12}>
+                <p style={{ fontSize: "24px", fontWeight: "bold" }}>Bên B (Nhận thiết bị)</p>
+                <p style={{ fontSize: "20px" }}>
+                  Tên người nhận:
+                  {""} {deviceBorrowingDetailList?.user?.full_name}
+                </p>
+
+                <p style={{ fontSize: "20px" }}>Email: {deviceBorrowingDetailList?.user?.email}</p>
+              </Col>
+            </Row>
+
+            <Table columns={returnColumns} dataSource={transformedData} pagination={false} />
+
+            <Row>
+              <Col span={12}>
+                <p style={{ fontSize: "24px", fontWeight: "bold", marginBottom: 0 }}>Bên A (Trả thiết bị)</p>
+                <p style={{ fontSize: "20px", marginBottom: 150, marginTop: 0 }}>
+                  (Ký, ghi rõ họ tên, đóng dấu nếu có)
+                </p>
+              </Col>
+
+              <Col span={12}>
+                <p style={{ fontSize: "24px", fontWeight: "bold", marginBottom: 0 }}>Bên B (Nhận thiết bị)</p>
+                <p style={{ fontSize: "20px", marginBottom: 150, marginTop: 0 }}>(Ký, ghi rõ họ tên)</p>
+              </Col>
+            </Row>
+          </div>
+        </div>
       </Modal>
     </BaseLayout>
   );

@@ -65,7 +65,7 @@ const DashboardPage = () => {
       bnb: "bnb2"
     },
     {
-      today: "Sẵn sàng cho mượn",
+      today: "Sẵn sàng",
       title: total_ready,
       icon: <CheckOutlined />,
       bnb: "redtext"
@@ -79,6 +79,7 @@ const DashboardPage = () => {
   ];
 
   const colors = ["#69c0ff", "#ffc069", "#95de64", "#ff7875", "#d3adf7", "#ff85c0"];
+  console.log(11111111, roomList);
 
   const availableRooms = roomList.filter((room) => room.is_active && !room.is_maintenance && !room.is_using);
 

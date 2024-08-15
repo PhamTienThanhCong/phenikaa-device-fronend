@@ -140,7 +140,7 @@ const RoomLoanListPage = () => {
     console.log(111111111111, summaryData, formList);
     await dispatch(addRoomBooking(summaryData));
     setSummary(summaryData);
-    setSummaryModalVisible(true);
+    // setSummaryModalVisible(true);
     setOpenRequestModal(false);
   };
 

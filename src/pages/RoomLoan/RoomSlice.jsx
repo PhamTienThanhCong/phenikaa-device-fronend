@@ -25,27 +25,24 @@ export const roomSlice = createSlice({
       state.isGetRoom = true;
     });
     builder.addCase(getRoomList.rejected, (state, action) => {
-      state.error = action.meta.response.data.detail;  // Xử lý lỗi
+      state.error = action.meta.response.data.detail; // Xử lý lỗi
     });
     builder.addCase(addRoom.fulfilled, (state, action) => {
       state.roomList = [...state.roomList, action.payload];
     });
     builder.addCase(addRoom.rejected, (state, action) => {
-      state.error = action.meta.response.data.detail;  // Xử lý lỗi
+      state.error = action.meta.response.data.detail; // Xử lý lỗi
     });
     builder.addCase(getRoomBookingList.fulfilled, (state, action) => {
       state.roomBooking = [...action.payload];
       state.isRoomBooking = true;
     });
     builder.addCase(getRoomBookingList.rejected, (state, action) => {
-      state.error = action.meta.response.data.detail;  // Xử lý lỗi
+      state.error = action.meta.response.data.detail; // Xử lý lỗi
     });
-    builder.addCase(addRoomBooking.fulfilled, (state, action) => {
-      state.roomBooking = [...action.payload];
-      state.isRoomBooking = true;
-    });
+
     builder.addCase(addRoomBooking.rejected, (state, action) => {
-      state.error = action.meta.response.data.detail;  // Xử lý lỗi
+      state.error = action.meta.response.data.detail; // Xử lý lỗi
     });
   }
   //  trường hợp tạo loại thiết bị

@@ -1,11 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getDeviceList, getBookingDeviceList, borrowDevice, returnDevice } from "./DeviceApi";
+import { getDeviceList, getBookingDeviceList, borrowDevice, returnDevice, deviceBorrowingDetail } from "./DeviceApi";
 const initialState = {
   device: [],
   isDevice: false,
   deviceBooking: [],
   isDeviceBooking: false,
-  error: null
+  error: null,
+  deviceBorrowingDetailList: [],
+  isDeviceBorrowingDetail: false
 };
 
 export const deviceSlice = createSlice({
@@ -32,10 +34,10 @@ export const deviceSlice = createSlice({
       state.deviceBooking = [...state.deviceBooking, action.payload];
     });
     builder.addCase(borrowDevice.rejected, (state, action) => {
-      state.error = action.meta.response.data.detail;  // Xử lý lỗi
+      state.error = action.meta.response.data.detail; // Xử lý lỗi
     });
     builder.addCase(returnDevice.rejected, (state, action) => {
-      state.error = action.meta.response.data.detail;  // Xử lý lỗi
+      state.error = action.meta.response.data.detail; // Xử lý lỗi
     });
     builder.addCase(returnDevice.fulfilled, (state, action) => {
       state.deviceBooking = state.deviceBooking.map((item) => {
@@ -45,9 +47,10 @@ export const deviceSlice = createSlice({
         return item;
       });
     });
-
-
-
+    builder.addCase(deviceBorrowingDetail.fulfilled, (state, action) => {
+      state.deviceBorrowingDetailList = action.payload;
+      state.isDeviceBorrowingDetail = true;
+    });
   }
 });
 
