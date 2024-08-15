@@ -7,7 +7,7 @@ export const createUser = createAsyncThunk("customer/create-user", async (payloa
   return res;
 });
 
-export const getCustomer = createAsyncThunk("customer/get-customer", async (payload, thunkAPI) => {
+export const getCustomer = createAsyncThunk("customer/get-customer?limit=100&offset=0", async (payload, thunkAPI) => {
   const url = "/customer";
   let res = await SendRequest(url, payload, thunkAPI, "GET");
   return res;
