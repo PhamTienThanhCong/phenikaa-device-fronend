@@ -101,7 +101,7 @@ const ManageCustome = () => {
     return {
       user_id: item.id,
       email: item.email,
-      gender: item.profile.gender,
+      gender: item.profile?.gender,
       username: item.full_name,
       birth_date: item.profile.birth_date,
       full_name: item.profile.full_name,
