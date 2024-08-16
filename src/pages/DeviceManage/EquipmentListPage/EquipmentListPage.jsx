@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from "uuid";
 import QRCode from "qrcode.react";
 import { getCustomer } from "@/pages/manageCutome/CustomerAPI";
 
-import { unwrapResult } from '@reduxjs/toolkit';
+import { unwrapResult } from "@reduxjs/toolkit";
 
 const deviceData = [
   { id: "D001", name: "Laptop", total: 10 },
@@ -100,17 +100,26 @@ const EquipmentListPage = () => {
 
   const handleStudentCodeChange = (value) => {
     setStudentCode(value);
-    const student = customer.find((student) => student.card_id === value);
+    const student = customer.find((student) => student.id === value);
     if (student) {
       setStudentInfo({
         id: student.id,
         studentName: student.full_name,
         studentClass: student.department,
-        studentCode: student.card_id
+        studentCode: student.id
       });
     } else {
       setStudentInfo({ id: "", studentName: "", studentClass: "", studentCode: "" });
     }
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    // Reset form data
+    setFormList([{ id: uuidv4(), deviceId: "", quantity: "", quantityError: "" }]);
+    setStudentInfo({ studentName: "", class: "" });
+    setStudentCode("");
+    setProjectedReturnDate(null);
   };
 
   const handleSubmit = async () => {
@@ -134,7 +143,7 @@ const EquipmentListPage = () => {
     setNewData(data);
     console.log("newwwwwwwwwwwwwww", newData);
 
-    setOpenModal(false);
+    handleCloseModal();
     setOpenSummaryModal(true);
   };
 
@@ -220,19 +229,20 @@ const EquipmentListPage = () => {
       <Table columns={deviceColumns} dataSource={dataDevice} rowKey="key" />
 
       {/* modal yêu cầu mượn */}
-      <Modal title="Tạo yêu cầu mượn" visible={openModal} onOk={handleSubmit} onCancel={() => setOpenModal(false)}>
+      <Modal title="Tạo yêu cầu mượn" visible={openModal} onOk={handleSubmit} onCancel={() => handleCloseModal()}>
         <Form layout="vertical">
           <Form.Item label="Mã sinh viên">
             <AutoComplete
-              options={customer.map((student) => ({ value: student.card_id }))}
-              filterOption={(inputValue, option) => option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
+              options={customer.map((student) => ({ value: student.id }))}
+              value={studentCode}
+              filterOption={(inputValue, option) => option.value.toString().indexOf(inputValue) !== -1}
               onChange={handleStudentCodeChange}
             />
           </Form.Item>
           <p>Tên sinh viên: {studentInfo.studentName}</p>
           <p>Khoa: {studentInfo.studentClass}</p>
           <Form.Item label="Thời gian dự kiến trả">
-            <DatePicker onChange={(date) => setProjectedReturnDate(date)} />
+            <DatePicker value={projectedReturnDate} onChange={(date) => setProjectedReturnDate(date)} />
           </Form.Item>
           {formList.map((formItem) => (
             <Row
@@ -248,7 +258,7 @@ const EquipmentListPage = () => {
                   <Select
                     value={formItem.deviceId}
                     onChange={(value) => handleChange(formItem.id, "deviceId", value)}
-                  // disabled={selectedDeviceIds.includes(formItem.deviceId)}
+                    // disabled={selectedDeviceIds.includes(formItem.deviceId)}
                   >
                     {dataDevice
                       .filter(
@@ -263,12 +273,14 @@ const EquipmentListPage = () => {
                   </Select>
                 </Form.Item>
               </Col>
-              <Col span={() => {
-                if (formList.length == 1) {
-                  return 12;
-                }
-                return 10;
-              }}>
+              <Col
+                span={() => {
+                  if (formList.length == 1) {
+                    return 12;
+                  }
+                  return 10;
+                }}
+              >
                 <Form.Item
                   label="Số lượng"
                   validateStatus={formItem.quantityError ? "error" : ""}
@@ -283,13 +295,15 @@ const EquipmentListPage = () => {
                 </Form.Item>
               </Col>
               <Col span={1}>
-                {
-                  formList.length > 1 && (
-                    <Button type="link" onClick={() => handleRemoveForm(formItem.id)} style={{ width: "100%", height: "32px", color: 'red' }}>
-                      Xóa
-                    </Button>
-                  )
-                }
+                {formList.length > 1 && (
+                  <Button
+                    type="link"
+                    onClick={() => handleRemoveForm(formItem.id)}
+                    style={{ width: "100%", height: "32px", color: "red" }}
+                  >
+                    Xóa
+                  </Button>
+                )}
               </Col>
             </Row>
           ))}

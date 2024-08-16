@@ -45,7 +45,8 @@ const DashboardPage = () => {
     {
       title: "Quản lý",
       dataIndex: "manager",
-      key: "manager"
+      key: "manager",
+      ellipsis: true
     },
     {
       title: "Ghi chú",

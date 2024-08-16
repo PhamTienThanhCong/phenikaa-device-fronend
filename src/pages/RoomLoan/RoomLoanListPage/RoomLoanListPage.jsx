@@ -113,12 +113,12 @@ const RoomLoanListPage = () => {
 
   const handleStudentCodeChange = (value) => {
     setStudentCode(value);
-    const student = customer.find((student) => student.card_id === value);
+    const student = customer.find((student) => student.id === value);
     if (student) {
       setStudentInfo({
         studentName: student.full_name,
         studentClass: student.department,
-        studentCode: student.card_id
+        studentCode: student.id
       });
     } else {
       setStudentInfo({ studentName: "", studentClass: "", studentCode: "" });
@@ -144,9 +144,9 @@ const RoomLoanListPage = () => {
     setOpenRequestModal(false);
   };
 
-  const getCustomerId = (card_id) => {
-    const customerinfo = customer.find((user) => user.card_id === card_id);
-    console.log("customer", customerinfo, card_id);
+  const getCustomerId = (id) => {
+    const customerinfo = customer.find((user) => user.id === id);
+    // console.log("customer", customerinfo, card_id);
     return customer ? customerinfo.id : null;
   };
   const handlePrint = () => {
@@ -382,9 +382,9 @@ const RoomLoanListPage = () => {
         <Form layout="vertical">
           <Form.Item label="Mã sinh viên">
             <AutoComplete
-              options={customer.map((student) => ({ value: student.card_id }))}
+              options={customer.map((student) => ({ value: student.id }))}
               onChange={handleStudentCodeChange}
-              filterOption={(inputValue, option) => option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
+              filterOption={(inputValue, option) => option.value.toString().indexOf(inputValue) !== -1}
             />
           </Form.Item>
           <p>Tên sinh viên: {studentInfo.studentName}</p>

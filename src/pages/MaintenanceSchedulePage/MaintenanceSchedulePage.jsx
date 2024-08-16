@@ -166,11 +166,11 @@ const MaintenanceSchedulePage = () => {
   };
 
   const columns = [
-    { title: "ID", dataIndex: "index", key: "index" },
+    { title: "ID", dataIndex: "index", key: "index", width: "3%" },
     // { title: "Mã bảo trì", dataIndex: "deviceCode", key: "deviceCode" },
     { title: "Tiêu đề", dataIndex: "title", key: "title" },
     { title: "Tên thiết bị", dataIndex: "deviceName", key: "deviceName" },
-    { title: "Số lượng", dataIndex: "quantity", key: "quantity" },
+    { title: "Số lượng", dataIndex: "quantity", key: "quantity", width: "5%" },
     { title: "Người phụ trách", dataIndex: "user", key: "user" },
     { title: "Email", dataIndex: "email", key: "email" },
 
@@ -182,7 +182,13 @@ const MaintenanceSchedulePage = () => {
     },
     { title: "Thời gian tạo", dataIndex: "createdAt", key: "createdAt" },
     { title: "Thời gian hoàn thành", dataIndex: "maintenanceTime", key: "maintenanceTime" },
-    { title: "Đơn vị bảo trì", dataIndex: "name", key: "name" },
+    {
+      title: "Đơn vị bảo trì",
+      dataIndex: "name",
+      key: "name",
+
+      ellipsis: true
+    },
     { title: "Giá", dataIndex: "cost_per_unit", key: "cost_per_unit" },
     { title: "Ghi chú", dataIndex: "note", key: "note" },
     {

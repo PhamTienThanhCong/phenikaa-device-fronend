@@ -33,8 +33,8 @@ const studentColumns = [
   },
   {
     title: "Mã sinh viên",
-    dataIndex: "card_id",
-    key: "card_id"
+    dataIndex: "id",
+    key: "id"
   },
   {
     title: "Số điện thoại",
@@ -62,8 +62,8 @@ const teacherColumns = [
   },
   {
     title: "Mã giảng viên",
-    dataIndex: "card_id",
-    key: "card_id"
+    dataIndex: "id",
+    key: "id"
   },
   {
     title: "Số điện thoại",
@@ -106,7 +106,7 @@ const ManageCustome = () => {
       avatar: item?.profile?.avatar,
       address: item?.profile?.address,
       phone_number: item?.profile?.phone_number,
-      card_id: item?.profile?.card_id
+      card_id: item?.id
     };
   });
 
@@ -135,8 +135,8 @@ const ManageCustome = () => {
   const handleSearchChange = (e) => {
     setSearchText(e.target.value);
   };
-  const listDataSinhVien = customer.filter((item) => item.role === 2);
-  const listDataGiangVien = customer.filter((item) => item.role === 1);
+  const listDataSinhVien = customer.filter((item) => item.role === 1);
+  const listDataGiangVien = customer.filter((item) => item.role === 2);
   const genderOptions = [
     {
       label: "Nam",

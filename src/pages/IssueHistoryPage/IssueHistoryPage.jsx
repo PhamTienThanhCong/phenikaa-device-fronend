@@ -181,17 +181,37 @@ const IssueHistoryPage = () => {
   };
 
   const columns = [
-    { title: "STT", dataIndex: "key", key: "key" },
-    { title: "Tên công ty", dataIndex: "name", key: "name" },
-    { title: "Người phụ trách", dataIndex: "guardian", key: "guardian" },
-    { title: "Mô tả", dataIndex: "description", key: "description" },
-    { title: "Địa chỉ", dataIndex: "address", key: "address" },
-    { title: "Số điện thoại", dataIndex: "phone", key: "phone" },
-    { title: "Email", dataIndex: "email", key: "email" },
+    { title: "STT", dataIndex: "key", key: "key", width: "3%" },
+    {
+      title: "Tên công ty",
+      dataIndex: "name",
+      key: "name",
+      // ẩn đi nếu nội dung quá dài
+      ellipsis: true
+    },
+    {
+      title: "Người phụ trách",
+      dataIndex: "guardian",
+      key: "guardian",
+      width: "10%",
+      // ẩn đi nếu nội dung quá dài
+      ellipsis: true
+    },
+    {
+      title: "Mô tả",
+      dataIndex: "description",
+      key: "description",
+      // ẩn đi nếu nội dung quá dài
+      ellipsis: true
+    },
+    { title: "Địa chỉ", dataIndex: "address", key: "address", ellipsis: true },
+    { title: "Số điện thoại", dataIndex: "phone", key: "phone", width: "8%" },
+    { title: "Email", dataIndex: "email", key: "email", width: "12%" },
     {
       title: "Thao tác",
       dataIndex: "actions",
       key: "actions",
+      width: "6%",
       render: (_, record) => (
         <Space style={{ width: "50%", display: "flex", justifyContent: "center" }}>
           <p type="text" onClick={() => handleModalOpen("view", record)} style={{ color: "blue", cursor: "pointer" }}>
