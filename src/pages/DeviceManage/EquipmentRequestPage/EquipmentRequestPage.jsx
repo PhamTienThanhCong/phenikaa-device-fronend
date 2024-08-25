@@ -18,7 +18,7 @@ import {
 import QRCode from "qrcode.react";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { getBookingDeviceList } from "../DeviceApi";
-import { getDeviceList, returnDevice, updateDevice, deviceBorrowingDetail } from "../DeviceApi";
+import { getDeviceList, updateDevice, deviceBorrowingDetail } from "../DeviceApi";
 import { use } from "echarts";
 import { clearError } from "../DeviceSlice";
 import { notification } from "antd";
@@ -125,42 +125,6 @@ const EquipmentRequestPage = () => {
   // lấy giá trị ngày hiện tại
   const currentDate = new Date().toISOString().substring(0, 10);
 
-  const handleFinish = async (values) => {
-    form.resetFields();
-    setFormData(values); // Lưu dữ liệu vào state
-
-    const filteredEntries = Object.entries(values).filter(
-      ([key, value]) => key !== "description" && key !== "deviceList" && typeof value === "object"
-    );
-    const objectArray = filteredEntries.map(([key, value]) => value);
-
-    const payload = {
-      devices: objectArray.map((item, index) => ({
-        device_id: selectedRequest.deviceList[index].id,
-        quantity_return: selectedRequest.deviceList[index].quantity,
-        status: item.status,
-        note: item.note
-      })),
-      note: ""
-    };
-
-    setIsReturnVisible(false);
-    setIsPrintModalVisible(true);
-
-    await dispatch(
-      updateDevice({
-        device_borrowing_id: selectedRequest.slipCode,
-        ...payload
-      })
-    );
-
-    await dispatch(returnDevice({ id: selectedRequest.slipCode }));
-    await dispatch(deviceBorrowingDetail({ id: selectedRequest.slipCode }));
-    setSelectedRequest(null);
-
-    // await dispatch(getBookingDeviceList());
-  };
-
   const handlePrint = () => {
     window.print();
   };
@@ -215,6 +179,37 @@ const EquipmentRequestPage = () => {
           id: deviceId,
           name: "Unknown"
         };
+  };
+
+  const handleFinish = async (values) => {
+    form.resetFields();
+    setFormData(values); // Lưu dữ liệu vào state
+
+    const filteredEntries = Object.entries(values).filter(
+      ([key, value]) => key !== "description" && key !== "deviceList" && typeof value === "object"
+    );
+    const objectArray = filteredEntries.map(([key, value]) => value);
+
+    const payload = {
+      devices: objectArray.map((item, index) => ({
+        device_id: selectedRequest.deviceList[index].id,
+        quantity_return: selectedRequest.deviceList[index].quantity,
+        status: item.status,
+        note: item.note
+      })),
+      note: ""
+    };
+
+    setIsReturnVisible(false);
+    setIsPrintModalVisible(true);
+
+    await dispatch(updateDevice({ device_borrowing_id: selectedRequest.slipCode, ...payload }));
+
+    // await dispatch(returnDevice({ id: selectedRequest.slipCode }));
+    await dispatch(deviceBorrowingDetail({ id: selectedRequest.slipCode }));
+    setSelectedRequest(null);
+
+    await dispatch(getBookingDeviceList());
   };
 
   // tạo 1 mảng data
@@ -311,6 +306,21 @@ const EquipmentRequestPage = () => {
             <div style={{ textAlign: "center", marginBottom: 16 }}>
               <QRCode value={`Slip Code: ${selectedRequest.slipCode}`} />
             </div>
+            <p>
+              <strong>Mã phiếu mượn:</strong>{" "}
+              <button
+                style={{
+                  background: "#F26526",
+                  color: "white",
+                  border: "none"
+                }}
+                onClick={() => {
+                  window.location.href = `https://phenikaa-uni.top/device-loan/${selectedRequest.slipCode}`;
+                }}
+              >
+                Phiếu mượn
+              </button>
+            </p>
             <p>
               <strong>Mã phiếu mượn:</strong> {selectedRequest.slipCode}
             </p>

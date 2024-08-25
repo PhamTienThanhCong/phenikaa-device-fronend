@@ -21,10 +21,7 @@ export const deviceCategorySlice = createSlice({
       state.deviceCategory = [...action.payload];
       state.isDeviceCategory = true;
     });
-    builder.addCase(createDeviceCategory.fulfilled, (state, action) => {
-      state.deviceCategory = [...action.payload];
-      state.isDeviceCategory = true;
-    });
+
     builder.addCase(getDeviceList.fulfilled, (state, action) => {
       state.deviceList = [...action.payload];
       state.isDeviceList = true;

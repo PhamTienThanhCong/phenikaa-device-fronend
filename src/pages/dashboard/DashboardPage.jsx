@@ -1,7 +1,13 @@
 import BaseLayout from "@/features/layout/BaseLayout";
 
 import { Card, Col, Row, Table, Typography } from "antd";
-import { AppstoreOutlined, CheckOutlined, ExclamationCircleOutlined, FormOutlined } from "@ant-design/icons";
+import {
+  AppstoreOutlined,
+  CheckOutlined,
+  ExclamationCircleOutlined,
+  FormOutlined,
+  ReloadOutlined
+} from "@ant-design/icons";
 
 import DounutChart from "@/components/chart/DounutChart";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
@@ -84,7 +90,7 @@ const DashboardPage = () => {
   ];
 
   const colors = ["#69c0ff", "#ffc069", "#95de64", "#ff7875", "#d3adf7", "#ff85c0"];
-  console.log(11111111, roomList);
+  // console.log(11111111, roomList);
 
   const availableRooms = roomList.filter((room) => room.is_active && !room.is_maintenance && !room.is_using);
 
@@ -96,6 +102,28 @@ const DashboardPage = () => {
     <BaseLayout>
       <>
         <div className="layout-content">
+          {/* Thêm button Relaoad */}
+          <Row>
+            <Col span={24}>
+              <div
+                className="btn-reload"
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  marginBottom: "10px"
+                }}
+              >
+                <button
+                  style={{
+                    backgroundColor: "#df6c0d"
+                  }}
+                  onClick={() => dispatch(getDeviceList())}
+                >
+                  <ReloadOutlined />
+                </button>
+              </div>
+            </Col>
+          </Row>
           <Row className="rowgap-vbox" gutter={[24, 0]}>
             {count.map((c, index) => (
               <Col key={index} xs={24} sm={24} md={12} lg={6} xl={6} className="mb-24">

@@ -137,7 +137,7 @@ const RoomLoanListPage = () => {
       total_customer: 50,
       customer_id: getCustomerId(studentInfo.studentCode)
     };
-    console.log(111111111111, summaryData, formList);
+
     await dispatch(addRoomBooking(summaryData));
     setSummary(summaryData);
     // setSummaryModalVisible(true);

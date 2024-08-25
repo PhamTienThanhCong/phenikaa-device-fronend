@@ -52,9 +52,6 @@ const EquipmentHistoryPage = () => {
       dispatch(deviceBorrowingDetail({ id: selectedRecord.slipCode }));
     }
   }, [selectedRecord, dispatch]);
-  console.log(11111111, deviceBorrowingDetailList);
-
-  console.log(22222222, selectedRecord);
 
   const reasons = ["Bình thường", "Hỏng", "Mất", "Khác"];
   const returnColumns = [
@@ -184,7 +181,7 @@ const EquipmentHistoryPage = () => {
         issuedBy: item.user ? item.user.full_name : "QTV",
         devices: item.devices.map((device) => ({
           id: device.device_id,
-          name: device.device.name,
+          name: device.name,
           quantity: device.quantity
         }))
       };
@@ -263,6 +260,20 @@ const EquipmentHistoryPage = () => {
             <div style={{ textAlign: "center", marginBottom: 16 }}>
               <QRCode value={`https://phenikaa-uni.top/device-loan/${selectedRecord.slipCode}`} />
             </div>
+            <p>
+              <strong>Mã phiếu mượn:</strong>{" "}
+              <button
+                style={{
+                  background: "#F26526",
+                  color: "white"
+                }}
+                onClick={() => {
+                  window.location.href = `https://phenikaa-uni.top/device-loan/${selectedRecord.slipCode}`;
+                }}
+              >
+                Phiếu mượn
+              </button>
+            </p>
             <p>
               <strong>Mã phiếu mượn:</strong> {selectedRecord.slipCode}
             </p>

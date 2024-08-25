@@ -148,49 +148,49 @@ const EquipmentListPage = () => {
   };
 
   const handlePrint = () => {
-    const printWindow = window.open("", "", "width=800,height=600");
-    const printContent = `
-      <html>
-        <head>
-          <title>Phiếu Mượn</title>
-          <style>
-            body { font-family: Arial, sans-serif; }
-            .container { width: 100%; padding: 20px; }
-            .header { text-align: center; margin-bottom: 20px; }
-            .details { margin-bottom: 20px; }
-            .details p { margin: 0; }
-            .footer { margin-top: 20px; }
-            .footer button { margin-right: 10px; }
-            @media print {
-              .footer { display: none; }
-            }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="header">
-              <h2>Phiếu Mượn Thiết Bị</h2>
-              <div>${QRCode.toDataURL(`Student Code: ${summaryData.studentCode}`)}</div>
-            </div>
-            <div class="details">
-              <p><strong>Mã sinh viên:</strong> ${summaryData.studentCode}</p>
-              <p><strong>Tên sinh viên:</strong> ${summaryData.studentName}</p>
-              <p><strong>Lớp:</strong> ${summaryData.class}</p>
-              <p><strong>Thời gian trả dự kiến:</strong> ${summaryData.projectedReturnDate}</p>
-              <p><strong>Các thiết bị mượn:</strong></p>
-              <ul>
-                ${summaryData.devices.map((device) => `<li>${device.device} - ${device.quantity}</li>`).join("")}
-              </ul>
-            </div>
-          </div>
-        </body>
-      </html>
-    `;
+    const printWindow = window.print();
+    // const printContent = `
+    //   <html>
+    //     <head>
+    //       <title>Phiếu Mượn</title>
+    //       <style>
+    //         body { font-family: Arial, sans-serif; }
+    //         .container { width: 100%; padding: 20px; }
+    //         .header { text-align: center; margin-bottom: 20px; }
+    //         .details { margin-bottom: 20px; }
+    //         .details p { margin: 0; }
+    //         .footer { margin-top: 20px; }
+    //         .footer button { margin-right: 10px; }
+    //         @media print {
+    //           .footer { display: none; }
+    //         }
+    //       </style>
+    //     </head>
+    //     <body>
+    //       <div class="container">
+    //         <div class="header">
+    //           <h2>Phiếu Mượn Thiết Bị</h2>
+    //           <div>${QRCode.toDataURL(`Student Code: ${summaryData.studentCode}`)}</div>
+    //         </div>
+    //         <div class="details">
+    //           <p><strong>Mã sinh viên:</strong> ${summaryData.studentCode}</p>
+    //           <p><strong>Tên sinh viên:</strong> ${summaryData.studentName}</p>
+    //           <p><strong>Lớp:</strong> ${summaryData.class}</p>
+    //           <p><strong>Thời gian trả dự kiến:</strong> ${summaryData.projectedReturnDate}</p>
+    //           <p><strong>Các thiết bị mượn:</strong></p>
+    //           <ul>
+    //             ${summaryData.devices.map((device) => `<li>${device.device} - ${device.quantity}</li>`).join("")}
+    //           </ul>
+    //         </div>
+    //       </div>
+    //     </body>
+    //   </html>
+    // `;
     printWindow.document.open();
-    printWindow.document.write(printContent);
+    // printWindow.document.write(printContent);
     printWindow.document.close();
     printWindow.focus();
-    printWindow.print();
+    // printWindow.print();
   };
   const formatDeviceData = (deviceData) => {
     return deviceData.map((item) => ({
@@ -333,6 +333,21 @@ const EquipmentListPage = () => {
             <div style={{ textAlign: "center", marginBottom: 16 }}>
               <QRCode value={`https://phenikaa-uni.top/device-loan/${newData.id}`} />
             </div>
+            {/* thêm button để dẫn đến đường dẫn trên */}
+            <p>
+              <strong>Mã phiếu mượn:</strong>{" "}
+              <button
+                style={{
+                  background: "#F26526",
+                  color: "white"
+                }}
+                onClick={() => {
+                  window.location.href = `https://phenikaa-uni.top/device-loan/${newData.id}`;
+                }}
+              >
+                Phiếu mượn
+              </button>
+            </p>
             <p>
               <strong>Mã sinh viên:</strong> {newData?.customer?.id}
             </p>

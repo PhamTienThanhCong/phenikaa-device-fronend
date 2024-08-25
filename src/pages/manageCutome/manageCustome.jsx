@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { getCustomer } from "./CustomerAPI";
 import { getUser, createUser, deleteUser, editUser } from "./CustomerAPI";
 import { clearError } from "./CustomerSlice";
+import { getProfile } from "../profile/profileApi";
 
 import "./manageCustome.scss";
 // import { idIDIntl } from "@ant-design/pro-components";
@@ -94,6 +95,12 @@ const ManageCustome = () => {
   const { customer, isCustomer } = useAppSelector((state) => state.customer);
   const { users, isUser } = useAppSelector((state) => state.customer);
   // const { createUser, isCreateUser } = useAppSelector((state) => state.customer);
+  const { profileList, isGetAll } = useAppSelector((state) => state.profile);
+  React.useEffect(() => {
+    if (!isGetAll) {
+      dispatch(getProfile());
+    }
+  }, [dispatch, isGetAll]);
 
   const listQTV = users.map((item) => {
     return {
@@ -390,32 +397,35 @@ const ManageCustome = () => {
               scroll={{ x: "max-content" }} // responsive scroll
             />
           </TabPane>
-          <TabPane tab="Quản Trị Viên" key="3">
-            <div style={{ width: "100%", display: "flex", justifyContent: "flex-end" }}>
-              <Input
-                placeholder="Tìm kiếm"
-                value={searchText}
-                onChange={handleSearchChange}
-                style={{ marginBottom: "20px", width: "100%" }}
-                suffix={<SearchOutlined />}
-              />
-              <Button
-                type="primary"
-                onClick={handleAdd}
-                style={{
-                  marginBottom: "20px",
-                  color: "white",
-                  backgroundColor: "#F26526",
-                  height: "50px",
-                  marginLeft: "20px"
-                }}
-              >
-                Thêm mới
-              </Button>
-            </div>
+          {/*nếu profileList. role = 1 thì mới hiển thị*/}
+          {profileList?.role === 1 && (
+            <TabPane tab="Quản Trị Viên" key="3">
+              <div style={{ width: "100%", display: "flex", justifyContent: "flex-end" }}>
+                <Input
+                  placeholder="Tìm kiếm"
+                  value={searchText}
+                  onChange={handleSearchChange}
+                  style={{ marginBottom: "20px", width: "100%" }}
+                  suffix={<SearchOutlined />}
+                />
+                <Button
+                  type="primary"
+                  onClick={handleAdd}
+                  style={{
+                    marginBottom: "20px",
+                    color: "white",
+                    backgroundColor: "#F26526",
+                    height: "50px",
+                    marginLeft: "20px"
+                  }}
+                >
+                  Thêm mới
+                </Button>
+              </div>
 
-            <Table columns={qtvColumns} dataSource={filteredQTV} scroll={{ x: "max-content" }} />
-          </TabPane>
+              <Table columns={qtvColumns} dataSource={filteredQTV} scroll={{ x: "max-content" }} />
+            </TabPane>
+          )}
         </Tabs>
         <Modal
           title={isEditing ? "Sửa thông tin" : "Thêm mới quản trị viên"}

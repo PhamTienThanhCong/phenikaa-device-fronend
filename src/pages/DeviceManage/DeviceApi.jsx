@@ -19,11 +19,11 @@ export const borrowDevice = createAsyncThunk("device/borrow-device", async (payl
   return res;
 });
 
-export const returnDevice = createAsyncThunk("device/return-device", async (payload, thunkAPI) => {
-  const url = `/device-borrowing/${payload.id}/return`;
-  let res = await SendRequest(url, payload, thunkAPI, "POST");
-  return res;
-});
+// export const returnDevice = createAsyncThunk("device/return-device", async (payload, thunkAPI) => {
+//   const url = `/device-borrowing/${payload.id}/return`;
+//   let res = await SendRequest(url, payload, thunkAPI, "POST");
+//   return res;
+// });
 
 // API PUT
 export const updateDevice = createAsyncThunk("device/update-device", async (payload, thunkAPI) => {

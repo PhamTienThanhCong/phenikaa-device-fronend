@@ -171,8 +171,8 @@ const MaintenanceSchedulePage = () => {
     { title: "Tiêu đề", dataIndex: "title", key: "title" },
     { title: "Tên thiết bị", dataIndex: "deviceName", key: "deviceName" },
     { title: "Số lượng", dataIndex: "quantity", key: "quantity", width: "5%" },
-    { title: "Người phụ trách", dataIndex: "user", key: "user" },
-    { title: "Email", dataIndex: "email", key: "email" },
+    { title: "Người phụ trách", dataIndex: "user", key: "user", ellipsis: true },
+    { title: "Email", dataIndex: "email", key: "email", ellipsis: true },
 
     {
       title: "Trạng thái thiết bị",
